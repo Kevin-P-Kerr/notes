@@ -33,7 +33,7 @@ public class Notes {
 	}
 	public static void main(String[] args) {
 		List<Tuple<Long,Long>> l = Lists.newArrayList();
-		List<Long> xElems = Lists.newArrayList(9L,11L,21L,33L,47L,55L,67L,71L,85L,91L,105L);
+		List<Long> xElems = Lists.newArrayList(9L,47L,91L,105L);
 		for (Long xelm:xElems) {
 			long f = getFactor(xelm);
 			l.add(new Tuple<Long, Long>(xelm,f));
