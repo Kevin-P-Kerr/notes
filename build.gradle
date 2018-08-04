@@ -3,7 +3,7 @@ apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: 'application'
 
-mainClassName = 'com.lang.Notes' 
+mainClassName = 'com.notes.Notes' 
 repositories {
     mavenCentral()
 }
