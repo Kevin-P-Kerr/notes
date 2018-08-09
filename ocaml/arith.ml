@@ -10,10 +10,9 @@ type quant = Q of quantpart * variable | QR of quant * quant;;
 type formula = FO of arithexpr * eq * arithexpr | FL of formula * lc * formula | QF of quant * formula;;
 
 let formal_number_tostr x:formal_number = x;;
-let rec tostr x:arithexpr =
+let rec tostr x =
     match x with 
-    |    F(f) -> formal_number_tostr x
-    | A(f,o,a) -> formal_
+    | F(f) -> f
 let z v = FO (A((V v), PLUS,  F(C("0"))),EQUALS ,F(V(v)));;
 let r va vb = FO (A(V(va), PLUS, F(V(vb))), EQUALS, A(V(vb), PLUS, F(V(va))));;
 
