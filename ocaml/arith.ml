@@ -26,6 +26,18 @@ let rec tostr x =
     | F(f) -> fntostr f
     | A(f,o,a) -> (fntostr f)^(opstr o)^tostr a
 
+let rec quantstr x =
+    match x with
+    | FORALL -> "forall"
+    | THEREIS -> "thereis"
+
+let rec quantifierstr x = 
+    match x with
+    | Q(q,V(VAR(s))) -> quantstr q^" "^s
+    | QR(q,qq) -> quantifierstr q ^" "^quantifierstr qq
+
+
+
 let rec formulastr x =
     match x with
         | FO (a,e,b) -> (tostr a)^"="^(tostr b)
