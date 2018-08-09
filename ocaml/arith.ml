@@ -28,8 +28,8 @@ let rec tostr x =
 
 let rec quantstr x =
     match x with
-    | FORALL -> "forall"
-    | THEREIS -> "thereis"
+    | FORALL -> "A"
+    | THEREIS -> "E"
 
 let rec quantifierstr x = 
     match x with
@@ -42,9 +42,16 @@ let rec formulastr x =
     match x with
         | FO (a,e,b) -> (tostr a)^"="^(tostr b)
         | FL (f,l,g) -> (formulastr f)^"->"^(formulastr g)
-        | QF (q,f) -> "Ax"^(formulastr f)
+        | QF (q,f) -> quantifierstr q^"("^(formulastr f)^")"
 
 let g x = match x with | FO(a,e,b) -> a;;
+(* x+0=x *)
 let z v = FO (A((V v), PLUS,  F(C(CN("0")))),EQUALS ,F(V(v)));;
+(* a+b=b+a *)
 let r va vb = FO (A(va, PLUS, F(vb)), EQUALS, A(vb, PLUS, F(va)));;
+let reserved = VAR("j");;
+let one = CN("1");;
+(* Ex(x=a+1) *)
+(* todo, random string *)
+let inc v = QF(Q(THEREIS, reserved), FO(F(V(reserved)), EQUALS, A(V(v),PLUS, F(C(one)))));;
 
