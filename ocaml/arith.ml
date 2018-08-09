@@ -33,7 +33,7 @@ let rec quantstr x =
 
 let rec quantifierstr x = 
     match x with
-    | Q(q,V(VAR(s))) -> quantstr q^" "^s
+    | Q(q,VAR(s)) -> quantstr q^" "^s
     | QR(q,qq) -> quantifierstr q ^" "^quantifierstr qq
 
 
