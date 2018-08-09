@@ -9,10 +9,17 @@ type quantpart = FORALL | THEREIS
 type quant = Q of quantpart * variable | QR of quant * quant;;
 type formula = FO of arithexpr * eq * arithexpr | FL of formula * lc * formula | QF of quant * formula;;
 
-let formal_number_tostr x:formal_number = x;;
+let fntostr x =
+    match x with
+        | C(y) -> y
+        | V(v) -> v
+
 let rec tostr x =
     match x with 
-    | F(f) -> f
+    | F(f) -> fntostr f
+    | A(f,o,a) -> (fntostr f)^"+"^tostr a
+
+let g x = match x with | FO(a,e,b) -> a;;
 let z v = FO (A((V v), PLUS,  F(C("0"))),EQUALS ,F(V(v)));;
 let r va vb = FO (A(V(va), PLUS, F(V(vb))), EQUALS, A(V(vb), PLUS, F(V(va))));;
 
