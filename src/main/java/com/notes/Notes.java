@@ -31,30 +31,51 @@ public class Notes {
 		}
 		
 	}
+	
+	public static Long fib (long l) {
+		long i = 0;
+		long ii = 1;
+		while (l > 0) {
+			long n = i;
+			i = ii;
+			ii = n+i;
+			l--;
+		}
+		return i;
+		
+	}
+	
+	public static long fact(long i) {
+		long base = i;
+		i--;
+		while (i>0) {
+			base*=i--;
+		}
+		return base;
+	}
 	public static void main(String[] args) {
-		List<Tuple<Long,Long>> l = Lists.newArrayList();
-		List<Long> xElems = Lists.newArrayList(9L,47L,91L,105L);
+		List<Tuple<Long,Double>> l = Lists.newArrayList();
+		List<Long> xElems = Lists.newArrayList(1L,5L,11L);
 		for (Long xelm:xElems) {
-			long f = getFactor(xelm);
-			l.add(new Tuple<Long, Long>(xelm,f));
+			double f = fact(xelm) * 1.0;
+			l.add(new Tuple<Long, Double>(xelm,f));
 		}
 		
 		List<Double> x = Lists.newArrayList();
 		List<Double> y = Lists.newArrayList();
-		for (Tuple<Long, Long> t:l) {
+		for (Tuple<Long, Double> t:l) {
 			Long xa = t.left;
-			Long ya = t.right;
+			Double ya = t.right;
 			x.add(xa.doubleValue());
 			y.add(ya.doubleValue());
 		}
 		PolynomialFunctionLagrangeForm poly = new PolynomialFunctionLagrangeForm(Doubles.toArray(x), Doubles.toArray(y));
 		String ps = poly.toString();
 		String polystr = "";
-		for (int z =3,ii=105;z<=ii;z+=2) {
+		for (int z =0,ii=10;z<=ii;z++) {
 			double v = poly.value(z*1.0);
-			long fv = Math.round(v);
-			long fact = getFactor(z);
-			System.out.println(String.format("%d: %d : %d",z, fv,fact));			
+			double fact = fact(z)*1.0;
+			System.out.println(String.format("%d: %f : %f",z, v,fact));			
 		}
 		List<Double> co = Doubles.asList(poly.getCoefficients());
 		
