@@ -33,8 +33,8 @@ let rec quantstr x =
 
 let rec quantifierstr x = 
     match x with
-    | Q(q,VAR(s)) -> quantstr q^" "^s
-    | QR(q,qq) -> quantifierstr q ^" "^quantifierstr qq
+    | Q(q,VAR(s)) -> quantstr q^"."^s
+    | QR(q,qq) -> quantifierstr q ^"."^quantifierstr qq
 
 
 
@@ -55,3 +55,5 @@ let one = CN("1");;
 (* todo, random string *)
 let inc v = QF(Q(THEREIS, reserved), FO(F(V(reserved)), EQUALS, A(V(v),PLUS, F(C(one)))));;
 
+let z = inc(VAR("a"));;
+print_string (formulastr z);;
