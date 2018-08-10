@@ -55,5 +55,9 @@ let one = CN("1");;
 (* todo, random string *)
 let inc v = QF(Q(THEREIS, reserved), FO(F(V(reserved)), EQUALS, A(V(v),PLUS, F(C(one)))));;
 
+let a = V(VAR("a"));;
+let b = V(VAR("b"));;
+let zz = r a b;;
+print_string ((formulastr zz)^"\n");;
 let z = inc(VAR("a"));;
 print_string (formulastr z);;
