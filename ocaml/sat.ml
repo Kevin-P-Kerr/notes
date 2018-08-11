@@ -1,7 +1,8 @@
 open Str;;
+open List;;
 
 type token = ASTER | PLUS | VAR | NEG;;
-type tokenInfo = (T of token * S of string);;
+type tokenInfo = T of (token * string);;
 type atom = A of string;;
 type negate = NEGATE;;
 type atomProp = AP of atom | NAG of (negate*atom)
@@ -13,8 +14,11 @@ let asterMatch = Str.regexp "\\*";;
 let plusMatch = Str.regexp "\\+";;
 let negMatch = Str.regexp "~";;
 
-let rec parse x y = 
+let ismatch r s =
+  Str.string_match r s 0;;
+
+let rec parse x y  = 
   if String.length y == 0 then x else 
-    if (
+    if ismatch varMatch y then parse (T(VAR,"a")::x) "a" else x;;
 
 
