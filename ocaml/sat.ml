@@ -167,7 +167,7 @@ let distribute ap d =
   | J(sc) -> oversatconj ap sc
   | DF(sc,df) -> 
       let n = oversatconj ap sc in
-      concatdnf n d(istribute ap df);;
+      concatdnf n distribute ap df);;
 
 let rec echocnf2dnf d = 
   match d with 
