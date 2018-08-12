@@ -191,6 +191,6 @@ let rec multbool d f =
       
 let rec cnf2dnf c = 
   match c with 
-  | C(d) -> echocnf2dnf d
+  | C(d) -> echocnf2dnf c
   | CF(d,e) ->
       let pd = cnf2dnf e in multbool d pd ;;
