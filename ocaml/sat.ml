@@ -64,9 +64,19 @@ let parseDisjuncts t =
   in
   h [] t;;
 
-let parseDisj tk = 
+let rec parseDisj tk = 
+  let a = parseAtom tk in
+  match a with
+  | (b,c) ->
+      if List.length c == 0 then (D(b),c) else
+      if List.hd c == PLUS then (D(b),List.tl c) else
+      let i = parseDisj c in
+        match i with
+        | (d,e) -> (DJ(b*d),e)
 
-
+let parseAtom tk = 
+  let f = List.nth tk 0 in
+  match f with 
 
 let parse t =
   makeCNF(parseDisjuncts t);;
