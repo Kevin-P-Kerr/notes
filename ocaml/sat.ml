@@ -11,9 +11,9 @@ type cnf = C of disj | CF of (disj*cnf)
 type lexrule = LR of (Str.regexp * token);;
 type parsestate = PS of (tokenInfo list * string);;
 type conj = CJ of atomProp | MCJ of (atomProp*conj);;
-type dnf = J of conj | DF of (conj*dnf);;
 type contrary = CONTRARY;;
-type satdnf = CD of contrary | DNF of dnf;;
+type satconj = Cnt of contrary | CONJ of conj;;
+type dnf = J of satconj | DF of (satconj*dnf);;
 
 let varMatch = LR(Str.regexp "^[A-Za-z]+",VAR);;
 let asterMatch = LR(Str.regexp "^\\*",ASTER);;
@@ -125,8 +125,8 @@ let l = parse z;;
 
 let rec echocnf2dnf d = 
   match d with 
-  | C(D(d)) -> DNF(J(CJ(d)))
-  | C(DJ(a,b)) -> DNF(DF(CJ(a), echocnf2dnf b));;
+  | C(D(d)) -> J(CJ(d))
+  | C(DJ(a,b)) -> DF(CJ(a), echocnf2dnf b);;
 
 (* multiply a disjunction by a dnf *)
 let rec multbool d f =
@@ -137,7 +137,10 @@ let rec multbool d f =
       multbool j df;;
 
 let distribute ap d =
-  let rec helper 
+  let rec helper current newdnf =
+    match current with 
+    | CD(c) -> 
+
       
 let rec cnf2dnf c = 
   match c with 
