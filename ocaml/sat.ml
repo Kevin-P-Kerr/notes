@@ -35,7 +35,7 @@ let getmatch y =
 let getnonempty l n = 
   if List.length l == 0 then n else List.hd l;;
 
-let rec parsework x y z=
+let rec lexwork x y z=
   let LR(r,t) = List.nth reglist z in
   if ismatch r y 
     then 
@@ -43,14 +43,28 @@ let rec parsework x y z=
     let l = Str.split r y in
     let ns = getnonempty l "" in
       PS(T(t,m)::x,ns) 
-    else parsework x y (z+1);;
+    else lexwork x y (z+1);;
    
 
-let rec parse n =
+let rec lex n =
   match n with 
    | PS(x, y) ->
-    if String.length y == 0 then x else parse (parsework x y 0);;
+    if String.length y == 0 then x else lex (parsework x y 0);;
+
+let makeCNF ld = 
+  if List.length ld == 1 then C(List.hd ld)
+  else CF((list.hd ld) (makeCNF List.tl ld));;
+
+let parseDisjuncts t =
+  let ret = [] in
+  let rec h r tk = 
+    if List.length tk == 0 r else
+
+
+let parse t =
+  makeCNF(parseDisjuncts t);;
+
 
 let test = PS([],"a+b*d");;
 
-let z = parse test;;
+let z = lex test;;
