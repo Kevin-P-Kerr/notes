@@ -121,6 +121,12 @@ let test = PS([],"a+b*d+z");;
 let z = lex test;;
 let l = parse z;;
 
-let cnf2dnf c = 
+let rec multbool dj df =
+  match 
+
+
+let rec cnf2dnf c = 
   match c with 
-  | C(
+  | C(d) -> echocnf2dnf d
+  | CF(d,e) ->
+      let pd = cnf2dnf e in multbool(d,pd);;
