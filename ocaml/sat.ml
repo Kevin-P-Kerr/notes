@@ -26,7 +26,7 @@ let debug x y =
   y
 ;;
 
-let getAtom x = match x with | D(a) -> a;;
+let getAtom x = match x with | AP(a) -> a;;
 let gettoken x = match x with | T(t,s) -> t;;
 let getstr x = match x with | T(t,s) -> s;;
 
@@ -79,7 +79,7 @@ let rec parseDisj tk =
       if gettoken(List.hd c) == PLUS then (D(b),List.tl c) else
       let i = parseDisj c in
         match i with
-        | (d,e) -> (DJ(b*d),e)
+        | (d,e) -> (DJ(b,d),e)
 
 let parseDisjuncts t =
   let rec h r tk = 
@@ -89,8 +89,6 @@ let parseDisjuncts t =
     else h m::r n
   in
   h [] t;;
-
-
 
 let parse t =
   makeCNF(parseDisjuncts t);;
