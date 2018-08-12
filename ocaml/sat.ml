@@ -34,7 +34,7 @@ let ismatch r s =
   Str.string_match r s 0;;
 
 let getmatch y =
-  debug ("get it\n"^y) Str.matched_string y;;
+  Str.matched_string y;;
 
 let getnonempty l n = 
   if List.length l == 0 then n else List.hd l;;
@@ -114,7 +114,7 @@ let rec tocnfstr cnf =
   | C(d) -> todisjstr d
   | CF(d,c) -> (todisjstr d)^"*"^(tocnfstr c);;
 
-let test = PS([],"a+b*d");;
+let test = PS([],"a+b*d+z");;
 
 let z = lex test;;
 let l = parse z;;
