@@ -162,7 +162,14 @@ let rec oversatconj ap sc =
         |J(Cnt(z)) -> nc
         |J(CONJ(cj)) -> J(CONJ(MCJ(a,cj)))
 
-let distribute ap d =
+let rec concatdnf d1 d2 = 
+  match d1 with
+  |J(s) -> DF(s,d2)
+  | DF(s,d) -> 
+      let d3 = concatdnf d d2 in 
+      DF(s,d3);;
+
+let rec distribute ap d =
   match d with 
   | J(sc) -> oversatconj ap sc
   | DF(sc,df) -> 
