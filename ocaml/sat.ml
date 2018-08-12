@@ -123,9 +123,35 @@ let test = PS([],"a+b*d+z");;
 let z = lex test;;
 let l = parse z;;
 
+let getraw a =
+  match a with 
+  | AP(s) -> s
+  | NAG(n,s) -> s
+;;
+
+let litequals a b =
+  let rawa = getraw a in
+  let rawb = getraw b in
+  atomlit rawa == atomlit rawb;;
+
+let booldisagree a b =
+  match a with |
+  AP(s) ->
+    match b with
+    |AP (ss) -> false
+    |NAG (n,ss) -> true
+  | NAG(n,s) ->
+      match b with
+      |AP(ss) -> true
+      | NAG(nn,ss) -> false
+;;
+
+let contradicts a b = 
+  not ((litequals a b) && (booldisagree a b));;
+
 let oversatconj ap sc =
   match sc with
-  | Cnt(a) -> J(a)
+  | Cnt(a) -> J(sc)
   | CONJ(CJ(c)) -> 
       if contradicts ap c then J(Cnt(CONTRARY)) else
         J(CONJ(MCJ(ap,sc)))
