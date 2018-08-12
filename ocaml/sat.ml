@@ -26,6 +26,8 @@ let debug x y =
   y
 ;;
 
+let gettoken x = match x with | T(t,s) -> t;;
+
 let ismatch r s =
   Str.string_match r s 0;;
 
@@ -69,15 +71,16 @@ let rec parseDisj tk =
   match a with
   | (b,c) ->
       if List.length c == 0 then (D(b),c) else
-      if List.hd c == PLUS then (D(b),List.tl c) else
+      if gettoken(List.hd c) == PLUS then (D(b),List.tl c) else
       let i = parseDisj c in
         match i with
         | (d,e) -> (DJ(b*d),e)
 
 let parseAtom tk = 
-  let f = List.nth tk 0 in
+  let f = getoken (List.nth tk 0) in
   match f with 
     | VAR -> (
+
 let parse t =
   makeCNF(parseDisjuncts t);;
 
