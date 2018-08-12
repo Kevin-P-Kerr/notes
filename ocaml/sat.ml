@@ -86,7 +86,8 @@ let parseDisjuncts t =
     if List.length tk == 0 then r else
     match parseDisj tk with |
     (m,n) -> if List.length n == 0 then m::r
-    else h m::r n
+    (* pop the aster off here *)
+    else h (m::r) (List.tl n)
   in
   h [] t;;
 
@@ -97,3 +98,4 @@ let parse t =
 let test = PS([],"a+b*d");;
 
 let z = lex test;;
+let l = parse z;;
