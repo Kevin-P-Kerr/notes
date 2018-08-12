@@ -149,15 +149,15 @@ let booldisagree a b =
 let contradicts a b = 
   not ((litequals a b) && (booldisagree a b));;
 
-let oversatconj ap sc =
+let rec oversatconj ap sc =
   match sc with
   | Cnt(a) -> J(sc)
   | CONJ(CJ(c)) -> 
       if contradicts ap c then J(Cnt(CONTRARY)) else
-        J(CONJ(MCJ(ap,sc)))
+        J(CONJ(MCJ(ap,CJ(c))))
   | CONJ(MCJ(a,c)) ->
-      if contradicts ap a then J(Cnt(CONTRARU)) else
-        let nc = oversatconj ap CONJ(c) in
+      if contradicts ap a then J(Cnt(CONTRARY)) else
+        let nc = oversatconj ap (CONJ(c)) in
         match nc with
         |J(Cnt(z)) -> nc
         |J(CONJ(cj)) -> J(CONJ(MCJ(a,cj)))
@@ -167,7 +167,7 @@ let distribute ap d =
   | J(sc) -> oversatconj ap sc
   | DF(sc,df) -> 
       let n = oversatconj ap sc in
-      concatdnf n distribute ap df);;
+      concatdnf n (distribute ap df);;
 
 let rec echocnf2dnf d = 
   match d with 
