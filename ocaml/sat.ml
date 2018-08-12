@@ -118,7 +118,6 @@ let rec tocnfstr cnf =
   | C(d) -> todisjstr d
   | CF(d,c) -> (todisjstr d)^"*"^(tocnfstr c);;
 
-let test = PS([],"a+b*d+z");;
 
 
 let getraw a =
@@ -145,20 +144,7 @@ let booldisagree a b =
 ;;
 
 let contradicts a b = 
-  not ((litequals a b) && (booldisagree a b));;
-
-let rec oversatconj ap sc =
-  match sc with
-  | Cnt(a) -> J(sc)
-  | CONJ(CJ(c)) -> 
-      if contradicts ap c then J(Cnt(CONTRARY)) else
-        J(CONJ(MCJ(ap,CJ(c))))
-  | CONJ(MCJ(a,c)) ->
-      if contradicts ap a then J(Cnt(CONTRARY)) else
-        let nc = oversatconj ap (CONJ(c)) in
-        match nc with
-        |J(Cnt(z)) -> nc
-        |J(CONJ(cj)) -> J(CONJ(MCJ(a,cj)))
+   ((litequals a b) && (booldisagree a b));;
 
 let rec concatdnf d1 d2 = 
   match d1 with
@@ -167,25 +153,12 @@ let rec concatdnf d1 d2 =
       let d3 = concatdnf d d2 in 
       DF(s,d3);;
 
-let rec distribute ap d =
-  match d with 
-  | J(sc) -> oversatconj ap sc
-  | DF(sc,df) -> 
-      let n = oversatconj ap sc in
-      concatdnf n (distribute ap df);;
 
 let rec echocnf2dnf d = 
   match d with 
   | C(D(d)) -> J(CONJ(CJ(d)))
   | C(DJ(a,b)) -> DF(CONJ(CJ(a)), echocnf2dnf (C(b)));;
 
-(* multiply a disjunction by a dnf *)
-let rec multbool d f =
-  match d with
-  | D(ap) -> distribute ap f
-  | DJ(ap,j) -> 
-      let df = distribute ap f in
-      multbool j df;;
       
 let rec cnf2dnf c = 
   match c with 
@@ -208,6 +181,8 @@ let rec print_dnf d =
   J(s) -> print_satconj s
   | DF(s,dd) -> (print_satconj s)^"+"^(print_dnf dd);;
 
+
+let test = PS([],"a+b*d+z");;
 let z = lex test;;
 let l = parse z;;
 
