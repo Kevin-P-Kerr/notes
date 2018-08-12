@@ -123,19 +123,6 @@ let test = PS([],"a+b*d+z");;
 let z = lex test;;
 let l = parse z;;
 
-let rec echocnf2dnf d = 
-  match d with 
-  | C(D(d)) -> J(CONJ(CJ(d)))
-  | C(DJ(a,b)) -> DF(CONJ(CJ(a)), echocnf2dnf b);;
-
-(* multiply a disjunction by a dnf *)
-let rec multbool d f =
-  match d with
-  | D(ap) -> distribute ap f
-  | DJ(ap,j) -> 
-      let df = distribute ap f in
-      multbool j df;;
-
 let oversatconj ap sc =
   match sc with
   | Cnt(a) -> J(a)
@@ -156,6 +143,18 @@ let distribute ap d =
       let n = oversatconj ap sc in
       concatdnf n d(istribute ap df);;
 
+let rec echocnf2dnf d = 
+  match d with 
+  | C(D(d)) -> J(CONJ(CJ(d)))
+  | C(DJ(a,b)) -> DF(CONJ(CJ(a)), echocnf2dnf (C(b)));;
+
+(* multiply a disjunction by a dnf *)
+let rec multbool d f =
+  match d with
+  | D(ap) -> distribute ap f
+  | DJ(ap,j) -> 
+      let df = distribute ap f in
+      multbool j df;;
       
 let rec cnf2dnf c = 
   match c with 
