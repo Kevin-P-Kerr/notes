@@ -76,10 +76,11 @@ let rec parseDisj tk =
   match a with
   | (b,c) ->
       if List.length c == 0 then (D(b),c) else
-      if gettoken (List.head c) == PLUS then
+      if gettoken (List.hd c) == PLUS then
         let n = parseDisj (List.tl c) in
           match n with |
-          (d,t) -> (DJ(a,d),t);;
+          (d,t) -> (DJ(b,d),t)
+      else (D(b),c);;
 
 let parseDisjuncts t =
   let rec h r tk = 
