@@ -10,6 +10,8 @@ type disj = D of atomProp | DJ of (atomProp*disj)
 type cnf = C of disj | CF of (disj*cnf)
 type lexrule = LR of (Str.regexp * token);;
 type parsestate = PS of (tokenInfo list * string);;
+type conj = CJ of atomProp | MCJ of (atomProp*conj);;
+type dnf = J of conj | DF of (conj*dnf);;
 
 let varMatch = LR(Str.regexp "^[A-Za-z]+",VAR);;
 let asterMatch = LR(Str.regexp "^\\*",ASTER);;
@@ -118,3 +120,7 @@ let test = PS([],"a+b*d+z");;
 
 let z = lex test;;
 let l = parse z;;
+
+let cnf2dnf c = 
+  match c with 
+  | C(
