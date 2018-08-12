@@ -136,10 +136,25 @@ let rec multbool d f =
       let df = distribute ap f in
       multbool j df;;
 
+let oversatconj ap sc =
+  match sc with
+  | Cnt(a) -> J(a)
+  | CONJ(CJ(c)) -> 
+      if contradicts ap c then J(Cnt(CONTRARY)) else
+        J(CONJ(MCJ(ap,sc)))
+  | CONJ(MCJ(a,c)) ->
+      if contradicts ap a then J(Cnt(CONTRARU)) else
+        let nc = oversatconj ap CONJ(c) in
+        match nc with
+        J(Cnt(z)) -> nc
+        J(CONJ(cj)) -> J(CONJ(MCJ(a,cj)))
+
 let distribute ap d =
-  let rec helper current newdnf =
-    match current with 
-    | CD(c) -> 
+  match d with 
+  | J(sc) -> oversatconj ap sc
+  | DF(sc,df) -> 
+      let n = oversatconj ap sc in
+      concatdnf n d(istribute ap df);;
 
       
 let rec cnf2dnf c = 
