@@ -126,9 +126,21 @@ let rec echocnf2dnf d =
   | C(D(d)) -> J(CJ(d))
   | C(DJ(a,b)) -> DF(CJ(a), echocnf2dnf b);;
 
+(* multiply a disjunction by a dnf *)
+let rec multbool d f =
+  match d with
+  | D(ap) -> distribute ap f
+  | DJ(ap,j) -> 
+      let df = distribute ap f in
+      multbool j df;;
+
+let distribute ap d =
+      
+
+
 
 let rec cnf2dnf c = 
   match c with 
   | C(d) -> echocnf2dnf d
   | CF(d,e) ->
-      let pd = cnf2dnf e in multbool(d,pd);;
+      let pd = cnf2dnf e in multbool d pd ;;
