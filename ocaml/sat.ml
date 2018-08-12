@@ -95,8 +95,28 @@ let parseDisjuncts t =
 let parse t =
   makeCNF(parseDisjuncts t);;
 
+let atomlit a = 
+  match a with
+  | A(s) -> s;;
+
+let toatomstr a =
+  match a with 
+  | AP(a) -> atomlit a
+  | NAG(n,a) -> "~"^(atomlit a);;
+
+let rec todisjstr d = 
+  match d with
+  | D(a) -> toatomstr a
+  | DJ(a,j) -> (toatomstr a)^"+"^(todisjstr j)
+
+let rec tocnfstr cnf = 
+  match cnf with
+  | C(d) -> todisjstr d
+  | CF(d,c) -> (todisjstr d)^"*"^(tocnfstr c);;
 
 let test = PS([],"a+b*d");;
 
 let z = lex test;;
 let l = parse z;;
+
+print_string (tocnfstr l)
