@@ -125,8 +125,8 @@ let l = parse z;;
 
 let rec echocnf2dnf d = 
   match d with 
-  | C(D(d)) -> J(CJ(d))
-  | C(DJ(a,b)) -> DF(CJ(a), echocnf2dnf b);;
+  | C(D(d)) -> J(CONJ(CJ(d)))
+  | C(DJ(a,b)) -> DF(CONJ(CJ(a)), echocnf2dnf b);;
 
 (* multiply a disjunction by a dnf *)
 let rec multbool d f =
@@ -146,8 +146,8 @@ let oversatconj ap sc =
       if contradicts ap a then J(Cnt(CONTRARU)) else
         let nc = oversatconj ap CONJ(c) in
         match nc with
-        J(Cnt(z)) -> nc
-        J(CONJ(cj)) -> J(CONJ(MCJ(a,cj)))
+        |J(Cnt(z)) -> nc
+        |J(CONJ(cj)) -> J(CONJ(MCJ(a,cj)))
 
 let distribute ap d =
   match d with 
