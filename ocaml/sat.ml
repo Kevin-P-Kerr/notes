@@ -120,8 +120,6 @@ let rec tocnfstr cnf =
 
 let test = PS([],"a+b*d+z");;
 
-let z = lex test;;
-let l = parse z;;
 
 let getraw a =
   match a with 
@@ -194,3 +192,24 @@ let rec cnf2dnf c =
   | C(d) -> echocnf2dnf c
   | CF(d,e) ->
       let pd = cnf2dnf e in multbool d pd ;;
+
+let rec print_conj cj = 
+  match cj with
+  | CJ(ap) -> toatomstr ap
+  | MCJ(ap,cj) -> (toatomstr ap)^"*"^print_conj cj;;
+
+let print_satconj c =
+  match c with |
+  Cnt(z) -> "0"
+  | CONJ(cj) -> print_conj cj;;
+
+let rec print_dnf d = 
+  match d with |
+  J(s) -> print_satconj s
+  | DF(s,dd) -> (print_satconj s)^"+"^(print_dnf dd);;
+
+let z = lex test;;
+let l = parse z;;
+
+let n = cnf2dnf l;;
+print_string(print_dnf n);;
