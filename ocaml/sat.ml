@@ -77,7 +77,7 @@ let rec parseDisj tk =
 let parseAtom tk = 
   let f = List.nth tk 0 in
   match f with 
-
+    | VAR -> (
 let parse t =
   makeCNF(parseDisjuncts t);;
 
