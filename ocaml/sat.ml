@@ -153,18 +153,19 @@ let rec concatdnf d1 d2 =
       let d3 = concatdnf d d2 in 
       DF(s,d3);;
 
-
 let rec echocnf2dnf d = 
   match d with 
   | C(D(d)) -> J(CONJ(CJ(d)))
   | C(DJ(a,b)) -> DF(CONJ(CJ(a)), echocnf2dnf (C(b)));;
 
-      
+let distributeover d p =
+
 let rec cnf2dnf c = 
   match c with 
   | C(d) -> echocnf2dnf c
   | CF(d,e) ->
-      let pd = cnf2dnf e in multbool d pd ;;
+      let p = cnf2dnf e in
+      distributeover d p;;
 
 let rec print_conj cj = 
   match cj with
@@ -180,7 +181,6 @@ let rec print_dnf d =
   match d with |
   J(s) -> print_satconj s
   | DF(s,dd) -> (print_satconj s)^"+"^(print_dnf dd);;
-
 
 let test = PS([],"a+b*d+z");;
 let z = lex test;;
