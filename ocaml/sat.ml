@@ -26,7 +26,9 @@ let debug x y =
   y
 ;;
 
+let getAtom x = match x with | D(a) -> a;;
 let gettoken x = match x with | T(t,s) -> t;;
+let getstr x = match x with | T(t,s) -> s;;
 
 let ismatch r s =
   Str.string_match r s 0;;
@@ -51,20 +53,23 @@ let rec lexwork x y z=
 let rec lex n =
   match n with 
    | PS(x, y) ->
-    if String.length y == 0 then x else lex (parsework x y 0);;
+    if String.length y == 0 then x else lex (lexwork x y 0);;
 
-let makeCNF ld = 
+let rec parseAtom tk = 
+  let t = List.nth tk 0 in
+  let f = gettoken t in
+  let s = getstr t in
+  let tail = List.tl tk in
+  match f with 
+    | VAR -> (AP(A(s)),tail)
+    | NEG -> 
+        let r = parseAtom tail in
+        match r with |
+        (y,z) -> (NAG(NEGATE,getAtom(y)),z);;
+
+let rec makeCNF ld = 
   if List.length ld == 1 then C(List.hd ld)
-  else CF((list.hd ld) (makeCNF List.tl ld));;
-
-let parseDisjuncts t =
-  let rec h r tk = 
-    if List.length tk == 0 r else
-    match parseDisj tk with |
-    (m,n) -> if List.length n == 0 m::r
-    else h m::r n
-  in
-  h [] t;;
+  else CF((List.hd ld),(makeCNF (List.tl ld)));;
 
 let rec parseDisj tk = 
   let a = parseAtom tk in
@@ -76,10 +81,16 @@ let rec parseDisj tk =
         match i with
         | (d,e) -> (DJ(b*d),e)
 
-let parseAtom tk = 
-  let f = getoken (List.nth tk 0) in
-  match f with 
-    | VAR -> (
+let parseDisjuncts t =
+  let rec h r tk = 
+    if List.length tk == 0 then r else
+    match parseDisj tk with |
+    (m,n) -> if List.length n == 0 then m::r
+    else h m::r n
+  in
+  h [] t;;
+
+
 
 let parse t =
   makeCNF(parseDisjuncts t);;
