@@ -12,6 +12,8 @@ type lexrule = LR of (Str.regexp * token);;
 type parsestate = PS of (tokenInfo list * string);;
 type conj = CJ of atomProp | MCJ of (atomProp*conj);;
 type dnf = J of conj | DF of (conj*dnf);;
+type contrary = CONTRARY;;
+type satdnf = CD of contrary | DNF of dnf;;
 
 let varMatch = LR(Str.regexp "^[A-Za-z]+",VAR);;
 let asterMatch = LR(Str.regexp "^\\*",ASTER);;
@@ -123,8 +125,8 @@ let l = parse z;;
 
 let rec echocnf2dnf d = 
   match d with 
-  | C(D(d)) -> J(CJ(d))
-  | C(DJ(a,b)) -> DF(CJ(a), echocnf2dnf b);;
+  | C(D(d)) -> DNF(J(CJ(d)))
+  | C(DJ(a,b)) -> DNF(DF(CJ(a), echocnf2dnf b));;
 
 (* multiply a disjunction by a dnf *)
 let rec multbool d f =
@@ -137,9 +139,6 @@ let rec multbool d f =
 let distribute ap d =
   let rec helper 
       
-
-
-
 let rec cnf2dnf c = 
   match c with 
   | C(d) -> echocnf2dnf d
