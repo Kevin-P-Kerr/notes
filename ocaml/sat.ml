@@ -53,7 +53,7 @@ let rec lexwork x y z=
 let rec lex n =
   match n with 
    | PS(x, y) ->
-    if String.length y == 0 then x else lex (lexwork x y 0);;
+    if String.length y == 0 then List.rev x else lex (lexwork x y 0);;
 
 let rec parseAtom tk = 
   let t = List.nth tk 0 in
@@ -93,7 +93,7 @@ let parseDisjuncts t =
   h [] t;;
 
 let parse t =
-  makeCNF(parseDisjuncts t);;
+  makeCNF(List.rev(parseDisjuncts t));;
 
 let atomlit a = 
   match a with
