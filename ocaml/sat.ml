@@ -124,8 +124,7 @@ let l = parse z;;
 let rec echocnf2dnf d = 
   match d with 
   | C(D(d)) -> J(CJ(d))
-  | C(DJ(a,b)) ->
-
+  | C(DJ(a,b)) -> DF(CJ(a), echocnf2dnf b);;
 
 
 let rec cnf2dnf c = 
