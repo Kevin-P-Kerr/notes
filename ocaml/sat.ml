@@ -17,18 +17,33 @@ let plusMatch = LR(Str.regexp "^\\+",PLUS);;
 let negMatch = LR(Str.regexp "^~",NEG);;
 let reglist = [varMatch;asterMatch;plusMatch;negMatch];;
 
-let debug x y
-  let z = print_string z in
-  y;;
+let debug_flag = true;;
+let debug x y =
+  if debug_flag then
+  let z = print_string (x^"\n") in
+  y
+  else 
+  y
+;;
 
 let ismatch r s =
-  let b = Str.string_match r s 0 in
-  if b let y = print_string "yes" in b else b;;
+  Str.string_match r s 0;;
+
+let getmatch y =
+  debug ("get it\n"^y) Str.matched_string y;;
+
+let getnonempty l n = 
+  if List.length l == 0 then n else List.hd l;;
 
 let rec parsework x y z=
-  let s = print_string (y^"\n") in
   let LR(r,t) = List.nth reglist z in
-  if ismatch r y then PS(T(t,Str.matched_string y)::x,List.hd(Str.split r y)) else parsework x y (z+1);;
+  if ismatch r y 
+    then 
+    let m = getmatch y in
+    let l = Str.split r y in
+    let ns = getnonempty l "" in
+      PS(T(t,m)::x,ns) 
+    else parsework x y (z+1);;
    
 
 let rec parse n =
@@ -38,4 +53,4 @@ let rec parse n =
 
 let test = PS([],"a+b*d");;
 
-let z = parse test;; 
+let z = parse test;;
