@@ -135,6 +135,7 @@ let rec multbool d f =
       multbool j df;;
 
 let distribute ap d =
+  let rec helper 
       
 
 
