@@ -56,9 +56,16 @@ let makeCNF ld =
   else CF((list.hd ld) (makeCNF List.tl ld));;
 
 let parseDisjuncts t =
-  let ret = [] in
   let rec h r tk = 
     if List.length tk == 0 r else
+    match parseDisj tk with |
+    (m,n) -> if List.length n == 0 m::r
+    else h m::r n
+  in
+  h [] t;;
+
+let parseDisj tk = 
+
 
 
 let parse t =
