@@ -118,5 +118,3 @@ let test = PS([],"a+b*d+z");;
 
 let z = lex test;;
 let l = parse z;;
-
-print_string (tocnfstr l)
