@@ -161,7 +161,7 @@ let rec echocnf2dnf d =
 let distributetoconj d cj =
   match cj with
   | Cnt(c) -> cj
-  | CONJ(c) -> CONJ(MCJ(d c))
+  | CONJ(c) -> CONJ(MCJ(d,c))
 ;;
 
 let rec distributeover d p =
@@ -178,7 +178,7 @@ let rec cnf2dnf c =
   | CF(d,e) ->
       let p = cnf2dnf e in
       match d with 
-      | D(ap) -> distributeover ap e
+      | D(ap) -> (distributeover ap e)
       | DJ(ap,dj) ->
           let rec helper dis =
             match dis with
