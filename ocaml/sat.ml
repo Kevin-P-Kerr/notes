@@ -218,7 +218,7 @@ let rec print_dnf d =
   J(s) -> print_satconj s
   | DF(s,dd) -> (print_satconj s)^"+"^(print_dnf dd);;
 
-let test = PS([],"a+b*d+z+~a");;
+let test = PS([],"a+b*~a+b*~b+a");;
 let z = lex test;;
 let l = parse z;;
 
