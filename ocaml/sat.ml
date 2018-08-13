@@ -224,12 +224,24 @@ let rec print_dnf d =
 
 let rec checksat x =
     match x with
+    | J(Cnt(s)) -> false
+    | J(CONJ(s)) -> true
+    | DF(s,more) ->
+    begin
+    match s with
+    | Cnt(n) -> checksat more
+    | CONJ(n) -> true
+    end
+
 let dosat x =
+    checksat (cnf2dnf x)
     
 
-let test = PS([],"a+b*~a+b*~b+a*~b+~a");;
+let test = PS([],"a+b*~a+b*~b+a*~b+~e");;
 let z = lex test;;
 let l = parse z;;
 
 let n = cnf2dnf l;;
 print_string(print_dnf n);;
+let bo = dosat l;;
+if bo then print_string "yes\n" else print_string "no\n"
