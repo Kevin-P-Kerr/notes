@@ -137,13 +137,17 @@ let litequals a b =
 let booldisagree a b =
   match a with |
   AP(s) ->
+    begin
     match b with
     |AP (ss) -> false
     |NAG (n,ss) -> true
-  | NAG(n,s) ->
+    end
+  |NAG (n,s) ->
+      begin
       match b with
       |AP(ss) -> true
       | NAG(nn,ss) -> false
+      end
 ;;
 
 let contradicts a b = 
@@ -218,7 +222,12 @@ let rec print_dnf d =
   J(s) -> print_satconj s
   | DF(s,dd) -> (print_satconj s)^"+"^(print_dnf dd);;
 
-let test = PS([],"a+b*~a+b*~b+a");;
+let rec checksat x =
+    match x with
+let dosat x =
+    
+
+let test = PS([],"a+b*~a+b*~b+a*~b+~a");;
 let z = lex test;;
 let l = parse z;;
 
