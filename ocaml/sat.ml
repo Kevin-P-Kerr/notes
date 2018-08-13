@@ -129,7 +129,10 @@ let getraw a =
 let litequals a b =
   let rawa = getraw a in
   let rawb = getraw b in
-  atomlit rawa == atomlit rawb;;
+  let s1 = atomlit rawa in
+  let s2 = atomlit rawb in
+  let b = s1 = s2 in
+  if b then debug "hi" b else debug (s1^"zz"^s2) b;;
 
 let booldisagree a b =
   match a with |
@@ -158,10 +161,21 @@ let rec echocnf2dnf d =
   | C(D(d)) -> J(CONJ(CJ(d)))
   | C(DJ(a,b)) -> DF(CONJ(CJ(a)), echocnf2dnf (C(b)));;
 
+let rec contradictsany ap ldj =
+  match ldj with
+  | CJ(app) -> (debug (toatomstr ap) (contradicts ap app))
+  | MCJ(app,more) ->
+      if contradicts ap app then true else contradictsany ap more;;
+
 let distributetoconj d cj =
   match cj with
   | Cnt(c) -> cj
-  | CONJ(c) -> CONJ(MCJ(d,c))
+  | CONJ(c) -> 
+      match c with
+      | CJ(ap) ->
+          if debug(toatomstr d^" "^(toatomstr ap)) (contradicts d ap) then Cnt(CONTRARY) else CONJ(MCJ(d,c))
+      | MCJ(ap,more) -> 
+          if (contradicts d ap) || (contradictsany d more) then Cnt(CONTRARY) else CONJ(MCJ(d,c))
 ;;
 
 let rec distributeover d p =
