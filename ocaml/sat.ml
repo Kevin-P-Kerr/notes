@@ -158,7 +158,19 @@ let rec echocnf2dnf d =
   | C(D(d)) -> J(CONJ(CJ(d)))
   | C(DJ(a,b)) -> DF(CONJ(CJ(a)), echocnf2dnf (C(b)));;
 
-let distributeover d p =
+let distributetoconj d cj =
+  match cj with
+  | Cnt(c) -> cj
+  | CONJ(c) -> CONJ(MCJ(d c))
+;;
+
+let rec distributeover d p =
+  match p with 
+  | J(cj) -> J(distributetoconj d cj)
+  | DF(cj,df) -> 
+      let nc = distributetoconj d cj in
+      let rest = distributeover d df in
+      DF(nc,rest);;
 
 let rec cnf2dnf c = 
   match c with 
