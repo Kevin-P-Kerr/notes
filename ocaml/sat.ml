@@ -177,7 +177,17 @@ let rec cnf2dnf c =
   | C(d) -> echocnf2dnf c
   | CF(d,e) ->
       let p = cnf2dnf e in
-      distributeover d p;;
+      match d with 
+      | D(ap) -> distributeover ap e
+      | DJ(ap,dj) ->
+          let rec helper dis =
+            match dis with
+            | D(at) -> distributeover at e
+            | DJ(aap,ddj) -> 
+                DF((distributeover aap e),(helper ddj))
+          in 
+          let z = helper dj in
+          DF((distributeover ap e),z);;
 
 let rec print_conj cj = 
   match cj with
