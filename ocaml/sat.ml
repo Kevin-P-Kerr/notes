@@ -237,7 +237,7 @@ let dosat x =
     checksat (cnf2dnf x)
     
 
-let fn = (read_line);;
+let fn = (read_line ());;
 print_endline fn
 let satfile = open_in fn;;
 let satinstance = input_line satfile;;
