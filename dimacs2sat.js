@@ -26,10 +26,10 @@ lines.forEach(function (ln) {
         }
         if (atom[0] == '-') {
             na += "~";
-            na += alpha[parseInt(atom.substr(1,atom.length-1),10)];
+            na +=  atom.substr(1,atom.length-1);
         }
         else {
-            na+=alpha[parseInt(atom,10)];
+            na+=atom;
         }
         intermediate += na;
     });
@@ -44,6 +44,11 @@ lines.forEach(function (ln) {
         ret = (ret+ "*"+intermediate); 
     }
 });
+
+var n = 0;
+for (;n<10;n++) {
+    ret = ret.replace(new RegExp(n+"", 'g'),alpha[n]);
+}
 
 console.log(ret);
 
