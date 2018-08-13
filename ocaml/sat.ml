@@ -184,10 +184,10 @@ let rec cnf2dnf c =
             match dis with
             | D(at) -> distributeover at p
             | DJ(aap,ddj) -> 
-                DF((distributeover aap p),(helper ddj))
+                concatdnf (distributeover aap p) (helper ddj)
           in 
           let z = helper dj in
-          DF((distributeover ap e),z);;
+          concatdnf (distributeover ap p) z;;
 
 let rec print_conj cj = 
   match cj with
@@ -204,7 +204,7 @@ let rec print_dnf d =
   J(s) -> print_satconj s
   | DF(s,dd) -> (print_satconj s)^"+"^(print_dnf dd);;
 
-let test = PS([],"a+b*d+z");;
+let test = PS([],"a+b*d+z+~a");;
 let z = lex test;;
 let l = parse z;;
 
