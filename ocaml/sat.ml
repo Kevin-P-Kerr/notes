@@ -237,7 +237,11 @@ let dosat x =
     checksat (cnf2dnf x)
     
 
-let test = PS([],"e+b+a*a+b+e*~a+b*~b+a*~b+~c*b+c+~e+~a+k*~k+~z+j");;
+let fn = (read_line);;
+print_endline fn
+let satfile = open_in fn;;
+let satinstance = input_line satfile;;
+let test = PS([],satinstance);;
 let z = lex test;;
 let l = parse z;;
 
