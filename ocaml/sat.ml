@@ -178,13 +178,13 @@ let rec cnf2dnf c =
   | CF(d,e) ->
       let p = cnf2dnf e in
       match d with 
-      | D(ap) -> (distributeover ap e)
+      | D(ap) -> (distributeover ap p)
       | DJ(ap,dj) ->
           let rec helper dis =
             match dis with
-            | D(at) -> distributeover at e
+            | D(at) -> distributeover at p
             | DJ(aap,ddj) -> 
-                DF((distributeover aap e),(helper ddj))
+                DF((distributeover aap p),(helper ddj))
           in 
           let z = helper dj in
           DF((distributeover ap e),z);;
