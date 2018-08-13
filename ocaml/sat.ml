@@ -21,7 +21,7 @@ let plusMatch = LR(Str.regexp "^\\+",PLUS);;
 let negMatch = LR(Str.regexp "^~",NEG);;
 let reglist = [varMatch;asterMatch;plusMatch;negMatch];;
 
-let debug_flag = true;;
+let debug_flag = false;;
 let debug x y =
   if debug_flag then
   let z = print_string (x^"\n") in
@@ -237,11 +237,11 @@ let dosat x =
     checksat (cnf2dnf x)
     
 
-let test = PS([],"a+b*~a+b*~b+a*~b+~e");;
+let test = PS([],"e+b+a*a+b+e*~a+b*~b+a*~b+~c*b+c+~e+~a+k*~k+~z+j");;
 let z = lex test;;
 let l = parse z;;
 
 let n = cnf2dnf l;;
-print_string(print_dnf n);;
+print_string((print_dnf n)^"\n");;
 let bo = dosat l;;
 if bo then print_string "yes\n" else print_string "no\n"
