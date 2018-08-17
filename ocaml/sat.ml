@@ -309,11 +309,12 @@ let rec trySat x y n =
            trySat x (debug ((Printf.sprintf "%d" n )^"\n"^(tolatomstr na)) na) (n-1);;
 
 let rec exp b p r =
-    if p == 0 then 1 else if p == 1 then r else exp b (p-1) (r*b);;
+    if p = 0 then 1 else if p = 1 then r else exp b (p-1) (r*b);;
 
 let min x y = 
-    let n = exp 2 y 1 in
-    if n < x then n else x;;
+    let n = exp 2 (debug (Printf.sprintf "%d" y) y) 1 in
+    let s = Printf.sprintf "!%d\n" n in
+    if (debug s n) < x then if n = 0 then x else n else x;;
 
 let dosat_naive x =
     let y = getInitialAssignment x in
