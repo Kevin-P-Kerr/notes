@@ -14,6 +14,7 @@ type conj = CJ of atomProp | MCJ of (atomProp*conj);;
 type contrary = CONTRARY;;
 type satconj = Cnt of contrary | CONJ of conj;;
 type dnf = J of satconj | DF of (satconj*dnf);;
+type satresult = R(bool) | SR(atomProp list * bool)
 
 let varMatch = LR(Str.regexp "^[A-Za-z]+",VAR);;
 let asterMatch = LR(Str.regexp "^\\*",ASTER);;
@@ -258,9 +259,25 @@ let rec getInitialAssigment x =
     | C(dj) -> unique(getVars(dj));;
     | CF(dj,cf) -> unique(List.apend(getVars(dj)::(getInitialAssignment cf)));;
 
+let rec statsdj d y =
+    match d with 
+    | D(ap) -> not contradicts d y;;
+    | DJ(ap,dj) ->  (not contradicts ap y)  and (statsdj dj y);;
+
+let rec sats x y = 
+    match x with
+    | C(dj) -> satsdj x y;;
+    | CF(dj,cf) -> (satsdj dj y)  and (sats cf y);;
+
+let rec trySat x y n =
+   if n = 0 then R(false) else
+       if sats x y then SR(y,true) else
+           let na = getNextAssign x y in
+           trySat x na n-1;;
+
 let dosat_naive x =
     let y = getInitialAssignment x
-    trySat x y;;
+    trySat x y 1000;;
 
 let fn = (read_line ());;
 print_endline fn
