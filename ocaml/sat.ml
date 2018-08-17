@@ -270,7 +270,7 @@ let rec satsatom a y =
 let rec satsdj d y =
     match d with 
     | D(ap) -> satsatom ap y 
-    | DJ(ap,dj) ->  if not (satsatom ap d) then false else satsdj dj y;;
+    | DJ(ap,dj) ->  if not (satsatom ap y) then false else satsdj dj y;;
 
 let rec sats x y = 
     match x with
@@ -284,8 +284,8 @@ let rec getFirstFail x y =
 
 let rec getFirstFailV dj y =
     match dj with
-    | D(ap) -> if contradicts ap y then ap else raise (Whoops "no")
-    | DJ(ap,djj) -> if contradicts ap y then ap else getFirstFailV djj y;;
+    | D(ap) -> if not (satsatom ap y) then ap else raise(Whoops "bad")
+    | DJ(ap,djj) -> if not (satsatom ap y) then ap else getFirstFailV djj y;;
 
 let rec flip v y =
     match y with
@@ -301,7 +301,7 @@ let rec trySat x y n =
    if n = 0 then R(false) else
        if sats x y then SR(y,true) else
            let na = getNextAssign x y in
-           trySat x na n-1;;
+           trySat x na (n-1);;
 
 let dosat_naive x =
     let y = getInitialAssignment x in
