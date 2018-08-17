@@ -261,13 +261,36 @@ let rec getInitialAssigment x =
 
 let rec statsdj d y =
     match d with 
-    | D(ap) -> not contradicts d y;;
+    | D(ap) -> not contradicts ap y;;
     | DJ(ap,dj) ->  (not contradicts ap y)  and (statsdj dj y);;
 
 let rec sats x y = 
     match x with
     | C(dj) -> satsdj x y;;
     | CF(dj,cf) -> (satsdj dj y)  and (sats cf y);;
+
+let rec getFirstFail x y = 
+    match x with 
+    | C(dj) -> if not statsdj x y then dj else raise ("foo")
+    | CF(dj,cf) if not statsdj x y then dj else getFirstFail cj y;;
+
+let getFirstFailV dj y =
+    match dj with
+    | D(ap) -> if contradicts ap y then ap else raise ("no")
+    | DJ(ap,djj) -> if contradicts ap y then ap else getFirstFailV djj y;;
+
+let flip v y =
+    match y with
+    | [] -> []
+    | x:xs -> 
+    begin
+        if contradicts v x then v::xs else x::(flip v xs)
+    end;;
+
+let getNextAssign x y =
+    let dj = getFirstFail x y in
+    let v = getFirstFailV dj y in
+    flip v y;;
 
 let rec trySat x y n =
    if n = 0 then R(false) else
