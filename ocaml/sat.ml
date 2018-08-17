@@ -233,9 +233,34 @@ let rec checksat x =
     | CONJ(n) -> true
     end
 
-let dosat x =
+let dosat_all x =
     checksat (cnf2dnf x)
-    
+
+let getAtom x =
+    match x with
+    | AP(a) -> a;
+    | NAG(n,a) -> aa;;
+
+let atomeq x y =
+    (getAtom x) = (getAtom y);;
+
+let rec unique l = 
+    | [] -> [];;
+    | x::xs -> x::unique((List.filter (fun y -> atomeq x y) xs));;
+
+let rec getVars d = 
+    match d with |
+    D(ap) -> [ap];;
+    DJ(ap,dj) -> ap::(getVars dj)
+
+let rec getInitialAssigment x = 
+    match x with
+    | C(dj) -> unique(getVars(dj));;
+    | CF(dj,cf) -> unique(List.apend(getVars(dj)::(getInitialAssignment cf)));;
+
+let dosat_naive x =
+    let y = getInitialAssignment x
+    trySat x y;;
 
 let fn = (read_line ());;
 print_endline fn
