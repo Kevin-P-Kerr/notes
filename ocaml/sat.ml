@@ -26,7 +26,7 @@ let reglist = [varMatch;asterMatch;plusMatch;negMatch];;
 let debug_flag = true;;
 let debug x y =
   if debug_flag then
-  let z = print_string (x^"\n") in
+  let z = print_string (x^"\n\n") in
   y
   else 
   y
@@ -275,7 +275,7 @@ let rec satsatom a y =
 let rec satsdj d y =
     match d with 
     | D(ap) -> satsatom ap y 
-    | DJ(ap,dj) ->  if not (satsatom ap y) then false else satsdj dj y;;
+    | DJ(ap,dj) ->  if satsatom ap y then true else satsdj dj y;;
 
 let rec sats x y = 
     match x with
@@ -306,21 +306,31 @@ let rec trySat x y n =
    if n = 0 then R(false) else
        if sats x y then SR(y,true) else
            let na = getNextAssign x y in
-           trySat x (debug (tolatomstr na) na) (n-1);;
+           trySat x (debug ((Printf.sprintf "%d" n )^"\n"^(tolatomstr na)) na) (n-1);;
+
+let rec exp b p r =
+    if p == 0 then 1 else if p == 1 then r else exp b (p-1) (r*b);;
+
+let min x y = 
+    let n = exp 2 y 1 in
+    if n < x then n else x;;
 
 let dosat_naive x =
     let y = getInitialAssignment x in
-    trySat x y 1000;;
+    trySat x y (1+((min 1048576 (List.length y))));;
 
 
 let fn = (read_line ());;
 print_endline fn
 let satfile = open_in fn;;
+print_string "reading\n";;
 let satinstance = input_line satfile;;
 let test = PS([],satinstance);;
+print_string "lexing\n";;
 let z = lex test;;
+print_string "parsing\n";;
 let l = parse z;;
-
+print_string "solving\n";;
 let bo = dosat_naive l;;
 match bo with R(b) -> 
 if b then print_string "yes\n" else print_string "no\n"
