@@ -15,6 +15,7 @@ type contrary = CONTRARY;;
 type satconj = Cnt of contrary | CONJ of conj;;
 type dnf = J of satconj | DF of (satconj*dnf);;
 type satresult = R of (bool) | SR of (atomProp list * bool);;
+exception Whoops of string;;
 
 let varMatch = LR(Str.regexp "^[A-Za-z]+",VAR);;
 let asterMatch = LR(Str.regexp "^\\*",ASTER);;
@@ -240,7 +241,7 @@ let dosat_all x =
 let getAtom x =
     match x with
     | AP(a) -> a;
-    | NAG(n,a) -> aa;;
+    | NAG(n,a) -> a;;
 
 let atomeq x y =
     (getAtom x) = (getAtom y);;
@@ -255,32 +256,38 @@ let rec getVars d =
     D(ap) -> [ap] |
     DJ(ap,dj) -> ap::(getVars dj)
 
-let rec getInitialAssigment x = 
+let rec getInitialAssignment x = 
     match x with
     | C(dj) -> unique(getVars(dj))
-    | CF(dj,cf) -> unique(List.apend(getVars(dj)::(getInitialAssignment cf)));;
+    | CF(dj,cf) -> unique(List.append (getVars dj) (getInitialAssignment cf));;
 
-let rec statsdj d y =
+
+let rec satsatom a y =
+    match y with
+    | [] -> true
+    | x::xs -> if (contradicts a x) then false else satsatom a xs;;
+
+let rec satsdj d y =
     match d with 
-    | D(ap) -> not contradicts ap y
-    | DJ(ap,dj) ->  ((not contradicts ap y) && (statsdj dj y));;
+    | D(ap) -> satsatom ap y 
+    | DJ(ap,dj) ->  if not (satsatom ap d) then false else satsdj dj y;;
 
 let rec sats x y = 
     match x with
-    | C(dj) -> satsdj x y
+    | C(dj) -> satsdj dj y
     | CF(dj,cf) -> (satsdj dj y) && (sats cf y);;
 
 let rec getFirstFail x y = 
     match x with 
-    | C(dj) -> if not statsdj x y then dj else raise ("foo")
-    | CF(dj,cf) -> if not statsdj x y then dj else getFirstFail cj y;;
+    | C(dj) -> if not (satsdj dj y) then dj else raise (Whoops "foo")
+    | CF(dj,cf) -> if not (satsdj dj y) then dj else getFirstFail cf y;;
 
-let getFirstFailV dj y =
+let rec getFirstFailV dj y =
     match dj with
-    | D(ap) -> if contradicts ap y then ap else raise ("no")
+    | D(ap) -> if contradicts ap y then ap else raise (Whoops "no")
     | DJ(ap,djj) -> if contradicts ap y then ap else getFirstFailV djj y;;
 
-let flip v y =
+let rec flip v y =
     match y with
     | [] -> []
     | x::xs -> if contradicts v x then v::xs else x::(flip v xs);;
