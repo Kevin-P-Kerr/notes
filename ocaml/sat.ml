@@ -14,7 +14,7 @@ type conj = CJ of atomProp | MCJ of (atomProp*conj);;
 type contrary = CONTRARY;;
 type satconj = Cnt of contrary | CONJ of conj;;
 type dnf = J of satconj | DF of (satconj*dnf);;
-type satresult = R(bool) | SR(atomProp list * bool)
+type satresult = R of (bool) | SR of (atomProp list * bool);;
 
 let varMatch = LR(Str.regexp "^[A-Za-z]+",VAR);;
 let asterMatch = LR(Str.regexp "^\\*",ASTER);;
@@ -246,22 +246,23 @@ let atomeq x y =
     (getAtom x) = (getAtom y);;
 
 let rec unique l = 
-    | [] -> [];;
+    match l with
+    | [] -> []
     | x::xs -> x::unique((List.filter (fun y -> atomeq x y) xs));;
 
 let rec getVars d = 
     match d with |
-    D(ap) -> [ap];;
+    D(ap) -> [ap] |
     DJ(ap,dj) -> ap::(getVars dj)
 
 let rec getInitialAssigment x = 
     match x with
-    | C(dj) -> unique(getVars(dj));;
+    | C(dj) -> unique(getVars(dj))
     | CF(dj,cf) -> unique(List.apend(getVars(dj)::(getInitialAssignment cf)));;
 
 let rec statsdj d y =
     match d with 
-    | D(ap) -> not contradicts ap y;;
+    | D(ap) -> not contradicts ap y
     | DJ(ap,dj) ->  (not contradicts ap y)  and (statsdj dj y);;
 
 let rec sats x y = 
