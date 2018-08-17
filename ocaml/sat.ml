@@ -263,7 +263,7 @@ let rec getInitialAssigment x =
 let rec statsdj d y =
     match d with 
     | D(ap) -> not contradicts ap y
-    | DJ(ap,dj) ->  (not contradicts ap y)  and (statsdj dj y);;
+    | DJ(ap,dj) ->  ((not contradicts ap y) && (statsdj dj y));;
 
 let rec sats x y = 
     match x with
