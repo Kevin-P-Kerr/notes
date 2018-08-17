@@ -283,7 +283,7 @@ let getFirstFailV dj y =
 let flip v y =
     match y with
     | [] -> []
-    | x:xs -> if contradicts v x then v::xs else x::(flip v xs);;
+    | x::xs -> if contradicts v x then v::xs else x::(flip v xs);;
 
 let getNextAssign x y =
     let dj = getFirstFail x y in
@@ -297,7 +297,7 @@ let rec trySat x y n =
            trySat x na n-1;;
 
 let dosat_naive x =
-    let y = getInitialAssignment x
+    let y = getInitialAssignment x in
     trySat x y 1000;;
 
 let fn = (read_line ());;
