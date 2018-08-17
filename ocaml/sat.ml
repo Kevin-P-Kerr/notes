@@ -23,7 +23,7 @@ let plusMatch = LR(Str.regexp "^\\+",PLUS);;
 let negMatch = LR(Str.regexp "^~",NEG);;
 let reglist = [varMatch;asterMatch;plusMatch;negMatch];;
 
-let debug_flag = false;;
+let debug_flag = true;;
 let debug x y =
   if debug_flag then
   let z = print_string (x^"\n") in
@@ -133,8 +133,7 @@ let litequals a b =
   let rawb = getraw b in
   let s1 = atomlit rawa in
   let s2 = atomlit rawb in
-  let b = s1 = s2 in
-  if b then debug "hi" b else debug (s1^"zz"^s2) b;;
+  s1 = s2;;
 
 let booldisagree a b =
   match a with |
@@ -151,6 +150,12 @@ let booldisagree a b =
       | NAG(nn,ss) -> false
       end
 ;;
+
+let rec tolatomstr al = 
+    match al with
+    | [] -> ""
+    | x::xs -> (toatomstr x)^" "^(tolatomstr xs)
+    | _ -> "";;
 
 let contradicts a b = 
    ((litequals a b) && (booldisagree a b));;
@@ -249,7 +254,7 @@ let atomeq x y =
 let rec unique l = 
     match l with
     | [] -> []
-    | x::xs -> x::unique((List.filter (fun y -> atomeq x y) xs));;
+    | x::xs -> x::unique((List.filter (fun y -> not (atomeq x y)) xs));;
 
 let rec getVars d = 
     match d with |
@@ -301,17 +306,12 @@ let rec trySat x y n =
    if n = 0 then R(false) else
        if sats x y then SR(y,true) else
            let na = getNextAssign x y in
-           trySat x na (n-1);;
+           trySat x (debug (tolatomstr na) na) (n-1);;
 
 let dosat_naive x =
     let y = getInitialAssignment x in
     trySat x y 1000;;
 
-let rec tolatomstr al = 
-    match al with
-    | [] -> ""
-    | x::xs -> (toatomstr x)^" "^(tolatomstr xs)
-    | _ -> "";;
 
 let fn = (read_line ());;
 print_endline fn
