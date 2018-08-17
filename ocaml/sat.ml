@@ -43,7 +43,7 @@ let getmatch y =
   Str.matched_string y;;
 
 let getnonempty l n = 
-  if List.length l == 0 then n else List.hd l;;
+  if List.length l = 0 then n else List.hd l;;
 
 let rec lexwork x y z=
   let LR(r,t) = List.nth reglist z in
@@ -59,7 +59,7 @@ let rec lexwork x y z=
 let rec lex n =
   match n with 
    | PS(x, y) ->
-    if String.length y == 0 then List.rev x else lex (lexwork x y 0);;
+    if String.length y = 0 then List.rev x else lex (lexwork x y 0);;
 
 let rec parseAtom tk = 
   let t = List.nth tk 0 in
@@ -74,15 +74,15 @@ let rec parseAtom tk =
         (y,z) -> (NAG(NEGATE,getAtom(y)),z);;
 
 let rec makeCNF ld = 
-  if List.length ld == 1 then C(List.hd ld)
+  if List.length ld = 1 then C(List.hd ld)
   else CF((List.hd ld),(makeCNF (List.tl ld)));;
 
 let rec parseDisj tk = 
   let a = parseAtom tk in
   match a with
   | (b,c) ->
-      if List.length c == 0 then (D(b),c) else
-      if gettoken (List.hd c) == PLUS then
+      if List.length c = 0 then (D(b),c) else
+      if gettoken (List.hd c) = PLUS then
         let n = parseDisj (List.tl c) in
           match n with |
           (d,t) -> (DJ(b,d),t)
@@ -90,9 +90,9 @@ let rec parseDisj tk =
 
 let parseDisjuncts t =
   let rec h r tk = 
-    if List.length tk == 0 then r else
+    if List.length tk = 0 then r else
     match parseDisj tk with |
-    (m,n) -> if List.length n == 0 then m::r
+    (m,n) -> if List.length n = 0 then m::r
     (* pop the aster off here *)
     else h (m::r) (List.tl n)
   in
