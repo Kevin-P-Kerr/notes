@@ -267,13 +267,13 @@ let rec statsdj d y =
 
 let rec sats x y = 
     match x with
-    | C(dj) -> satsdj x y;;
-    | CF(dj,cf) -> (satsdj dj y)  and (sats cf y);;
+    | C(dj) -> satsdj x y
+    | CF(dj,cf) -> (satsdj dj y) && (sats cf y);;
 
 let rec getFirstFail x y = 
     match x with 
     | C(dj) -> if not statsdj x y then dj else raise ("foo")
-    | CF(dj,cf) if not statsdj x y then dj else getFirstFail cj y;;
+    | CF(dj,cf) -> if not statsdj x y then dj else getFirstFail cj y;;
 
 let getFirstFailV dj y =
     match dj with
@@ -283,10 +283,7 @@ let getFirstFailV dj y =
 let flip v y =
     match y with
     | [] -> []
-    | x:xs -> 
-    begin
-        if contradicts v x then v::xs else x::(flip v xs)
-    end;;
+    | x:xs -> if contradicts v x then v::xs else x::(flip v xs);;
 
 let getNextAssign x y =
     let dj = getFirstFail x y in
