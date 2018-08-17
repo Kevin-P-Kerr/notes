@@ -307,6 +307,12 @@ let dosat_naive x =
     let y = getInitialAssignment x in
     trySat x y 1000;;
 
+let rec tolatomstr al = 
+    match al with
+    | [] -> ""
+    | x::xs -> (toatomstr x)^" "^(tolatomstr xs)
+    | _ -> "";;
+
 let fn = (read_line ());;
 print_endline fn
 let satfile = open_in fn;;
@@ -315,7 +321,7 @@ let test = PS([],satinstance);;
 let z = lex test;;
 let l = parse z;;
 
-let n = cnf2dnf l;;
-print_string((print_dnf n)^"\n");;
-let bo = dosat l;;
-if bo then print_string "yes\n" else print_string "no\n"
+let bo = dosat_naive l;;
+match bo with R(b) -> 
+if b then print_string "yes\n" else print_string "no\n"
+|SR(al,b) -> print_string ("yes\n"^(tolatomstr al));;
