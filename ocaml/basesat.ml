@@ -223,7 +223,7 @@ let rec cnf2dnf c =
       | D(ap) -> (distributeover ap p (fun x -> x))
       | DJ(ap,dj) ->
           let rec helper dis =
-            let rxy = print_string ("reached helper"^(todisjstr dis)^"\n") in
+            let rxy = print_string ("reached helper"^(todisjstr dis)^" \n") in
             match dis with
             | D(at) -> distributeover at p (fun x -> x)
             | DJ(aap,ddj) ->
