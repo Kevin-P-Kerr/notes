@@ -173,13 +173,13 @@ let distributetoconj d cj =
           if (contradicts d ap) || (contradictsany d more) then Cnt(CONTRARY) else CONJ(MCJ(d,c))
 ;;
 
-let rec distributeover d p =
+let rec distributeover d p f =
   match p with 
-  | J(cj) -> J(distributetoconj d cj)
+  | J(cj) -> f J(distributetoconj d cj)
   | DF(cj,df) -> 
       let nc = distributetoconj d cj in
       let rest = distributeover d df in
-      DF(nc,rest);;
+      f DF(nc,rest);;
 
 let rec echocnf2dnf d = 
   match d with 
@@ -199,16 +199,16 @@ let rec cnf2dnf c =
   | CF(d,e) ->
       let p = cnf2dnf e in
       match d with 
-      | D(ap) -> (distributeover ap p)
+      | D(ap) -> (distributeover ap p (fun x -> x))
       | DJ(ap,dj) ->
           let rec helper dis =
             match dis with
-            | D(at) -> distributeover at p
+            | D(at) -> distributeover at p (fun x -> x)
             | DJ(aap,ddj) -> 
-                concatdnf (distributeover aap p) (helper ddj)
+                distributeover aap p (fun x -> concatdnf x (helper ddj))
           in 
           let z = helper dj in
-          concatdnf (distributeover ap p) z;;
+          distributeover ap p (fun x -> concatdnf x z);;
 
 let rec tolatomstr al = 
     match al with
