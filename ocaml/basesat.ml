@@ -1,3 +1,4 @@
+open Basesat;;
 open Str;;
 open List;;
 open Random;;
