@@ -162,17 +162,6 @@ let rec contradictsany ap ldj =
   | MCJ(app,more) ->
       if contradicts ap app then true else contradictsany ap more;;
 
-let distributetoconj d cj =
-  match cj with
-  | Cnt(c) -> cj
-  | CONJ(c) -> 
-      match c with
-      | CJ(ap) ->
-          if debug(toatomstr d^" "^(toatomstr ap)) (contradicts d ap) then Cnt(CONTRARY) else CONJ(MCJ(d,c))
-      | MCJ(ap,more) -> 
-          if (contradicts d ap) || (contradictsany d more) then Cnt(CONTRARY) else CONJ(MCJ(d,c))
-;;
-
 let rec print_conj cj = 
   match cj with
   | CJ(ap) -> toatomstr ap
@@ -188,29 +177,11 @@ let rec print_dnf d =
   J(s) -> print_satconj s
   | DF(s,dd) -> (print_satconj s)^"+"^(print_dnf dd);;
 
-let distributeover d p g =
-    let f = (fun x -> let r = g x in let s = print_string ((print_dnf r)^"\n") in r) in
-    let rec helper x y = 
-    match x with
-    |J(s) -> f(DF(y,(J(distributetoconj d s))))
-    |DF(cj,dj) -> helper dj (distributetoconj d cj)
-  in
-  match p with 
-  | J(cj) -> f (J(distributetoconj d cj))
-  | DF(cj,df) -> helper df (distributetoconj d cj);;
-
 let rec echocnf2dnf d = 
   match d with 
   | C(D(d)) -> J(CONJ(CJ(d)))
   | C(DJ(a,b)) -> DF(CONJ(CJ(a)), echocnf2dnf (C(b)));;
 
-let concatdnf d1 d2 =
-    let rec helper x y =
-        match x with
-        | J(s) -> DF(s,y)
-        | DF(s,df) -> helper df (DF(s,y))
-        in 
-        helper d1 d2;;
 
 let cnf2dnf c = 
  let s = tocnfstr c in
@@ -220,7 +191,6 @@ let cnf2dnf c =
   | CF(d,e) ->
     let df = echocnf2dnf d in
     let z = (fun x -> x) in
-        
 
 let rec tolatomstr al = 
     match al with
