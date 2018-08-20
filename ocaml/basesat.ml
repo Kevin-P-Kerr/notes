@@ -182,15 +182,52 @@ let rec echocnf2dnf d =
   | C(D(d)) -> J(CONJ(CJ(d)))
   | C(DJ(a,b)) -> DF(CONJ(CJ(a)), echocnf2dnf (C(b)));;
 
+let rec concatDJ d1 d2 = 
+    match d1 with
+    | J(s) -> DF(s,d2)
+    | DF(s,df) -> DF(s,(concatDF df d2));;
+
+let ontoconj a c =
+    match c with
+    |CJ(ap) -> if contradicts a ap then Cnt(CONTRARY) else CONJ(a,c)
+    | MCJ (ap*cj) ->
+        if contradicts a ap then Cnt(CONTRARY) else 
+            if contradictsany a cj then Cnt(CONTRARY) else 
+                CONJ(MCJ(a,c));;
+
+let onto a c = 
+    match c with
+    | Cnt(cnt) -> Cnt(cnt)
+    | CONJ(con) -> ontoconj a con;;
+
+let rec distribAP a d =
+    match d with 
+    | J(s) -> J(onto a s)
+    | DF(s,df) -> DF(J(onto a s),distribAP a df);;
+
+let rec distribDJIter dj d r =
+    match dj with
+    | D(ap) -> concatDJ(distribAP ap d ) r
+    | DJ(ap,djj) -> distribDJIter djj d (concatDJ (distribAP ap d) r);;
+
+let distribDJ dj d = 
+    match dj with
+    | D(ap) -> distribAP ap d
+    | DJ(ap,djj) -> 
+        let x = distribAP ap d in
+        distribDJIter djj d x
+
+let rec distribCoverD c d =
+    match c with 
+    | C(dj) -> distribDJ dj d
+    | CF(dj,cj) -> distribCoverD cj (distribDJ dj d);;
 
 let cnf2dnf c = 
- let s = tocnfstr c in
- let tzf = print_string("cnf2dnf: " ^s^"\n") in
   match c with 
   | C(d) -> echocnf2dnf c
   | CF(d,e) ->
     let df = echocnf2dnf d in
-    let z = (fun x -> x) in
+    distribCoverD e df;;
 
 let rec tolatomstr al = 
     match al with
