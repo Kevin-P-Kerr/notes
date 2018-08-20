@@ -1,6 +1,6 @@
 var fs = require('fs');
 
-var d = fs.readFileSync('d.dimacs').toString();
+var d = fs.readFileSync('factoring.dimacs').toString();
 var lines = d.split("\n");
 
 var alpha = ['a','b','c','d','e','f','g','h','i','j','k','l','m'];

@@ -1,5 +1,6 @@
 open Str;;
 open List;;
+open Random;;
 
 type token = ASTER | PLUS | VAR | NEG;;
 type tokenInfo = T of (token * string);;
@@ -15,7 +16,10 @@ type contrary = CONTRARY;;
 type satconj = Cnt of contrary | CONJ of conj;;
 type dnf = J of satconj | DF of (satconj*dnf);;
 type satresult = R of (bool) | SR of (atomProp list * bool);;
+type satbool = TRUE|FALSE|INDIFF;;
 exception Whoops of string;;
+
+Random.self_init();;
 
 let varMatch = LR(Str.regexp "^[A-Za-z]+",VAR);;
 let asterMatch = LR(Str.regexp "^\\*",ASTER);;
@@ -287,10 +291,11 @@ let rec getFirstFail x y =
     | C(dj) -> if not (satsdj dj y) then dj else raise (Whoops "foo")
     | CF(dj,cf) -> if not (satsdj dj y) then dj else getFirstFail cf y;;
 
-let rec getFirstFailV dj y =
-    match dj with
-    | D(ap) -> if not (satsatom ap y) then ap else raise(Whoops "bad")
-    | DJ(ap,djj) -> if not (satsatom ap y) then ap else getFirstFailV djj y;;
+let rec getFailV dj y =
+  let b = Random.bool() in 
+  match dj with
+  | D(a) -> a
+  | DJ(ap,djj) -> if b then ap else getFailV djj y;;
 
 let rec flip v y =
     match y with
@@ -299,7 +304,7 @@ let rec flip v y =
 
 let getNextAssign x y =
     let dj = getFirstFail x y in
-    let v = getFirstFailV dj y in
+    let v = getFailV dj y in
     flip v y;;
 
 let rec trySat x y n =
