@@ -185,12 +185,12 @@ let rec echocnf2dnf d =
 let rec concatDJ d1 d2 = 
     match d1 with
     | J(s) -> DF(s,d2)
-    | DF(s,df) -> DF(s,(concatDF df d2));;
+    | DF(s,df) -> DF(s,(concatDJ df d2));;
 
 let ontoconj a c =
     match c with
-    |CJ(ap) -> if contradicts a ap then Cnt(CONTRARY) else CONJ(a,c)
-    | MCJ (ap*cj) ->
+    |CJ(ap) -> if contradicts a ap then Cnt(CONTRARY) else CONJ(MCJ(a,c))
+    | MCJ (ap,cj) ->
         if contradicts a ap then Cnt(CONTRARY) else 
             if contradictsany a cj then Cnt(CONTRARY) else 
                 CONJ(MCJ(a,c));;
