@@ -54,3 +54,7 @@ let rec checksat x =
 
 let dosat_all x =
     checksat (cnf2dnf x)
+
+let fn = (read_line ());;
+let b = dosat_all (getCNFFromFile fn);;
+if b then print_string "sat\n" else print_string "unsat\n";;

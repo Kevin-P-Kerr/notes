@@ -269,19 +269,10 @@ let dosat_naive x =
     let y = getInitialAssignment x in
     trySat x y (1+((min 1048576 (List.length y))));;
 
+let getCNFFromFile fn = 
+    let satfile = open_in fn in
+    let satinstance = input_line satfile in
+    let test = PS([],satinstance) in
+    let z = lex test in
+    parse z;;
 
-let fn = (read_line ());;
-print_endline fn
-let satfile = open_in fn;;
-print_string "reading\n";;
-let satinstance = input_line satfile;;
-let test = PS([],satinstance);;
-print_string "lexing\n";;
-let z = lex test;;
-print_string "parsing\n";;
-let l = parse z;;
-print_string "solving\n";;
-let bo = dosat_naive l;;
-match bo with R(b) -> 
-if b then print_string "yes\n" else print_string "no\n"
-|SR(al,b) -> print_string ("yes\n"^(tolatomstr al));;
