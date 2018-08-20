@@ -1,4 +1,4 @@
-
+open Basesat;;
 
 let distributetoconj d cj =
   match cj with

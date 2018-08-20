@@ -1,4 +1,3 @@
-open Basesat;;
 open Str;;
 open List;;
 open Random;;
@@ -125,24 +124,11 @@ let rec tocnfstr cnf =
   | C(d) -> todisjstr d
   | CF(d,c) -> (todisjstr d)^"*"^(tocnfstr c);;
 
-let rec contradictsany ap ldj =
-  match ldj with
-  | CJ(app) -> (debug (toatomstr ap) (contradicts ap app))
-  | MCJ(app,more) ->
-      if contradicts ap app then true else contradictsany ap more;;
-
 let getraw a =
   match a with 
   | AP(s) -> s
   | NAG(n,s) -> s
 ;;
-
-let litequals a b =
-  let rawa = getraw a in
-  let rawb = getraw b in
-  let s1 = atomlit rawa in
-  let s2 = atomlit rawb in
-  s1 = s2;;
 
 let booldisagree a b =
   match a with |
@@ -160,14 +146,45 @@ let booldisagree a b =
       end
 ;;
 
-let rec tolatomstr al = 
-    match al with
-    | [] -> ""
-    | x::xs -> (toatomstr x)^" "^(tolatomstr xs)
-    | _ -> "";;
+let litequals a b =
+  let rawa = getraw a in
+  let rawb = getraw b in
+  let s1 = atomlit rawa in
+  let s2 = atomlit rawb in
+  s1 = s2;;
 
 let contradicts a b = 
    ((litequals a b) && (booldisagree a b));;
+
+let rec contradictsany ap ldj =
+  match ldj with
+  | CJ(app) -> (debug (toatomstr ap) (contradicts ap app))
+  | MCJ(app,more) ->
+      if contradicts ap app then true else contradictsany ap more;;
+
+let distributetoconj d cj =
+  match cj with
+  | Cnt(c) -> cj
+  | CONJ(c) -> 
+      match c with
+      | CJ(ap) ->
+          if debug(toatomstr d^" "^(toatomstr ap)) (contradicts d ap) then Cnt(CONTRARY) else CONJ(MCJ(d,c))
+      | MCJ(ap,more) -> 
+          if (contradicts d ap) || (contradictsany d more) then Cnt(CONTRARY) else CONJ(MCJ(d,c))
+;;
+
+let rec distributeover d p =
+  match p with 
+  | J(cj) -> J(distributetoconj d cj)
+  | DF(cj,df) -> 
+      let nc = distributetoconj d cj in
+      let rest = distributeover d df in
+      DF(nc,rest);;
+
+let rec echocnf2dnf d = 
+  match d with 
+  | C(D(d)) -> J(CONJ(CJ(d)))
+  | C(DJ(a,b)) -> DF(CONJ(CJ(a)), echocnf2dnf (C(b)));;
 
 let rec concatdnf d1 d2 = 
   match d1 with
@@ -176,6 +193,28 @@ let rec concatdnf d1 d2 =
       let d3 = concatdnf d d2 in 
       DF(s,d3);;
 
+let rec cnf2dnf c = 
+  match c with 
+  | C(d) -> echocnf2dnf c
+  | CF(d,e) ->
+      let p = cnf2dnf e in
+      match d with 
+      | D(ap) -> (distributeover ap p)
+      | DJ(ap,dj) ->
+          let rec helper dis =
+            match dis with
+            | D(at) -> distributeover at p
+            | DJ(aap,ddj) -> 
+                concatdnf (distributeover aap p) (helper ddj)
+          in 
+          let z = helper dj in
+          concatdnf (distributeover ap p) z;;
+
+let rec tolatomstr al = 
+    match al with
+    | [] -> ""
+    | x::xs -> (toatomstr x)^" "^(tolatomstr xs)
+    | _ -> "";;
 
 let rec print_conj cj = 
   match cj with
@@ -214,7 +253,6 @@ let rec getInitialAssignment x =
     match x with
     | C(dj) -> unique(getVars(dj))
     | CF(dj,cf) -> unique(List.append (getVars dj) (getInitialAssignment cf));;
-
 
 let rec satsatom a y =
     match y with
@@ -276,4 +314,3 @@ let getCNFFromFile fn =
     let test = PS([],satinstance) in
     let z = lex test in
     parse z;;
-
