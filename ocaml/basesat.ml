@@ -27,7 +27,7 @@ let plusMatch = LR(Str.regexp "^\\+",PLUS);;
 let negMatch = LR(Str.regexp "^~",NEG);;
 let reglist = [varMatch;asterMatch;plusMatch;negMatch];;
 
-let debug_flag = true;;
+let debug_flag = false;;
 let debug x y =
   if debug_flag then
   let z = print_string (x^"\n\n") in
@@ -173,7 +173,23 @@ let distributetoconj d cj =
           if (contradicts d ap) || (contradictsany d more) then Cnt(CONTRARY) else CONJ(MCJ(d,c))
 ;;
 
-let distributeover d p f =
+let rec print_conj cj = 
+  match cj with
+  | CJ(ap) -> toatomstr ap
+  | MCJ(ap,cj) -> (toatomstr ap)^"*"^print_conj cj;;
+
+let print_satconj c =
+  match c with |
+  Cnt(z) -> "0"
+  | CONJ(cj) -> print_conj cj;;
+
+let rec print_dnf d = 
+  match d with |
+  J(s) -> print_satconj s
+  | DF(s,dd) -> (print_satconj s)^"+"^(print_dnf dd);;
+
+let distributeover d p g =
+    let f = (fun x -> let s = (print_dnf x)^"\n" in let r = print_string s in x) in
     let rec helper x y = 
     match x with
     |J(s) -> f(DF(y,(J(distributetoconj d s))))
@@ -218,21 +234,6 @@ let rec tolatomstr al =
     | [] -> ""
     | x::xs -> (toatomstr x)^" "^(tolatomstr xs)
     | _ -> "";;
-
-let rec print_conj cj = 
-  match cj with
-  | CJ(ap) -> toatomstr ap
-  | MCJ(ap,cj) -> (toatomstr ap)^"*"^print_conj cj;;
-
-let print_satconj c =
-  match c with |
-  Cnt(z) -> "0"
-  | CONJ(cj) -> print_conj cj;;
-
-let rec print_dnf d = 
-  match d with |
-  J(s) -> print_satconj s
-  | DF(s,dd) -> (print_satconj s)^"+"^(print_dnf dd);;
 
 let getAtom x =
     match x with
