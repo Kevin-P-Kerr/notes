@@ -27,10 +27,10 @@ let plusMatch = LR(Str.regexp "^\\+",PLUS);;
 let negMatch = LR(Str.regexp "^~",NEG);;
 let reglist = [varMatch;asterMatch;plusMatch;negMatch];;
 
-let debug_flag = false;;
+let debug_flag = true;;
 let debug x y =
   if debug_flag then
-  let z = print_string (x^"\n\n") in
+  let z = print_string ("debug: "^x^"\n") in
   y
   else 
   y
@@ -223,8 +223,10 @@ let rec cnf2dnf c =
           let rec helper dis =
             match dis with
             | D(at) -> distributeover at p (fun x -> x)
-            | DJ(aap,ddj) -> 
-                distributeover aap p (fun x -> concatdnf x (helper ddj))
+            | DJ(aap,ddj) ->
+                let n = helper ddj in
+                let r = print_string("jo : "^toatomstr aap^"\n") in
+                distributeover aap p (fun x -> concatdnf x n )
           in 
           let z = helper dj in
           distributeover ap p (fun x -> concatdnf x z);;
