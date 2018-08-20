@@ -212,27 +212,15 @@ let concatdnf d1 d2 =
         in 
         helper d1 d2;;
 
-let rec cnf2dnf c = 
+let cnf2dnf c = 
  let s = tocnfstr c in
  let tzf = print_string("cnf2dnf: " ^s^"\n") in
   match c with 
   | C(d) -> echocnf2dnf c
   | CF(d,e) ->
-      let p = cnf2dnf e in
-      match d with 
-      | D(ap) -> (distributeover ap p (fun x -> x))
-      | DJ(ap,dj) ->
-          let rec helper dis =
-            let rxy = print_string ("reached helper"^(todisjstr dis)^" \n") in
-            match dis with
-            | D(at) -> distributeover at p (fun x -> x)
-            | DJ(aap,ddj) ->
-                let n = helper ddj in
-                let r = print_string("jo : "^toatomstr aap^"\n") in
-                distributeover aap p (fun x -> concatdnf x n )
-          in 
-          let z = helper dj in
-          distributeover ap p (fun x -> concatdnf x z);;
+    let df = echocnf2dnf d in
+    let z = (fun x -> x) in
+        
 
 let rec tolatomstr al = 
     match al with
