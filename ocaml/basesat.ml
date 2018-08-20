@@ -189,7 +189,7 @@ let rec print_dnf d =
   | DF(s,dd) -> (print_satconj s)^"+"^(print_dnf dd);;
 
 let distributeover d p g =
-    let f = (fun x -> let s = (print_dnf x)^"\n" in let r = print_string s in x) in
+    let f = (fun x -> let r = g x in let s = print_string ((print_dnf r)^"\n") in r) in
     let rec helper x y = 
     match x with
     |J(s) -> f(DF(y,(J(distributetoconj d s))))
@@ -213,6 +213,8 @@ let concatdnf d1 d2 =
         helper d1 d2;;
 
 let rec cnf2dnf c = 
+ let s = tocnfstr c in
+ let tzf = print_string("cnf2dnf: " ^s^"\n") in
   match c with 
   | C(d) -> echocnf2dnf c
   | CF(d,e) ->
@@ -221,6 +223,7 @@ let rec cnf2dnf c =
       | D(ap) -> (distributeover ap p (fun x -> x))
       | DJ(ap,dj) ->
           let rec helper dis =
+            let rxy = print_string ("reached helper"^(todisjstr dis)^"\n") in
             match dis with
             | D(at) -> distributeover at p (fun x -> x)
             | DJ(aap,ddj) ->
