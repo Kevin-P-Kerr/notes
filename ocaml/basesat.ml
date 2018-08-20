@@ -174,14 +174,14 @@ let distributetoconj d cj =
 ;;
 
 let distributeover d p f =
-    let helper x y = 
+    let rec helper x y = 
     match x with
-    |J(s) -> f(DF(y,(J(distributetoconj s))))
-    |DF(cj,dj) -> helper dj (distributetoconj cj)
+    |J(s) -> f(DF(y,(J(distributetoconj d s))))
+    |DF(cj,dj) -> helper dj (distributetoconj d cj)
   in
   match p with 
   | J(cj) -> f (J(distributetoconj d cj))
-  | DF(cj,df) -> helper df (distributetoconj cj);;
+  | DF(cj,df) -> helper df (distributetoconj d cj);;
 
 let rec echocnf2dnf d = 
   match d with 
