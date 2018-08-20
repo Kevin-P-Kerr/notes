@@ -173,25 +173,26 @@ let distributetoconj d cj =
           if (contradicts d ap) || (contradictsany d more) then Cnt(CONTRARY) else CONJ(MCJ(d,c))
 ;;
 
-let rec distributeover d p f =
+let distributeover d p f =
   match p with 
-  | J(cj) -> f J(distributetoconj d cj)
+  | J(cj) -> f (J(distributetoconj d cj))
   | DF(cj,df) -> 
       let nc = distributetoconj d cj in
-      let rest = distributeover d df in
-      f DF(nc,rest);;
+      let rest = distributeover d df f in
+      f(DF(nc,rest));;
 
 let rec echocnf2dnf d = 
   match d with 
   | C(D(d)) -> J(CONJ(CJ(d)))
   | C(DJ(a,b)) -> DF(CONJ(CJ(a)), echocnf2dnf (C(b)));;
 
-let rec concatdnf d1 d2 = 
-  match d1 with
-  |J(s) -> DF(s,d2)
-  | DF(s,d) -> 
-      let d3 = concatdnf d d2 in 
-      DF(s,d3);;
+let concatdnf d1 d2 =
+    let rec helper x y =
+        match x with
+        | J(s) -> DF(s,y)
+        | DF(s,df) -> helper df (DF(s,y))
+        in 
+        helper d1 d2;;
 
 let rec cnf2dnf c = 
   match c with 
