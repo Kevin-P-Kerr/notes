@@ -281,8 +281,8 @@ let rec sats x y =
 let getAllFailDJ cn ap = 
     let rec helper cn ret =
         match cn with
-        | C(dj) -> if not satsDj dj ap then dj::ret else ret
-        | CF(dj,cf) -> if not satsDj dj ap then helper cf dj::ret else helper cf ret
+        | C(dj) -> if not (satsdj dj ap) then dj::ret else ret
+        | CF(dj,cf) -> if not (satsdj dj ap) then helper cf dj::ret else helper cf ret
         in
         helper cn [];;
 
