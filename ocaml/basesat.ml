@@ -177,10 +177,15 @@ let rec print_dnf d =
   J(s) -> print_satconj s
   | DF(s,dd) -> (print_satconj s)^"+"^(print_dnf dd);;
 
-let rec echoDisj2Dnf dj =
+let rec echoDisj2DnfIter dj df =
+  match dj with
+  | D(at) -> DF(CONJ(CJ(at)),df)
+  | DJ(at,djj) -> echoDisj2DnfIter djj DF(CONJ(CJ(at)),df);;
+
+let echoDisj2Dnf dj =
   match dj with
   | D(at) -> J(CONJ(CJ(at)))
-  | DJ(at,djj) -> DF(CONJ(CJ(at)),(echoDisj2Dnf djj));;
+  | DJ(at,djj) -> echoDisj2DnfIter djj J(CONJ(CJ(at)));;
 
 let rec concatDJ d1 d2 = 
     match d1 with
