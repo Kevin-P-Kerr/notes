@@ -315,7 +315,7 @@ let rec trySat x y n =
    if n = 0 then R(false) else
        if sats x y then SR(y,true) else
            let na = getNextAssign x y in
-           trySat x (debug ((Printf.sprintf "%d" n )^"\n"^(tolatomstr na)) na) (n-1);;
+           trySat x na (n-1);;
 
 let rec exp b p r =
     if p = 0 then 1 else if p = 1 then r else exp b (p-1) (r*b);;
