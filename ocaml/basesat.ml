@@ -224,9 +224,9 @@ let rec distribCoverD c d =
 
 let cnf2dnf c = 
   match c with 
-  | C(d) -> echocnf2dnf c
+  | C(d) -> echoDisj2Dnf d
   | CF(d,e) ->
-    let df = echocnf2dnf d in
+    let df = echoDisj2Dnf d in
     distribCoverD e df;;
 
 let rec tolatomstr al = 
