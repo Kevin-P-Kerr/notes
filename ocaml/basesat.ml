@@ -278,10 +278,22 @@ let rec sats x y =
     | C(dj) -> satsdj dj y
     | CF(dj,cf) -> (satsdj dj y) && (sats cf y);;
 
-let rec getFirstFail x y = 
-    match x with 
-    | C(dj) -> if not (satsdj dj y) then dj else raise (Whoops "foo")
-    | CF(dj,cf) -> if not (satsdj dj y) then dj else getFirstFail cf y;;
+let getAllFailDJ cn ap = 
+    let rec helper cn ret =
+        match cn with
+        | C(dj) -> if not satsDj dj ap then dj::ret else ret
+        | CF(dj,cf) -> if not satsDj dj ap then helper cf dj::ret else helper cf ret
+        in
+        helper cn [];;
+
+let rec getRandomFail a = 
+    match a with
+    | x::xs -> if List.length xs = 0 then x else
+       if Random.bool() then x else getRandomFail xs;; 
+
+let getFailDJ x y =
+    let all = getAllFailDJ x y in
+    getRandomFail all;;
 
 let rec getFailV dj y =
   let b = Random.bool() in 
