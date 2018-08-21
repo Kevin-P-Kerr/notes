@@ -282,7 +282,7 @@ let getAllFailDJ cn ap =
     let rec helper cn ret =
         match cn with
         | C(dj) -> if not (satsdj dj ap) then dj::ret else ret
-        | CF(dj,cf) -> if not (satsdj dj ap) then helper cf dj::ret else helper cf ret
+        | CF(dj,cf) -> if not (satsdj dj ap) then helper cf (dj::ret) else helper cf ret
         in
         helper cn [];;
 
@@ -307,7 +307,7 @@ let rec flip v y =
     | x::xs -> if contradicts v x then v::xs else x::(flip v xs);;
 
 let getNextAssign x y =
-    let dj = getFirstFail x y in
+    let dj = getFailDJ x y in
     let v = getFailV dj y in
     flip v y;;
 
