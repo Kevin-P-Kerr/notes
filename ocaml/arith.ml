@@ -4,7 +4,7 @@ type formal_number = C of constant | V of variable;;
 type op = PLUS | MINUS | TIMES | DIVIDE;;
 type eq = EQUALS | GT | LT;;
 type lc = IMP | DOUBLE_IMP | DISJ | CONJ;;
-type arithexpr = F of formal_number | A of formal_number * op * arithexpr;;
+type arithexpr = F of formal_number | A of formal_number * op * arithexpr | R of arithexpr*op*arithexpr;;
 type quantpart = FORALL | THEREIS
 type quant = Q of quantpart * variable | QR of quant * quant;;
 type formula = FO of arithexpr * eq * arithexpr | FL of formula * lc * formula | QF of quant * formula;;
@@ -25,6 +25,7 @@ let rec tostr x =
     match x with 
     | F(f) -> fntostr f
     | A(f,o,a) -> (fntostr f)^(opstr o)^tostr a
+    | R(a,o,aa) -> (tostr a)^(opstr o)^(tostr aa);;
 
 let rec quantstr x =
     match x with
@@ -53,11 +54,11 @@ let reserved = VAR("j");;
 let one = CN("1");;
 (* Ex(x=a+1) *)
 (* todo, random string *)
-let inc v = QF(Q(THEREIS, reserved), FO(F(V(reserved)), EQUALS, A(V(v),PLUS, F(C(one)))));;
+let inc v = QF(Q(THEREIS, reserved), FO(F(V(reserved)), EQUALS, R(v,PLUS, F(C(one)))));;
 
 let a = V(VAR("a"));;
 let b = V(VAR("b"));;
 let zz = r a b;;
 print_string ((formulastr zz)^"\n");;
-let z = inc(VAR("a"));;
+let z = inc((g zz));;
 print_string (formulastr z);;
