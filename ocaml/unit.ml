@@ -118,7 +118,7 @@ let rec checkConsistency nl =
     | x::xs -> if (helper xs x) then checkConsistency xs else false;;
 
 let inconsistent cnf l =
-    checkConsistency (List.concat[(collectUnits cnf); l]);;
+    not (checkConsistency (List.concat[(collectUnits cnf); l]));;
 
 let rec doSatRec c l =
     match c with 
@@ -142,3 +142,15 @@ let rec doSatRec c l =
 
 let doSat c = 
     doSatRec c [];;
+
+let handle b = 
+    match b with
+    | L(ap) -> print_string "sat"
+    | FAIL -> print_string "unsat";;
+
+let fn = (read_line ());;
+print_string "reading file and parsing contents\n";;
+let cn = getCNFFromFile fn;;
+print_string "doing sat\n";;
+let b = doSat (CN(cn));;
+handle b;;
