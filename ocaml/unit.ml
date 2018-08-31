@@ -3,8 +3,25 @@ open Basesat;;
 type unitcnf = CN of cnf | EMPTY;;
 type unitreturn = L of atomProp list | FAIL;;
 
-let elim cnf l =
-    let a = getNextUnit cnf l in
+let getNextUnit cnf =
+    match cnf with
+    C(dj) ->
+        begin
+        match dj with
+        | D(a) -> a
+        | DJ(a,dj) -> a
+        end
+    CF(dj,cf) ->
+        begin
+        match dj with
+        |D (a) -> a
+        |DJ (a,dj) -> a
+        end;;
+
+
+
+let elim cnf  =
+    let a = getNextUnit cnf in
     elimAtom cnf a;;
 
 let elimAtom cnf a = 
