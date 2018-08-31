@@ -89,6 +89,24 @@ let checkAtomConsistency a1 a2 =
         | AP(aa) -> if (atomlit aa) = (atomlit a) then false else true
         end;;
 
+let collectUnits cf = 
+    let rec helper c l = 
+       match c with
+       |C(dj) ->
+        begin
+        match dj with
+        | D(ap) -> ap::l
+        | DJ(a,aa) -> l
+        end
+       | CF(dj,cn) ->
+            begin
+            match dj with
+            | D(ap) -> helper cn ap::l
+            | DJ(a,aa) -> helper cn l
+            end
+            in
+        helper cf [];;
+
 let rec checkConsistency nl =
     let rec helper l a = 
         match l with
