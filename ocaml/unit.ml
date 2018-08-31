@@ -62,16 +62,17 @@ let rec propagateUnit cnf a =
 
 let elimAtom cnf a = 
     let b = propagateUnit cnf a in
-    [a;b];;
+    (a,b);;
 
 let elim cnf  =
     let a = getNextUnit cnf in
-    elimAtom cnf a;;
+    let f = CN(cnf) in
+    elimAtom f a;;
 
 let negate a = 
     match a with
     | AP(at) -> NAG(NEGATE,at)
-    | NAG(n,at) -> at;;
+    | NAG(n,at) -> AP(at);;
 
 let checkAtomConsistency a1 a2 =
     match a1 with
@@ -103,12 +104,13 @@ let inconsistent cnf l =
 
 let rec doSatRec c l =
     match c with 
-    | CONFLICT -> FAIL
-    | EMPTY -> L(l)
+    | E(CONFLICT) -> FAIL
+    | E(EMPTY) -> L(l)
     | CN(cnf) ->
-        if inconsistent cnf l then FAIL else
-            let y = elim cnf l in
-            let r = doSatRec (List.nth y 1) (List.nth y 0)::l in
+        if (inconsistent cnf l) then FAIL else
+            let y = elim cnf in
+            match y with | (v,cc) ->
+            let r = doSatRec cc (a::l) in
             match r with
             | FAIL ->
                 begin
