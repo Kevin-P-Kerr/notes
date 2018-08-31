@@ -101,7 +101,7 @@ let collectUnits cf =
        | CF(dj,cn) ->
             begin
             match dj with
-            | D(ap) -> helper cn ap::l
+            | D(ap) -> helper cn (ap::l)
             | DJ(a,aa) -> helper cn l
             end
             in
@@ -128,16 +128,17 @@ let rec doSatRec c l =
         if (inconsistent cnf l) then FAIL else
             let y = elim cnf in
             match y with | (v,cc) ->
-            let r = doSatRec cc (a::l) in
+            let r = doSatRec cc (v::l) in
             match r with
             | FAIL ->
                 begin
-                let a = (List.nth y 0) in
-                let na = negate a in
-                let ny = elimAtom cnf a in
-                doSatRec(List.nth ny 1) a::l
+                let na = negate v in
+                let cnn = CN(cnf) in
+                let ny = elimAtom cnn na in
+                match ny with
+                | (vv,ccc) -> doSatRec ccc (na::l)
                 end
-            | L(ap) -> ap;;
+            | L(ap) -> L(ap);;
 
 let doSat c = 
     doSatRec c [];;
