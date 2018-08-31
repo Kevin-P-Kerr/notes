@@ -49,8 +49,16 @@ let rec propagateUnit cnf a =
         begin
         match d with
         | CONFLICT -> CONFLICT
-        | EMPTY -> propag
-            
+        | EMPTY -> propagateUnit cf a
+        | DD(ddj) -> 
+            begin
+            let rem = propagateUnit cf a in
+            match rem with
+            | CONFLICT -> CONFLICT
+            | EMPTY -> CN(C(ddj))
+            | CN(cff) -> CN(CF(ddj,ccf));;
+            end
+        end
 
 let elim cnf  =
     let a = getNextUnit cnf in
