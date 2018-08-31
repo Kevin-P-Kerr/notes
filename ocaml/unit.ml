@@ -1,19 +1,18 @@
 open Basesat;;
 
-type empcon = EMPTY | CONFLICT;;
-type unitcnf = CN of cnf | empcon;;
-type unitdj = DD of disj | empcon;;
+type unitcnf = CN of cnf | EMPTY | CONFLICT;;
+type unitdj = DD of disj | EMPTY | CONFLICT;;
 type unitreturn = L of atomProp list | FAIL;;
 
 let getNextUnit cnf =
     match cnf with
-    C(dj) ->
+    |C(dj) ->
         begin
         match dj with
         | D(a) -> a
         | DJ(a,dj) -> a
         end
-    CF(dj,cf) ->
+    |CF(dj,cf) ->
         begin
         match dj with
         |D (a) -> a
@@ -22,7 +21,7 @@ let getNextUnit cnf =
 
 let rec propagateIntoDJ a dj= 
     match dj with
-    | D(ap) -> if (contradicts ap a) then CONFLICT else if (litequals ap a) then EMPTY else cnf
+    | D(ap) -> if (contradicts ap a) then CONFLICT else if (litequals ap a) then EMPTY else dj
     | DJ(ap,dj) ->  
         let b = (contradicts ap a) in
         if ((not b) && (litequals ap a)) then EMPTY else let r = propagateUnit a dj in
@@ -45,6 +44,7 @@ let rec propagateUnit cnf a =
         | CONFLICT -> CONFLICT
         | DD(ddj) -> CN(C(ddj))
         end
+        end
         |CF(dj,cf) -> let d = propagateIntoDJ a dj in
         begin
         match d with
@@ -56,9 +56,9 @@ let rec propagateUnit cnf a =
             match rem with
             | CONFLICT -> CONFLICT
             | EMPTY -> CN(C(ddj))
-            | CN(cff) -> CN(CF(ddj,ccf));;
+            | CN(cff) -> CN(CF(ddj,ccf))
             end
-        end
+        end;;
 
 let elim cnf  =
     let a = getNextUnit cnf in
@@ -78,8 +78,8 @@ let checkAtomConsistency a1 a2 =
     | AP(a) ->
         begin
         match a2 with
-        AP(aa) -> true
-        NAG(n,aa) -> if (atomlit aa) = (atomlit a) then false else true 
+        |AP(aa) -> true
+        |NAG(n,aa) -> if (atomlit aa) = (atomlit a) then false else true 
         end
     | NAG(n,a) ->
         begin
