@@ -18,6 +18,18 @@ let getNextUnit cnf =
         |DJ (a,dj) -> a
         end;;
 
+let propagateIntoDJ = 
+    match dj with
+    | D(ap) -> if contradicts ap a then CONFLICT else if (litequals ap a) then EMPTY else cnf
+    | DJ(ap,dj) ->  
+        begin
+        let b = contradicts ap a in
+        if (not b && (litequals ap a)) then EMPTY else let r = propagateUnit CN(C(dj)) in
+    match r with 
+    | EMPTY -> EMPTY
+    | CONFLICT -> CONFLICT
+    | CN(cc) -> if b then CN(cc) else CN(CF(D(ap),cc))
+
 let rec propagateUnit cnf a =
     match cnf with
     | EMPTY -> EMPTY
@@ -26,20 +38,8 @@ let rec propagateUnit cnf a =
         begin
         match cf with
         C(dj) ->
-            begin
-            match dj with
-            | D(ap) -> if contradicts ap a then CONFLICT else if (litequals ap a) then EMPTY else cnf
-            | DJ(ap,dj) ->  
-                begin
-                let b = contradicts ap a in
-                if (not b && (litequals ap a)) then EMPTY else let r = propagateUnit CN(C(dj)) in
-            match r with 
-            | EMPTY -> EMPTY
-            | CONFLICT -> CONFLICT
-            | CN(cc) -> if b then CN(cc) else CN(CF(D(ap),cc))
-            end
-            end
         |CF(dj,cf) ->
+            
 
 let elim cnf  =
     let a = getNextUnit cnf in
