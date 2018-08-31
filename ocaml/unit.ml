@@ -60,13 +60,13 @@ let rec propagateUnit cnf a =
         end
     end;;
 
-let elim cnf  =
-    let a = getNextUnit cnf in
-    elimAtom cnf a;;
-
 let elimAtom cnf a = 
     let b = propagateUnit cnf a in
     [a;b];;
+
+let elim cnf  =
+    let a = getNextUnit cnf in
+    elimAtom cnf a;;
 
 let negate a = 
     match a with
