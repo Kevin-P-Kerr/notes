@@ -38,8 +38,18 @@ let rec propagateUnit cnf a =
     | CN(cf) ->
         begin
         match cf with
-        |C(dj) ->
-        |CF(dj,cf) -> `
+        |C(dj) -> let d = propagateIntoDJ a dj in
+        begin
+        match d with
+        | EMPTY -> EMPTY
+        | CONFLICT -> CONFLICT
+        | DD(ddj) -> CN(C(ddj))
+        end
+        |CF(dj,cf) -> let d = propagateIntoDJ a dj in
+        begin
+        match d with
+        | CONFLICT -> CONFLICT
+        | EMPTY -> propag
             
 
 let elim cnf  =
