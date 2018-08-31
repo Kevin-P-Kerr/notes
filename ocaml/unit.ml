@@ -27,12 +27,12 @@ let rec propagateIntoDJ a dj=
         let b = (contradicts ap a) in
         if ((not b) && (litequals ap a)) then EC(EMPTY) else let r = propagateIntoDJ a dj in
     match r with 
-    | EC(ec) -> ec
+    | EC(ec) -> r
     | DD(ddj) -> if b then r else DD(DJ(ap,ddj));;
 
 let rec propagateUnit cnf a =
     match cnf with
-    E(e) -> e
+    |E(e) -> cnf
     | CN(cf) ->
         begin
         match cf with
@@ -43,21 +43,22 @@ let rec propagateUnit cnf a =
         | EC(CONFLICT) -> E(CONFLICT)
         | DD(ddj) -> CN(C(ddj))
         end
-        end
         |CF(dj,cf) -> let d = propagateIntoDJ a dj in
         begin
+        let newcnf = CN(cf) in
         match d with
         | EC(CONFLICT) -> E(CONFLICT)
-        | EC(EMPTY) -> propagateUnit cf a
+        | EC(EMPTY) -> (propagateUnit newcnf a)
         | DD(ddj) -> 
             begin
-            let rem = propagateUnit cf a in
+            let rem = propagateUnit newcnf a in
             match rem with
             | E(CONFLICT) -> rem 
             | E(EMPTY) -> CN(C(ddj))
-            | CN(cff) -> CN(CF(ddj,ccf))
+            | CN(cff) -> CN(CF(ddj,cff))
             end
-        end;;
+        end
+    end;;
 
 let elim cnf  =
     let a = getNextUnit cnf in
