@@ -25,11 +25,11 @@ let rec propagateIntoDJ a dj=
     | D(ap) -> if (contradicts ap a) then CONFLICT else if (litequals ap a) then EMPTY else cnf
     | DJ(ap,dj) ->  
         let b = (contradicts ap a) in
-        if (not b && (litequals ap a)) then EMPTY else let r = propagateUnit CN(C(dj)) in
+        if ((not b) && (litequals ap a)) then EMPTY else let r = propagateUnit a dj in
     match r with 
     | EMPTY -> EMPTY
     | CONFLICT -> CONFLICT
-    | CN(cc) -> if b then CN(cc) else CN(CF(D(ap),cc));;
+    | DD(ddj) -> if b then r else DD(DJ(ap,ddj));;
 
 let rec propagateUnit cnf a =
     match cnf with
