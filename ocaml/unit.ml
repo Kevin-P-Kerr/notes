@@ -89,15 +89,15 @@ let checkAtomConsistency a1 a2 =
         | AP(aa) -> if (atomlit aa) = (atomlit a) then false else true
         end;;
 
-let rec checkConsistency l =
-    let helper l a = 
+let rec checkConsistency nl =
+    let rec helper l a = 
         match l with
-        | x::xs -> if not checkAtomConsistency x a then false else helper xs a
+        | x::xs -> if not (checkAtomConsistency x a) then false else helper xs a
         | [] -> true
         in
-    match l with
+    match nl with
     | [] -> true
-    | x::xs -> if helper x xs then checkConsistency xs else false;;
+    | x::xs -> if (helper xs x) then checkConsistency xs else false;;
 
 let inconsistent cnf l =
     checkConsistency (List.concat[(collectUnits cnf); l]);;
