@@ -1,7 +1,8 @@
 open Basesat;;
 
-type unitcnf = CN of cnf | EMPTY | CONFLICT;;
-type unitdj = DD of disj | EMPTY | CONFLICT;;
+type empcon = EMPTY | CONFLICT;;
+type unitcnf = CN of cnf | E of empcon;;
+type unitdj = DD of disj | EC of empcon;;
 type unitreturn = L of atomProp list | FAIL;;
 
 let getNextUnit cnf =
@@ -21,41 +22,39 @@ let getNextUnit cnf =
 
 let rec propagateIntoDJ a dj= 
     match dj with
-    | D(ap) -> if (contradicts ap a) then CONFLICT else if (litequals ap a) then EMPTY else dj
+    | D(ap) -> if (contradicts ap a) then EC(CONFLICT) else if (litequals ap a) then EC(EMPTY) else DD(dj)
     | DJ(ap,dj) ->  
         let b = (contradicts ap a) in
-        if ((not b) && (litequals ap a)) then EMPTY else let r = propagateUnit a dj in
+        if ((not b) && (litequals ap a)) then EC(EMPTY) else let r = propagateIntoDJ a dj in
     match r with 
-    | EMPTY -> EMPTY
-    | CONFLICT -> CONFLICT
+    | EC(ec) -> ec
     | DD(ddj) -> if b then r else DD(DJ(ap,ddj));;
 
 let rec propagateUnit cnf a =
     match cnf with
-    | EMPTY -> EMPTY
-    | CONFLICT -> CONFLICT
+    E(e) -> e
     | CN(cf) ->
         begin
         match cf with
         |C(dj) -> let d = propagateIntoDJ a dj in
         begin
         match d with
-        | EMPTY -> EMPTY
-        | CONFLICT -> CONFLICT
+        | EC(EMPTY) -> E(EMPTY)
+        | EC(CONFLICT) -> E(CONFLICT)
         | DD(ddj) -> CN(C(ddj))
         end
         end
         |CF(dj,cf) -> let d = propagateIntoDJ a dj in
         begin
         match d with
-        | CONFLICT -> CONFLICT
-        | EMPTY -> propagateUnit cf a
+        | EC(CONFLICT) -> E(CONFLICT)
+        | EC(EMPTY) -> propagateUnit cf a
         | DD(ddj) -> 
             begin
             let rem = propagateUnit cf a in
             match rem with
-            | CONFLICT -> CONFLICT
-            | EMPTY -> CN(C(ddj))
+            | E(CONFLICT) -> rem 
+            | E(EMPTY) -> CN(C(ddj))
             | CN(cff) -> CN(CF(ddj,ccf))
             end
         end;;
