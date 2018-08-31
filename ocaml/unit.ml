@@ -1,6 +1,6 @@
 open Basesat;;
 
-type unitcnf = CN of cnf | EMPTY;;
+type unitcnf = CN of cnf | EMPTY | CONFLICT;;
 type unitreturn = L of atomProp list | FAIL;;
 
 let getNextUnit cnf =
@@ -18,7 +18,28 @@ let getNextUnit cnf =
         |DJ (a,dj) -> a
         end;;
 
-
+let rec propagateUnit cnf a =
+    match cnf with
+    | EMPTY -> EMPTY
+    | CONFLICT -> CONFLICT
+    | CN(cf) ->
+        begin
+        match cf with
+        C(dj) ->
+            begin
+            match dj with
+            | D(ap) -> if contradicts ap a then CONFLICT else if (litequals ap a) then EMPTY else cnf
+            | DJ(ap,dj) ->  
+                begin
+                let b = contradicts ap a in
+                if (not b && (litequals ap a)) then EMPTY else let r = propagateUnit CN(C(dj)) in
+            match r with 
+            | EMPTY -> EMPTY
+            | CONFLICT -> CONFLICT
+            | CN(cc) -> if b then CN(cc) else CN(CF(D(ap),cc))
+            end
+            end
+        |CF(dj,cf) ->
 
 let elim cnf  =
     let a = getNextUnit cnf in
@@ -63,6 +84,7 @@ let inconsistent cnf l =
 
 let rec doSatRec c l =
     match c with 
+    | CONFLICT -> FAIL
     | EMPTY -> L(l)
     | CN(cnf) ->
         if inconsistent cnf l then FAIL else
