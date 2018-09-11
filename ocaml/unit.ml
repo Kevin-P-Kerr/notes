@@ -145,7 +145,7 @@ let doSat c =
 
 let handle b = 
     match b with
-    | L(ap) -> print_string "sat"
+    | L(ap) -> print_string ("sat\n"^(tolatomstr ap))
     | FAIL -> print_string "unsat";;
 
 let fn = (read_line ());;
