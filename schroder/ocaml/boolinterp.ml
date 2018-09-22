@@ -27,19 +27,6 @@ let getnonempty l n =
 let tokenize s =
   let rec makeTokens x y = 
     if String.length x = 0 then y else 
-      for i = 0 to List.length reglist do
-        let lr = List.nth reglist i in
-        match lr with 
-        LR(r,t) ->
-          begin
-          if ismatch r x then 
-            let lt = LT(t,getmatch x) in
-            let rest = getnonempty (Str.split r x) "" in
-            tokenize rest lt::y
-          end
-      done
-    in
-    makeTokens s [];;
           
 let rec repl a = 
   let s = read_line () in
