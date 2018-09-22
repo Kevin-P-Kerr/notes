@@ -3,6 +3,8 @@ open List;;
 
 type token = ASTER | PLUS | MINUS | VAR | ONE | ZERO | WHITE;;
 type lexrule = LR of (Str.regexp * token);;
+type lextoken = LT of (token*string);;
+
 let asterMatch = LR(Str.regexp "^\\*",ASTER);;
 let plusMatch = LR(Str.regexp "^\\+",PLUS);;
 let minusMath = LR(Str.regexp "^-",MINUS);;
@@ -12,7 +14,6 @@ let zeroMatch = LR(Str.regexp "^0",ZERO);;
 let whiteRE = Str.regexp "[ \n\r\t]+";;
 let whiteMatch = LR(whiteRE,WHITE);;
 let reglist = [varMatch;asterMatch;plusMatch;zeroMatch;oneMatch];;
-let lextoken = LT of (token,Str);;
 
 let ismatch r s =
   Str.string_match r s 0;;
@@ -20,22 +21,26 @@ let ismatch r s =
 let getmatch y =
   Str.matched_string y;;
 
+let getnonempty l n = 
+  if List.length l = 0 then n else List.hd l;;
+
 let tokenize s =
   let rec makeTokens x y = 
     if String.length x = 0 then y else 
       for i = 0 to List.length reglist do
         let lr = List.nth reglist i in
         match lr with 
-        T(r,t) ->
+        LR(r,t) ->
+          begin
           if ismatch r x then 
             let lt = LT(t,getmatch x) in
-            let rest = Str.split r x in
+            let rest = getnonempty (Str.split r x) "" in
             tokenize rest lt::y
-      done;;
+          end
+      done
     in
     makeTokens s [];;
           
-
 let rec repl a = 
   let s = read_line () in
   let ts = tokenize s in
