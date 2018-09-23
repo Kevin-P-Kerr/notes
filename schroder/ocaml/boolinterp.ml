@@ -80,8 +80,8 @@ let isstrop s =
 
 let isop t = 
   match t with
-  | TS(LT(t,m)) ->
-    if istokenop t then true else if isstrop then true else false;;
+  | TS(LT(tk,m)) ->
+    if istokenop tk then true else if isstrop m then true else false;;
 
 let getstropt s = 
   if s = "xor" then XOR else
@@ -125,18 +125,22 @@ let parseFormula ts =
   | EMPTY -> raise (ParseException "parse error")
   | TS(LT(t,m)) ->
       let left = parseExpr ts in
-      let right = praseExpr ts in
+      let right = parseExpr ts in
       ASTF(left,right);;
 
+let isequals t = 
+  match t with |
+  EQUAL -> true
+  | _ -> false;;
 
 let parse t = 
   match t with 
-  | [] -> raise ParseException "parse error"
+  | [] -> raise (ParseException "parse error")
   | x::xs ->
       let ts = makeTokenStack t in
       match x with
-      |LT(t,m) ->
-          if isequals(t) then parseFormula ts else parseExpression ts;;
+      |TS(LT(t,m)) ->
+          if isequals t then parseFormula ts else parseExpr ts;;
 
 
 (* to string method *)
@@ -156,7 +160,8 @@ let fromtokens ta =
 let rec repl a = 
   let s = read_line () in
   let ts = tokenize s in
-  let ns = fromtokens ts
+  let ns = fromtokens ts in
+  let a = parse ts 
   in 
   print_string (ns^"\n");
   repl ();;
