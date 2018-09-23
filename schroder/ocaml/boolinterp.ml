@@ -47,7 +47,9 @@ let tokenize s =
         if t = WHITE then makeTokens ns y else
           makeTokens ns (LT(t,m)::y)
   in
-  makeTokens s [];;
+  let ts = makeTokens s []
+  in List.rev ts;;
+
           
 let rec repl a = 
   let s = read_line () in
