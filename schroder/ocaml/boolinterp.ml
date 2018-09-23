@@ -1,7 +1,7 @@
 open Str;;
 open List;;
 
-type token = ASTER | PLUS | MINUS | VAR | ONE | ZERO | WHITE | EQUAL;;
+type token = QUASI | ASTER | PLUS | MINUS | VAR | ONE | ZERO | WHITE | EQUAL;;
 type op = AND|OR|XOR|RP|LP|NIMP|CNIMP|NAND|IMP|CIMP|EQV|RCOMPL|LCOMPL|NOR;;
 type constant = CONE|CZERO;;
 type lexrule = LR of (Str.regexp * token);;
@@ -18,6 +18,7 @@ let varMatch = LR(Str.regexp "^[A-Za-z]+",VAR);;
 let oneMatch = LR(Str.regexp "^1",ONE);;
 let zeroMatch = LR(Str.regexp "^0",ZERO);;
 let equalMatch = LR(Str.regexp "^=",EQUAL);;
+(*let quasiMatch = LR(Str.regexp "^`",EQUAL);; *)
 let whiteRE = Str.regexp "^[ \n\r\t]+";;
 let whiteMatch = LR(whiteRE,WHITE);;
 let reglist = [whiteMatch;varMatch;asterMatch;plusMatch;zeroMatch;oneMatch;equalMatch];;
