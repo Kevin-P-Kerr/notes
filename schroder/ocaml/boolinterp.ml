@@ -2,7 +2,7 @@ open Str;;
 open List;;
 
 type token = ASTER | PLUS | MINUS | VAR | ONE | ZERO | WHITE | EQUAL;;
-type op = AND,OR,XOR,RP,LP,NIMP,CNIMP,NAND,IMP,CIMP,EQV,RCOMPL,LCOMPL,NOR;;
+type op = AND|OR|XOR|RP|LP|NIMP|CNIMP|NAND|IMP|CIMP|EQV|RCOMPL|LCOMPL|NOR;;
 type constant = CONE|CZERO;;
 type lexrule = LR of (Str.regexp * token);;
 type lextoken = LT of (token*string);;
@@ -88,7 +88,6 @@ let rec parseExpr ts =
         let e2 = parseExpr ts in
         ASTE(opType,e1,e2)
       else if t = ONE then ASTC(CONE) else if t = ZERO then ASTC(CZERO) else ASTV (m);;
-
 
 let parse t = 
   match t with 
