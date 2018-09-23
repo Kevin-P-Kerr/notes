@@ -6,7 +6,7 @@ type op = AND|OR|XOR|RP|LP|NIMP|CNIMP|NAND|IMP|CIMP|EQV|RCOMPL|LCOMPL|NOR;;
 type constant = CONE|CZERO;;
 type lexrule = LR of (Str.regexp * token);;
 type lextoken = LT of (token*string);;
-type tokenstack = TS of (lextoken list) | EMPTY;;
+type tokenstack = TSLT of lextoken | TS of (lextoken list) | EMPTY;;
 type ast = ASTF of (ast*ast) | ASTV of string |ASTC of constant | ASTE of (op*ast*ast);;
 exception LexError of string;;
 exception ParseException of string;;
@@ -65,7 +65,7 @@ let makeTokenStack t  =
     | TS([]) -> EMPTY
     | TS(x::xs) ->
         tt := TS(xs);
-        x
+        TSLT(x)
   in
   f;;
 
@@ -81,7 +81,7 @@ let isstrop s =
 
 let isop t = 
   match t with
-  | TS(LT(tk,m)) ->
+  | TSLT(LT(tk,m)) ->
     if istokenop tk then true else if isstrop m then true else false;;
 
 let getstropt s = 
@@ -100,7 +100,8 @@ let getstropt s =
 
 let getopt t = 
   match t with
-  | TS(LT(t,n)) ->
+  | TS(l) -> raise (ParseException "parse error")
+  | TSLT(LT(t,n)) ->
       match t with 
       | ASTER -> AND
       | PLUS -> OR
@@ -112,7 +113,8 @@ let rec parseExpr ts =
   let ct = ts () in
   match ct with
   | EMPTY -> raise (ParseException "parse error")
-  | TS(LT(t,m)) ->
+  | TS(l) -> raise (ParseException "parse error")
+  | TSLT(LT(t,m)) ->
       if isop ct then 
         let opType = getopt ct in
         let e1 = parseExpr ts in
@@ -123,8 +125,9 @@ let rec parseExpr ts =
 let parseFormula ts = 
   let ct = ts () in
   match ct with
+  | TS(l) -> raise (ParseException "parse error")
   | EMPTY -> raise (ParseException "parse error")
-  | TS(LT(t,m)) ->
+  | TSLT(LT(t,m)) ->
       let left = parseExpr ts in
       let right = parseExpr ts in
       ASTF(left,right);;
@@ -136,11 +139,10 @@ let isequals t =
 
 let parse t = 
   match t with 
-  | [] -> raise (ParseException "parse error")
-  | x::xs ->
+  | TS (x::xs) ->
       let ts = makeTokenStack t in
       match x with
-      |TS(LT(t,m)) ->
+      | LT(t,m) ->
           if isequals t then parseFormula ts else parseExpr ts;;
 
 
