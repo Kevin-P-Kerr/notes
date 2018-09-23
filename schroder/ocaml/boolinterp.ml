@@ -5,6 +5,7 @@ type token = ASTER | PLUS | MINUS | VAR | ONE | ZERO | WHITE | EQUAL;;
 type lexrule = LR of (Str.regexp * token);;
 type lextoken = LT of (token*string);;
 exception LexError of string;;
+exception ParseException of string;;
 
 let asterMatch = LR(Str.regexp "^\\*",ASTER);;
 let plusMatch = LR(Str.regexp "^\\+",PLUS);;
@@ -51,6 +52,38 @@ let tokenize s =
   let ts = makeTokens s []
   in List.rev ts;;
 
+(* parsing *)
+let makeTokenStack t  =
+  let tt = ref t in
+  let f u =
+    match tt with
+    | [] -> EMPTY
+    | x::xs ->
+        tt := xs;
+        x
+  in
+  f;;
+
+let parseFormula ts = 
+  let ct = ts () in
+  match ct with
+  | EMPTY -> raise ParseException "parse error"
+  | LT(t,m) ->
+      let left = parseExpr ts in
+      let right = praseExpr ts in
+      AT(EQUALS,left,right);;
+
+let parse t = 
+  match t with 
+  | [] -> raise ParseException "parse error"
+  | x::xs ->
+      let ts = makeTokenStack t in
+      match x with
+      |LT(t,m) ->
+          if isequals(t) then parseFormula ts else parseExpression ts;;
+
+
+(* to string method *)
 
 let fromtokens ta = 
   let rec helper ta s = 
