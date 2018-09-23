@@ -4,7 +4,7 @@ open List;;
 type token = ASTER | PLUS | MINUS | VAR | ONE | ZERO | WHITE;;
 type lexrule = LR of (Str.regexp * token);;
 type lextoken = LT of (token*string);;
-exception LexError of String;;
+exception LexError of string;;
 
 let asterMatch = LR(Str.regexp "^\\*",ASTER);;
 let plusMatch = LR(Str.regexp "^\\+",PLUS);;
@@ -26,10 +26,10 @@ let getnonempty l n =
   if List.length l = 0 then n else List.hd l;;
 
 let itertoken s = 
-  let rec helper a
+  let rec helper a =
     match a with 
-    | [] -> raise LexError("no token")
-    | x:xs -> 
+    | [] -> raise (LexError "no token")
+    | x::xs -> 
         match x with 
         | (r,t) ->
             if ismatch r s then x else helper xs
