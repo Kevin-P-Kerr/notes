@@ -6,8 +6,8 @@ type op = AND|OR|XOR|RP|LP|NIMP|CNIMP|NAND|IMP|CIMP|EQV|RCOMPL|LCOMPL|NOR;;
 type constant = CONE|CZERO;;
 type lexrule = LR of (Str.regexp * token);;
 type lextoken = LT of (token*string);;
-type tokenstack = lextoken | EMPTY;;
-let ast = ASTF of (ast*ast) | ASTV of (string) |ASTC of constant |  ASTE of (op*ast*ast)
+type tokenstack = TS of lextoken | EMPTY;;
+type ast = ASTF of (ast*ast) | ASTV of string |ASTC of constant | ASTE of (op*ast*ast);;
 exception LexError of string;;
 exception ParseException of string;;
 
@@ -60,22 +60,13 @@ let tokenize s =
 let makeTokenStack t  =
   let tt = ref t in
   let f u =
-    match tt with
+    match !tt with
     | [] -> EMPTY
     | x::xs ->
         tt := xs;
         x
   in
   f;;
-
-let parseFormula ts = 
-  let ct = ts () in
-  match ct with
-  | EMPTY -> raise ParseException "parse error"
-  | LT(t,m) ->
-      let left = parseExpr ts in
-      let right = praseExpr ts in
-      ASTF(left,right);;
 
 let rec parseExpr ts =
   let ct = ts () in
@@ -88,6 +79,16 @@ let rec parseExpr ts =
         let e2 = parseExpr ts in
         ASTE(opType,e1,e2)
       else if t = ONE then ASTC(CONE) else if t = ZERO then ASTC(CZERO) else ASTV (m);;
+
+let parseFormula ts = 
+  let ct = ts () in
+  match ct with
+  | EMPTY -> raise (ParseException "parse error")
+  | TS(LT(t,m)) ->
+      let left = parseExpr ts in
+      let right = praseExpr ts in
+      ASTF(left,right);;
+
 
 let parse t = 
   match t with 
