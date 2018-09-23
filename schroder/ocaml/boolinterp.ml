@@ -31,7 +31,7 @@ let itertoken s =
     | [] -> raise (LexError "no token")
     | x::xs -> 
         match x with 
-        | (r,t) ->
+        | LR(r,t) ->
             if ismatch r s then x else helper xs
   in
   helper reglist;;
@@ -45,7 +45,7 @@ let tokenize s =
         let m = getmatch x in
         let ns = getnonempty (Str.split r x) "" in
         if t = WHITE then makeTokens ns y else
-          makeTokens ns LT(t,m)::y
+          makeTokens ns (LT(t,m)::y)
   in
   makeTokens s [];;
           
