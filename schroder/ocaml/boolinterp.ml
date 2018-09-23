@@ -71,8 +71,8 @@ let makeTokenStack t  =
 let rec parseExpr ts =
   let ct = ts () in
   match ct with
-  | EMTPY -> raise ParseException "parse error"
-  | LT(t,m) ->
+  | EMPTY -> raise (ParseException "parse error")
+  | TS(LT(t,m)) ->
       if isop ct then 
         let opType = ct in
         let e1 = parseExpr ts in
