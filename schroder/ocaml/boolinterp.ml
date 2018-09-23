@@ -164,7 +164,8 @@ let rec repl a =
   let s = read_line () in
   let ts = tokenize s in
   let ns = fromtokens ts in
-  let a = parse ts 
+  let l = TS(ts) in
+  let a = parse l
   in 
   print_string (ns^"\n");
   repl ();;
