@@ -1,7 +1,7 @@
 open Str;;
 open List;;
 
-type token = ASTER | PLUS | MINUS | VAR | ONE | ZERO | WHITE;;
+type token = ASTER | PLUS | MINUS | VAR | ONE | ZERO | WHITE | EQUAL;;
 type lexrule = LR of (Str.regexp * token);;
 type lextoken = LT of (token*string);;
 exception LexError of string;;
@@ -12,9 +12,10 @@ let minusMath = LR(Str.regexp "^-",MINUS);;
 let varMatch = LR(Str.regexp "^[A-Za-z]+",VAR);;
 let oneMatch = LR(Str.regexp "^1",ONE);;
 let zeroMatch = LR(Str.regexp "^0",ZERO);;
-let whiteRE = Str.regexp "[ \n\r\t]+";;
+let equalMatch = LR(Str.regexp "^=",EQUAL);;
+let whiteRE = Str.regexp "^[ \n\r\t]+";;
 let whiteMatch = LR(whiteRE,WHITE);;
-let reglist = [varMatch;asterMatch;plusMatch;zeroMatch;oneMatch];;
+let reglist = [whiteMatch;varMatch;asterMatch;plusMatch;zeroMatch;oneMatch;equalMatch];;
 
 let ismatch r s =
   Str.string_match r s 0;;
@@ -50,11 +51,25 @@ let tokenize s =
   let ts = makeTokens s []
   in List.rev ts;;
 
-          
+
+let fromtokens ta = 
+  let rec helper ta s = 
+    match ta with
+    | [] -> (s^"")
+    | x::xs ->
+        match x with
+        | LT(t,m) ->
+            helper xs (s^(m^" "))
+  in
+  helper ta "";;
+
+
 let rec repl a = 
   let s = read_line () in
   let ts = tokenize s in
-  print_string (s^"\n");
+  let ns = fromtokens ts
+  in 
+  print_string (ns^"\n");
   repl ();;
 
 repl ()
