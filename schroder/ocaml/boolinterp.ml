@@ -1,13 +1,13 @@
 open Str;;
 open List;;
 
-type token = QUASI | ASTER | PLUS | MINUS | VAR | ONE | ZERO | WHITE | EQUAL;;
+type token = COLON | QUASI | ASTER | PLUS | MINUS | VAR | ONE | ZERO | WHITE | EQUAL;;
 type op = AND|OR|XOR|RP|LP|NIMP|CNIMP|NAND|IMP|CIMP|EQV|RCOMPL|LCOMPL|NOR;;
 type constant = CONE|CZERO;;
 type lexrule = LR of (Str.regexp * token);;
 type lextoken = LT of (token*string);;
 type tokenstack = TSLT of lextoken | TS of (lextoken list) | EMPTY;;
-type ast = ASTF of (ast*ast) | ASTV of string |ASTC of constant | ASTE of (op*ast*ast);;
+type ast = ASTF of (ast*ast) | ASTV of string |ASTC of constant | ASTE of (op*ast*ast) | ASTA of (string,ast);;
 exception LexError of string;;
 exception ParseException of string;;
 
@@ -19,6 +19,7 @@ let oneMatch = LR(Str.regexp "^1",ONE);;
 let zeroMatch = LR(Str.regexp "^0",ZERO);;
 let equalMatch = LR(Str.regexp "^=",EQUAL);;
 (*let quasiMatch = LR(Str.regexp "^`",EQUAL);; *)
+let colonMatch = LR(Str.regexp "^:",EQUAL);; 
 let whiteRE = Str.regexp "^[ \n\r\t]+";;
 let whiteMatch = LR(whiteRE,WHITE);;
 let reglist = [whiteMatch;varMatch;asterMatch;plusMatch;zeroMatch;oneMatch;equalMatch];;
@@ -138,7 +139,7 @@ let isequals t =
   EQUAL -> true
   | _ -> false;;
 
-let parse t = 
+let parseboolian t = 
   match t with 
   | TS (x::xs) ->
       let ts = makeTokenStack t in
@@ -146,6 +147,18 @@ let parse t =
       | LT(t,m) ->
           if isequals t then parseFormula ts else parseExpr ts;;
 
+let parse t = 
+  match t with
+  | TS(x::xs) ->
+      match x with
+      LT(tk,m) ->
+        match tk with 
+        | COLON -> 
+            match xs with
+            | (y::ys) ->
+                let b = parse
+
+        | _ -> parseboolian t
 
 (* to string method *)
 
