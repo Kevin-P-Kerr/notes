@@ -6,7 +6,7 @@ type op = AND|OR|XOR|RP|LP|NIMP|CNIMP|NAND|IMP|CIMP|EQV|RCOMPL|LCOMPL|NOR;;
 type constant = CONE|CZERO;;
 type lexrule = LR of (Str.regexp * token);;
 type lextoken = LT of (token*string);;
-type tokenstack = TS of lextoken | EMPTY;;
+type tokenstack = TS of (lextoken list) | EMPTY;;
 type ast = ASTF of (ast*ast) | ASTV of string |ASTC of constant | ASTE of (op*ast*ast);;
 exception LexError of string;;
 exception ParseException of string;;
@@ -61,9 +61,10 @@ let makeTokenStack t  =
   let tt = ref t in
   let f u =
     match !tt with
-    | [] -> EMPTY
-    | x::xs ->
-        tt := xs;
+    | EMPTY -> EMPTY
+    | TS([]) -> EMPTY
+    | TS(x::xs) ->
+        tt := TS(xs);
         x
   in
   f;;
