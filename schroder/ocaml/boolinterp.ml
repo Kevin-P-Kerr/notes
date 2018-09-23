@@ -68,13 +68,52 @@ let makeTokenStack t  =
   in
   f;;
 
+let istokenop t =
+  match t with
+  | ASTER -> true
+  | PLUS -> true
+  | MINUS -> true
+  | _ -> false;;
+
+let isstrop s =
+  (s = "xor" || s = "rp" || s = "lp" || s = "nimp" || s = "cnimp" || s = "nand" || s = "imp" || s = "cimp" || s = "eqv" || s = "rcompl" || s = "lcompl" || s = "nor")
+
+let isop t = 
+  match t with
+  | TS(LT(t,m)) ->
+    if istokenop t then true else if isstrop then true else false;;
+
+let getstropt s = 
+  if s = "xor" then XOR else
+  if s = "rp" then RP else
+  if s = "lp" then LP else
+  if s = "nimp" then NIMP else
+  if s = "cnip" then CNIMP else
+  if s = "nand" then NAND else
+  if s = "imp" then IMP else
+  if s = "cimp" then CIMP else
+  if s = "eqv" then EQV else
+  if s = "rcompl" then RCOMPL else
+  if s = "lcompl" then LCOMPL else
+    if s = "nor" then NOR else raise (ParseException ("unknown operator"^s));;
+
+let getopt t = 
+  match t with
+  | TS(LT(t,n)) ->
+      match t with 
+      | ASTER -> AND
+      | PLUS -> OR
+      | MINUS -> NIMP
+      | _ ->
+          getstropt n;;
+
 let rec parseExpr ts =
   let ct = ts () in
   match ct with
   | EMPTY -> raise (ParseException "parse error")
   | TS(LT(t,m)) ->
       if isop ct then 
-        let opType = ct in
+        let opType = getopt ct in
         let e1 = parseExpr ts in
         let e2 = parseExpr ts in
         ASTE(opType,e1,e2)
