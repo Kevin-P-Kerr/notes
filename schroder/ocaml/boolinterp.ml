@@ -2,8 +2,12 @@ open Str;;
 open List;;
 
 type token = ASTER | PLUS | MINUS | VAR | ONE | ZERO | WHITE | EQUAL;;
+type op = AND,OR,XOR,RP,LP,NIMP,CNIMP,NAND,IMP,CIMP,EQV,RCOMPL,LCOMPL,NOR;;
+type constant = CONE|CZERO;;
 type lexrule = LR of (Str.regexp * token);;
 type lextoken = LT of (token*string);;
+type tokenstack = lextoken | EMPTY;;
+let ast = ASTF of (ast*ast) | ASTV of (string) |ASTC of constant |  ASTE of (op*ast*ast)
 exception LexError of string;;
 exception ParseException of string;;
 
@@ -71,7 +75,20 @@ let parseFormula ts =
   | LT(t,m) ->
       let left = parseExpr ts in
       let right = praseExpr ts in
-      AT(EQUALS,left,right);;
+      ASTF(left,right);;
+
+let rec parseExpr ts =
+  let ct = ts () in
+  match ct with
+  | EMTPY -> raise ParseException "parse error"
+  | LT(t,m) ->
+      if isop ct then 
+        let opType = ct in
+        let e1 = parseExpr ts in
+        let e2 = parseExpr ts in
+        ASTE(opType,e1,e2)
+      else if t = ONE then ASTC(CONE) else if t = ZERO then ASTC(CZERO) else ASTV (m);;
+
 
 let parse t = 
   match t with 
