@@ -147,6 +147,9 @@ let isequals t =
 let issetop s =
   s = "set";;
 
+let isevalop s =
+  s = "eval";;
+
 let rec parse t = 
   match t with 
   | TS (x::xs) ->
@@ -159,6 +162,12 @@ let rec parse t =
             match y with
             | LT(tt,mm) ->
                 ASTAS(mm,(parse (TS(ys))))
+          else if isevalop m then
+            match xs with
+            | y::ys ->
+            let efe = parse (TS(ys)) in
+            match efe with
+            |ER(at,e) ->
           else if isequals t then parseFormula ts else parseExpr ts;;
 
 (* evaluation *)
