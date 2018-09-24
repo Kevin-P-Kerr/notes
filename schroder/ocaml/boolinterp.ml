@@ -3,12 +3,12 @@ open List;;
 
 type token = COLON | QUASI | ASTER | PLUS | MINUS | VAR | ONE | ZERO | WHITE | EQUAL;;
 type op = AND|OR|XOR|RP|LP|NIMP|CNIMP|NAND|IMP|CIMP|EQV|RCOMPL|LCOMPL|NOR;;
-type metaop = SET;;
+type metaop = SET|EVAL;;
 type constant = CONE|CZERO;;
 type lexrule = LR of (Str.regexp * token);;
 type lextoken = LT of (token*string);;
 type tokenstack = TSLT of lextoken | TS of (lextoken list) | EMPTY;;
-type ast = ASTF of (ast*ast) | ASTV of string |ASTC of constant | ASTE of (op*ast*ast) | ASTAS of (string*ast);;
+type ast = ASTF of (ast*ast) | ASTV of string |ASTC of constant | ASTE of (op*ast*ast) | ASTAS of (string*ast) | ASTEV of (ast*constant list);;
 type metavar = MV of (string*ast);;
 type environment = ENV of metavar list | HIER of ((metavar list)*environment);;
 type evalresult = ER of (ast*environment);;
@@ -162,6 +162,30 @@ let rec parse t =
           else if isequals t then parseFormula ts else parseExpr ts;;
 
 (* evaluation *)
+(* literal evaluation 
+~a~b,a~b,~ab,ab
+ 0001 AND
+ 0010 CNIMP
+ 0011 RP
+ 0100 CIMP
+ 0101 LP
+ 0110 XOR
+ 0111 OR
+ 1000 NOR
+ 1001 EQV
+ 1010 LCOMPL
+ 1011 IMP
+ 1100 RCOMPL
+ 1101 CIMP
+ 1110 NAND *)
+let primTruthTables = [AND;CNIMP;RP;CIMP;LP;XOR;OR;NOR;EQV;LCOMPL;IMP;RCOMPL;CIMP;NAND];;
+let getPrimTruthTable o = 
+    let rec helper x i = 
+    match x with
+    | [] -> raise EvaluationError "eval error"
+    | y::ys -> if y = x then i else helper ys (i+1) in
+    helper primTruthTables 1;;
+
 let rec lookfor s l =
   match l with
   | [] -> FAIL
