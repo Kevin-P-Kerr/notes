@@ -193,7 +193,8 @@ let rec eval a env =
       | ENV(l) -> 
           ER(a,ENV(mv::l))
       | HIER(l,e) ->
-          ER(a,HIER((mv::l),e));;
+          ER(a,HIER((mv::l),e))
+  | _ -> ER(a,env);;
 
 (* to string method *)
 
@@ -215,8 +216,10 @@ let rec repl env =
   let ns = fromtokens ts in
   let l = TS(ts) in
   let a = parse l in
-  let r = eval l env in
+  let r = eval a env in
+  match r with
+  |ER(ast,e) ->
   print_string (ns^"\n");
-  repl ();;
+  repl e;;
 
-repl ()
+repl (ENV([]));;
