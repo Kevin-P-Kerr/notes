@@ -10,8 +10,9 @@ type lextoken = LT of (token*string);;
 type tokenstack = TSLT of lextoken | TS of (lextoken list) | EMPTY;;
 type ast = ASTF of (ast*ast) | ASTV of string |ASTC of constant | ASTE of (op*ast*ast) | ASTAS of (string*ast);;
 type metavar = MV of (string*ast);;
-type environment = ENV of metavar list | HEIR of ((metavar list)*environment)
+type environment = ENV of metavar list | HIER of ((metavar list)*environment);;
 type evalresult = ER of (ast*environment);;
+type lookupresult = LRS of ast | FAIL;;
 exception LexError of string;;
 exception ParseException of string;;
 
@@ -157,25 +158,41 @@ let rec parse t =
             | y::ys ->
             match y with
             | LT(tt,mm) ->
-                ASTAS(SET,mm,(parse (TS(ys))))
+                ASTAS(mm,(parse (TS(ys))))
           else if isequals t then parseFormula ts else parseExpr ts;;
 
 (* evaluation *)
+let rec lookfor s l =
+  match l with
+  | [] -> FAIL
+  | x::xs -> 
+        match x with
+        |MV(st,ast) -> if st = s then LRS(ast) else lookfor s xs;;
+
+let rec lookup s env = 
+  match env with 
+  | ENV(l) -> lookfor s l
+  | HIER(l,e) -> 
+      let r = lookfor s l in
+      match r with
+      | FAIL -> lookup s e
+      | _ -> r;;
+
 let rec eval a env =
   match a with
   | ASTV(s) ->
-      let b = lookup s env in
       begin
+      let b = lookup s env in
       match b with
-      | FAIL -> a
-      | SU(ast) -> ER(ast,env);;
+      | FAIL -> ER(a,env)
+      | LRS(ast) -> ER(ast,env)
       end
   | ASTAS(s,a) ->
       let mv = MV(s,a) in
       match env with
-      | MV(l) -> 
+      | ENV(l) -> 
           ER(a,ENV(mv::l))
-      | HEIR(l,e) ->
+      | HIER(l,e) ->
           ER(a,HIER((mv::l),e));;
 
 (* to string method *)
