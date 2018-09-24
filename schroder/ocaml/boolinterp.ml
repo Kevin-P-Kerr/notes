@@ -15,7 +15,7 @@ type evalresult = ER of (ast*environment);;
 type lookupresult = LRS of ast | FAIL;;
 exception LexError of string;;
 exception ParseException of string;;
-
+exception EvaluationError of string;;
 let asterMatch = LR(Str.regexp "^\\*",ASTER);;
 let plusMatch = LR(Str.regexp "^\\+",PLUS);;
 let minusMath = LR(Str.regexp "^-",MINUS);;
@@ -182,8 +182,8 @@ let primTruthTables = [AND;CNIMP;RP;CIMP;LP;XOR;OR;NOR;EQV;LCOMPL;IMP;RCOMPL;CIM
 let getPrimTruthTable o = 
     let rec helper x i = 
     match x with
-    | [] -> raise EvaluationError "eval error"
-    | y::ys -> if y = x then i else helper ys (i+1) in
+    | [] -> raise (EvaluationError "eval error")
+    | y::ys -> if y = o then i else helper ys (i+1) in
     helper primTruthTables 1;;
 
 let rec lookfor s l =
