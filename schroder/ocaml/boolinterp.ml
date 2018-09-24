@@ -8,9 +8,10 @@ type constant = CONE|CZERO;;
 type lexrule = LR of (Str.regexp * token);;
 type lextoken = LT of (token*string);;
 type tokenstack = TSLT of lextoken | TS of (lextoken list) | EMPTY;;
-type ast = ASTF of (ast*ast) | ASTV of string |ASTC of constant | ASTE of (op*ast*ast) | ASTAS of (metaop*string*ast);;
+type ast = ASTF of (ast*ast) | ASTV of string |ASTC of constant | ASTE of (op*ast*ast) | ASTAS of (string*ast);;
 type metavar = MV of (string*ast);;
 type environment = ENV of metavar list | HEIR of ((metavar list)*environment)
+type evalresult = ER of (ast*environment);;
 exception LexError of string;;
 exception ParseException of string;;
 
@@ -160,7 +161,22 @@ let rec parse t =
           else if isequals t then parseFormula ts else parseExpr ts;;
 
 (* evaluation *)
-let rec eval a env = 
+let rec eval a env =
+  match a with
+  | ASTV(s) ->
+      let b = lookup s env in
+      begin
+      match b with
+      | FAIL -> a
+      | SU(ast) -> ER(ast,env);;
+      end
+  | ASTAS(s,a) ->
+      let mv = MV(s,a) in
+      match env with
+      | MV(l) -> 
+          ER(a,ENV(mv::l))
+      | HEIR(l,e) ->
+          ER(a,HIER((mv::l),e));;
 
 (* to string method *)
 
