@@ -8,6 +8,7 @@ type constant = CONE|CZERO;;
 type lexrule = LR of (Str.regexp * token);;
 type lextoken = LT of (token*string);;
 type tokenstack = TSLT of lextoken | TS of (lextoken list) | EMPTY;;
+type tokenstackcommand = PEEK|POP;;
 type ast = ASTF of (ast*ast) | ASTV of string |ASTC of constant | ASTE of (op*ast*ast) | ASTAS of (string*ast) | ASTEV of (ast*constant list);;
 type metavar = MV of (string*ast);;
 type environment = ENV of metavar list | HIER of ((metavar list)*environment);;
@@ -74,7 +75,18 @@ let makeTokenStack t  =
         tt := TS(xs);
         TSLT(x)
   in
-  f;;
+  let g u =
+    match !tt with
+    | EMPTY -> EMPTY;
+    | TS([]) -> EMPTY;
+    | TS(x::xs) -> TSLT(x) 
+    in
+  let r c = 
+    match c with
+    |PEEK -> g ()
+    |POP -> f ()
+  in
+  r;;
 
 let istokenop t =
   match t with
@@ -150,25 +162,9 @@ let issetop s =
 let isevalop s =
   s = "eval";;
 
-let rec parse t = 
-  match t with 
-  | TS (x::xs) ->
-      let ts = makeTokenStack t in
-      match x with
-      | LT(t,m) ->
-          if issetop m then
-            match xs with
-            | y::ys ->
-            match y with
-            | LT(tt,mm) ->
-                ASTAS(mm,(parse (TS(ys))))
-          else if isevalop m then
-            match xs with
-            | y::ys ->
-            let efe = parse (TS(ys)) in
-            match efe with
-            |ER(at,e) ->
-          else if isequals t then parseFormula ts else parseExpr ts;;
+let rec parse ts =
+    
+    
 
 (* evaluation *)
 (* literal evaluation 
