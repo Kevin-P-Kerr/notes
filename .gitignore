@@ -4,3 +4,5 @@
 *.swp
 /.gradle/
 /build/
+/schroder/ocaml/bin/*
+/schroder/ocaml/._d/
