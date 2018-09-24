@@ -188,12 +188,14 @@ let rec eval a env =
       | LRS(ast) -> ER(ast,env)
       end
   | ASTAS(s,a) ->
+      begin
       let mv = MV(s,a) in
       match env with
       | ENV(l) -> 
           ER(a,ENV(mv::l))
       | HIER(l,e) ->
           ER(a,HIER((mv::l),e))
+      end
   | _ -> ER(a,env);;
 
 (* to string method *)
@@ -209,16 +211,48 @@ let fromtokens ta =
   in
   helper ta "";;
 
+let fromop o =
+  match o with 
+  |AND -> "*"
+  |OR -> "+"
+  |XOR -> "xor" 
+  |RP -> "rp"
+  |LP -> "lp"
+  |NIMP -> "np"
+  |CNIMP -> "cnp"
+  |NAND -> "nand"
+  |IMP -> "imp" 
+  |CIMP -> "cimp"
+  |EQV -> "eqv"
+  |RCOMPL -> "rcompl"
+  |LCOMPL -> "lcompl"
+  |NOR -> "nor";;
+
+let rec fromast ast = 
+  match ast with
+  | ASTF(aa,aaa) ->
+      (fromast aa)^" =" ^(fromast aaa)
+  | ASTV(s) -> s
+  | ASTC(c) -> 
+      begin
+      match c with
+      | CONE -> "1"
+      | CZERO -> "0"
+      end
+  | ASTE(o,a,aa) -> 
+      (fromast a)^" "^(fromop o)^" "^(fromast aa)
+  | _ -> "bad";;
+
 
 let rec repl env = 
   let s = read_line () in
   let ts = tokenize s in
-  let ns = fromtokens ts in
   let l = TS(ts) in
   let a = parse l in
   let r = eval a env in
   match r with
   |ER(ast,e) ->
+  let ns = fromast ast in
   print_string (ns^"\n");
   repl e;;
 
