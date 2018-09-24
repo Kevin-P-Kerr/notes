@@ -3,11 +3,12 @@ open List;;
 
 type token = COLON | QUASI | ASTER | PLUS | MINUS | VAR | ONE | ZERO | WHITE | EQUAL;;
 type op = AND|OR|XOR|RP|LP|NIMP|CNIMP|NAND|IMP|CIMP|EQV|RCOMPL|LCOMPL|NOR;;
+type metaop = SET;;
 type constant = CONE|CZERO;;
 type lexrule = LR of (Str.regexp * token);;
 type lextoken = LT of (token*string);;
 type tokenstack = TSLT of lextoken | TS of (lextoken list) | EMPTY;;
-type ast = ASTF of (ast*ast) | ASTV of string |ASTC of constant | ASTE of (op*ast*ast) | ASTA of (string,ast);;
+type ast = ASTF of (ast*ast) | ASTV of string |ASTC of constant | ASTE of (op*ast*ast) | ASTAS of (metaop*string*ast);;
 exception LexError of string;;
 exception ParseException of string;;
 
@@ -139,26 +140,22 @@ let isequals t =
   EQUAL -> true
   | _ -> false;;
 
-let parseboolian t = 
+let issetop s =
+  s = "set";;
+
+let rec parse t = 
   match t with 
   | TS (x::xs) ->
       let ts = makeTokenStack t in
       match x with
       | LT(t,m) ->
-          if isequals t then parseFormula ts else parseExpr ts;;
-
-let parse t = 
-  match t with
-  | TS(x::xs) ->
-      match x with
-      LT(tk,m) ->
-        match tk with 
-        | COLON -> 
+          if issetop m then
             match xs with
-            | (y::ys) ->
-                let b = parse
-
-        | _ -> parseboolian t
+            | y::ys ->
+            match y with
+            | LT(tt,mm) ->
+                ASTAS(SET,mm,(parse (TS(ys))))
+          else if isequals t then parseFormula ts else parseExpr ts;;
 
 (* to string method *)
 
