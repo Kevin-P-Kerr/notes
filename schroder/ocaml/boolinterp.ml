@@ -9,6 +9,8 @@ type lexrule = LR of (Str.regexp * token);;
 type lextoken = LT of (token*string);;
 type tokenstack = TSLT of lextoken | TS of (lextoken list) | EMPTY;;
 type ast = ASTF of (ast*ast) | ASTV of string |ASTC of constant | ASTE of (op*ast*ast) | ASTAS of (metaop*string*ast);;
+type metavar = MV of (string*ast);;
+type environment = ENV of metavar list | HEIR of ((metavar list)*environment)
 exception LexError of string;;
 exception ParseException of string;;
 
@@ -157,6 +159,9 @@ let rec parse t =
                 ASTAS(SET,mm,(parse (TS(ys))))
           else if isequals t then parseFormula ts else parseExpr ts;;
 
+(* evaluation *)
+let rec eval a env = 
+
 (* to string method *)
 
 let fromtokens ta = 
@@ -171,13 +176,13 @@ let fromtokens ta =
   helper ta "";;
 
 
-let rec repl a = 
+let rec repl env = 
   let s = read_line () in
   let ts = tokenize s in
   let ns = fromtokens ts in
   let l = TS(ts) in
-  let a = parse l
-  in 
+  let a = parse l in
+  let r = eval l env in
   print_string (ns^"\n");
   repl ();;
 
