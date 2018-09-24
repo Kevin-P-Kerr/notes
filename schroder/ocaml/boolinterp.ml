@@ -231,7 +231,7 @@ let fromop o =
 let rec fromast ast = 
   match ast with
   | ASTF(aa,aaa) ->
-      (fromast aa)^" =" ^(fromast aaa)
+      (fromast aa)^" = " ^(fromast aaa)
   | ASTV(s) -> s
   | ASTC(c) -> 
       begin
