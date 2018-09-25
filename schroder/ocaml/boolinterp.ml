@@ -129,7 +129,7 @@ let getopt t =
           getstropt n;;
 
 let rec parseExpr ts =
-  let ct = ts () in
+  let ct = ts POP in
   match ct with
   | EMPTY -> raise (ParseException "parse error")
   | TS(l) -> raise (ParseException "parse error")
@@ -142,7 +142,7 @@ let rec parseExpr ts =
       else if t = ONE then ASTC(CONE) else if t = ZERO then ASTC(CZERO) else ASTV (m);;
 
 let parseFormula ts = 
-  let ct = ts () in
+  let ct = ts POP in
   match ct with
   | TS(l) -> raise (ParseException "parse error")
   | EMPTY -> raise (ParseException "parse error")
