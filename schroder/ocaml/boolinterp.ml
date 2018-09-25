@@ -167,21 +167,20 @@ let rec parse ts =
   match t with
   | TSLT(LT(tk,s)) ->
       if issetop s then 
+        begin
         ts POP;
         let nextToken = ts POP in
         match nextToken with
         TSLT(LT(tk,s)) ->
           let at = parse ts in 
           ASTAS(s,at)
+        end
       else if isevalop s then
         (* do eval stuff *)
-      else if isop (LT(tk,s)) then
-        (* do op stuff *)
+        ASTC(ONE)
       else begin match tk with
-      | EQUALS -> (* do formula stuff *)
-      | ZERO|ONE -> (* do constant stuff *)
-      | VAR -> (* do var stuff *)
-      | _ -> raise (ParseException "parse error")
+      | EQUALS -> parseFormula ts
+      | _ -> parseExpr ts
       end 
   | _ -> raie (ParseException "parse error");; 
 
