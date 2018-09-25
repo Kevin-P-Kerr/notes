@@ -205,11 +205,11 @@ let rec parse ts =
 
 (* evaluation *)
 (* literal evaluation 
-~a~b,a~b,~ab,ab
+00,01,10,11
  0001 AND
  0010 CNIMP
  0011 RP
- 0100 CIMP
+ 0100 NIMP
  0101 LP
  0110 XOR
  0111 OR
@@ -227,6 +227,27 @@ let getPrimTruthTable o =
     | [] -> raise (EvaluationError "eval error")
     | y::ys -> if y = o then i else helper ys (i+1) in
     helper primTruthTables 1;;
+
+let getInverseOp o =
+    let i = getPrimTruthTable o in
+    let a = i land 1 in
+    let b = i land 2 in
+    let c = i land 4 in
+    let d = i land 8 in
+    let v = 16 in
+    let nv = if d=1 then v-2 else v-8 in
+    let yv = if c=1 then nv-4 else nv-1 in
+    let xv = if b=1 then yv+2 else yv+8 in
+    if a=1 then xv+1 else xv+4;;
+
+let getAllInverses u = 
+    let helper l x = 
+    match l with 
+    | [] -> x
+    | n::ns -> helper ns ((getInverseOp n)::l)
+    in
+    helper primTruthTables [];;
+
 
 let rec lookfor s l =
   match l with
@@ -293,6 +314,23 @@ let fromop o =
   |RCOMPL -> "rcompl"
   |LCOMPL -> "lcompl"
   |NOR -> "nor";;
+
+let printAllInverses u =
+    let v = getAllInverses () in
+    let rec helper z t =
+    match z with
+    | zf::zs ->
+    begin
+    match t with
+    | tf::ts -> 
+        let a = fromop zf in
+        let b fromop tf in
+        print_string (a^" "^b);
+        helper xs ts
+    end
+    in
+    helper primTruthTables v;;
+
 
 let rec fromast ast = 
   match ast with
