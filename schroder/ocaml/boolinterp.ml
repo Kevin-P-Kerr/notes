@@ -243,15 +243,15 @@ let getInverseOp o =
     let b = i land 2 in
     let c = i land 4 in
     let d = i land 8 in
-    let z = ((if c=0 then 8 else 0)+(if d=0 then 4 else 0)+(if c>0 then 2 else 0)+a) in
+    let z = ((if b=0 then 8 else 2)+(if a=0 then 4 else 1)) in
     print_string (toistr [i;d;c;b;a;z]);
-    List.nth primTruthTables z;;
+    List.nth primTruthTables (z-1);;
 
 let getAllInverses u = 
     let rec helper l x = 
     match l with 
     | [] -> x
-    | n::ns -> helper ns ((getInverseOp n)::x)
+    | n::ns -> helper ns ((n,(getInverseOp n))::x)
     in
     helper primTruthTables [];;
 
@@ -330,10 +330,14 @@ let printAllInverses u =
     begin
     match t with
     | tf::ts -> 
-        let a = fromop zf in
-        let b =  fromop tf in
+        begin
+        match tf with
+        | (o1,o2) ->
+        let a = fromop o1 in
+        let b =  fromop o2 in
         print_string (a^" "^b^"\n");
         helper zs ts
+        end
     | [] -> z
     end
     in
