@@ -234,9 +234,7 @@ let getInverseOp o =
     let b = i land 2 in
     let c = i land 4 in
     let d = i land 8 in
-    let v = 16 in
-    let nv = if d=1 then v-2 else v-8 in
-    let z = if c=1 then nv-4 else nv-1 in
+    determineBit(c,a,8) + determineBit(d,b,4) + determineBit(a
     List.nth primTruthTables z;;
 
 let getAllInverses u = 
@@ -246,7 +244,6 @@ let getAllInverses u =
     | n::ns -> helper ns ((getInverseOp n)::x)
     in
     helper primTruthTables [];;
-
 
 let rec lookfor s l =
   match l with
