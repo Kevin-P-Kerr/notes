@@ -228,13 +228,23 @@ let getPrimTruthTable o =
     | y::ys -> if y = o then i else helper ys (i+1) in
     helper primTruthTables 1;;
 
+let toistr l =
+    let a = ["0";"1";"2";"3";"4";"5";"6";"7";"8";"9"] in
+    let rec helper l s = 
+        match l with
+        | [] -> s
+        | x::xs -> helper xs (s^" "^(List.nth a x))
+    in
+    (helper l "")^"\n";;
+
 let getInverseOp o =
     let i = getPrimTruthTable o in
     let a = i land 1 in
     let b = i land 2 in
     let c = i land 4 in
     let d = i land 8 in
-    determineBit(c,a,8) + determineBit(d,b,4) + determineBit(a
+    print_string (toistr [i;a;b;c;d]);
+    let z = ((if c=0 then 8 else 0)+(if d=0 then 4 else 0)+(if c=1 then 2 else 0)+a) in
     List.nth primTruthTables z;;
 
 let getAllInverses u = 
