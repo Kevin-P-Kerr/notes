@@ -100,7 +100,7 @@ let isstrop s =
 
 let isop t = 
   match t with
-  | TSLT(LT(tk,m)) ->
+  | LT(tk,m) ->
     if istokenop tk then true else if isstrop m then true else false;;
 
 let getstropt s = 
@@ -163,8 +163,27 @@ let isevalop s =
   s = "eval";;
 
 let rec parse ts =
-    
-    
+  let t = ts PEEK in
+  match t with
+  | TSLT(LT(tk,s)) ->
+      if issetop s then 
+        ts POP;
+        let nextToken = ts POP in
+        match nextToken with
+        TSLT(LT(tk,s)) ->
+          let at = parse ts in 
+          ASTAS(s,at)
+      else if isevalop s then
+        (* do eval stuff *)
+      else if isop (LT(tk,s)) then
+        (* do op stuff *)
+      else begin match tk with
+      | EQUALS -> (* do formula stuff *)
+      | ZERO|ONE -> (* do constant stuff *)
+      | VAR -> (* do var stuff *)
+      | _ -> raise (ParseException "parse error")
+      end 
+  | _ -> raie (ParseException "parse error");; 
 
 (* evaluation *)
 (* literal evaluation 
