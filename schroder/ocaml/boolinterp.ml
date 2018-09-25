@@ -134,7 +134,7 @@ let rec parseExpr ts =
   | EMPTY -> raise (ParseException "parse error")
   | TS(l) -> raise (ParseException "parse error")
   | TSLT(LT(t,m)) ->
-      if isop ct then 
+      if isop (LT(t,m)) then 
         let opType = getopt ct in
         let e1 = parseExpr ts in
         let e2 = parseExpr ts in
@@ -177,12 +177,12 @@ let rec parse ts =
         end
       else if isevalop s then
         (* do eval stuff *)
-        ASTC(ONE)
+        ASTC(CONE)
       else begin match tk with
-      | EQUALS -> parseFormula ts
+      | EQUAL -> parseFormula ts
       | _ -> parseExpr ts
       end 
-  | _ -> raie (ParseException "parse error");; 
+  | _ -> raise (ParseException "parse error");; 
 
 (* evaluation *)
 (* literal evaluation 
