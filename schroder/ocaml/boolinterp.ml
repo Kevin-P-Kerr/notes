@@ -176,8 +176,12 @@ let rec parse ts =
           ASTAS(s,at)
         end
       else if isevalop s then
-        (* do eval stuff *)
-        ASTC(CONE)
+        begin
+        ts POP;
+        let at = parse ts in
+        let l = getConstantList ts in
+        ASTEV(at,l)
+        end
       else begin match tk with
       | EQUAL -> parseFormula ts
       | _ -> parseExpr ts
