@@ -238,10 +238,11 @@ let getInverseOp o =
     let nv = if d=1 then v-2 else v-8 in
     let yv = if c=1 then nv-4 else nv-1 in
     let xv = if b=1 then yv+2 else yv+8 in
-    if a=1 then xv+1 else xv+4;;
+    let z = if a=1 then xv+1 else xv+4 in
+    List.nth primTruthTables z;;
 
 let getAllInverses u = 
-    let helper l x = 
+    let rec helper l x = 
     match l with 
     | [] -> x
     | n::ns -> helper ns ((getInverseOp n)::l)
@@ -324,13 +325,14 @@ let printAllInverses u =
     match t with
     | tf::ts -> 
         let a = fromop zf in
-        let b fromop tf in
+        let b =  fromop tf in
         print_string (a^" "^b);
-        helper xs ts
+        helper zs ts
     end
     in
     helper primTruthTables v;;
 
+printAllInverses ();;
 
 let rec fromast ast = 
   match ast with
