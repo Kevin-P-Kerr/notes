@@ -162,6 +162,21 @@ let issetop s =
 let isevalop s =
   s = "eval";;
 
+let getConstantList ts in
+    let rec helper l in
+        let t = ts POP in
+        match t with
+        | TSLT(LT(tk,s)) ->
+            begin
+            match tk with
+            | ONE -> helper (CONE::l)
+            | ZERO -> helper (CZERO::l)
+            | _ -> raise (ParseException "parse error")
+            end
+        | _ -> l in
+    let l = helper [] in
+    List.rev l;;
+
 let rec parse ts =
   let t = ts PEEK in
   match t with
