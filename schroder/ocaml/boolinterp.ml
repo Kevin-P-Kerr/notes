@@ -229,7 +229,7 @@ let getPrimTruthTable o =
     helper primTruthTables 1;;
 
 let toistr l =
-    let a = ["0";"1";"2";"3";"4";"5";"6";"7";"8";"9"] in
+    let a = ["0";"1";"2";"3";"4";"5";"6";"7";"8";"9";"10";"11";"12";"13";"14";"15";"16"] in
     let rec helper l s = 
         match l with
         | [] -> s
@@ -243,8 +243,8 @@ let getInverseOp o =
     let b = i land 2 in
     let c = i land 4 in
     let d = i land 8 in
-    print_string (toistr [i;a;b;c;d]);
-    let z = ((if c=0 then 8 else 0)+(if d=0 then 4 else 0)+(if c=1 then 2 else 0)+a) in
+    let z = ((if c=0 then 8 else 0)+(if d=0 then 4 else 0)+(if c>0 then 2 else 0)+a) in
+    print_string (toistr [i;d;c;b;a;z]);
     List.nth primTruthTables z;;
 
 let getAllInverses u = 
