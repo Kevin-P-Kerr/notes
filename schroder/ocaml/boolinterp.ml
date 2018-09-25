@@ -295,7 +295,8 @@ let rec repl env =
   let s = read_line () in
   let ts = tokenize s in
   let l = TS(ts) in
-  let a = parse l in
+  let ts = makeTokenStack l in
+  let a = parse ts in
   let r = eval a env in
   match r with
   |ER(ast,e) ->
