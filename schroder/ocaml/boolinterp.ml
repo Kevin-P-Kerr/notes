@@ -162,8 +162,8 @@ let issetop s =
 let isevalop s =
   s = "eval";;
 
-let getConstantList ts in
-    let rec helper l in
+let getConstantList ts =
+    let rec helper l =
         let t = ts POP in
         match t with
         | TSLT(LT(tk,s)) ->
