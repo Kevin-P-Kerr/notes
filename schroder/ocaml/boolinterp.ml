@@ -255,7 +255,7 @@ let getRightIdentity o =
   let c = i land 4 in
   let d = i land 8 in
   if (d=0 && b>0) then 0 else
-  if (c=0 && a>0) then 1 else 16;
+  if (c=0 && a>0) then 1 else 16;;
 
 let getInverseOp o =
     let lident = getLeftIdentity o in
