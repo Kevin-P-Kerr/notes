@@ -266,7 +266,8 @@ let getIdentInfo o =
     (* if there is both a left identity element and a right identity element, then, for the 14 operations defined on 2 boolean variables, the identity element is the same in both directions. we can take advanatge of that here *)
     if (lident >= 0 && rident >= 0) then IDI(lident,BI) else if (lident >= 0) then IDI(lident,LEFT) else IDI(rident,RIGHT);;
 
-let getInverseOp o =
+(*a~b=c -> c~b=a*)
+let getLeftInverseOp o =
     let idi = getIdentInfo o in
     let i = getPrimTruthTable o in
     let a = i land 1 in
@@ -275,11 +276,9 @@ let getInverseOp o =
     let d = i land 8 in
     match idi with
     | NONE ->
-      let z = ((if b=0 then 8 else 2)+(if a=0 then 4 else 1)) in
       List.nth primTruthTables (z-1)
     | IDI(c,d) ->
     let ident = if c = CONE then 1 else 0 in
-      let z = ((if b=0 && d=0 then begin if ident=1 then 8 end else if b=0 then 8)+(if a=0 && c=0 then begin if ident=1 then 4 end else if a=0 then 4)) in
       List.nth primTruthTables(z-1);;
 
 let getAllInverses u = 
