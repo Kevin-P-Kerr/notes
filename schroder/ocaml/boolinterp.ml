@@ -237,7 +237,17 @@ let toistr l =
     in
     (helper l "")^"\n";;
 
+let getLeftIdentity o =
+  let tt = getPrimTruthTable o in
+  let a = i land 1 in
+  let b = i land 2 in
+  let c = i land 4 in
+  let d = i land 8 in
+  if (d=0 && c =1) then 0 else
+  if (b=0 and a=1) then 1 else -1;;
+
 let getInverseOp o =
+    let ident = getLeftIdentity o in
     let i = getPrimTruthTable o in
     let a = i land 1 in
     let b = i land 2 in
