@@ -246,8 +246,8 @@ let getLeftIdentity o =
   let b = i land 2 in
   let c = i land 4 in
   let d = i land 8 in
-  if (d=0 && c>0) then 0 else
-  if (b=0 && a>0) then 1 else 16;;
+  if (d=0 && c>0) then IDI(CZERO,LEFT) else
+  if (b=0 && a>0) then IDI(CONE,LEFT) else NONE;;
 
 (*a+b=a*)
 let getRightIdentity o =
@@ -256,8 +256,8 @@ let getRightIdentity o =
   let b = i land 2 in
   let c = i land 4 in
   let d = i land 8 in
-  if (d=0 && b>0) then 0 else
-  if (c=0 && a>0) then 1 else -1;;
+  if (d=0 && b>0) then IDI(CZERO,RIGHT) else
+  if (c=0 && a>0) then IDI(CONE,RIGHT) else NONE;;
 
 let getIdentInfo o = 
     let lident = getLeftIdentity o in
