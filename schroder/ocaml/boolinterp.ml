@@ -7,6 +7,7 @@ type metaop = SET|EVAL;;
 type constant = CONE|CZERO;;
 type identdirection = RIGHT|LEFT|BI;;
 type opRule = OR(op*op*int) | ORI(op*op*int*constant*identdirection);;
+type identinfo = IDI of (constant*identdirection) | NONE;;
 type lexrule = LR of (Str.regexp * token);;
 type lextoken = LT of (token*string);;
 type tokenstack = TSLT of lextoken | TS of (lextoken list) | EMPTY;;
@@ -256,7 +257,14 @@ let getRightIdentity o =
   let c = i land 4 in
   let d = i land 8 in
   if (d=0 && b>0) then 0 else
-  if (c=0 && a>0) then 1 else 16;;
+  if (c=0 && a>0) then 1 else -1;;
+
+let getIdentInfo o = 
+    let lident = getLeftIdentity o in
+    let rident = getRightIdentity o in
+    if (lident = -1 and rident = -1) then NONE else
+    (* if there is both a left identity element and a right identity element, then, for the 14 operations defined on 2 boolean variables, the identity element is the same in both directions. we can take advanatge of that here *)
+      if (lident >= 0 and rident >= 0) then IDI(lident,BI) else if (lident >= 0) then IDI(lident,LEFT) else IDI(rident,RIGHT);;
 
 let getInverseOp o =
     let lident = getLeftIdentity o in
