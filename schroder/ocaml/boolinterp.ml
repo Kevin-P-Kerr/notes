@@ -267,16 +267,17 @@ let getIdentInfo o =
       if (lident >= 0 and rident >= 0) then IDI(lident,BI) else if (lident >= 0) then IDI(lident,LEFT) else IDI(rident,RIGHT);;
 
 let getInverseOp o =
-    let lident = getLeftIdentity o in
-    let rident = getRightIdentity o in
+    let idi = getIdentInfo o in
     let i = getPrimTruthTable o in
     let a = i land 1 in
     let b = i land 2 in
     let c = i land 4 in
     let d = i land 8 in
-    let z = ((if b=0 then 8 else 2)+(if a=0 then 4 else 1)) in
-    print_string (toistr [i;d;c;b;a;z;lident;rident]);
-    List.nth primTruthTables (z-1);;
+    match idi with
+    | NONE ->
+      let z = ((if b=0 then 8 else 2)+(if a=0 then 4 else 1)) in
+      List.nth primTruthTables (z-1);;
+    | IDI(c,d) ->
 
 let getAllInverses u = 
     let rec helper l x = 
