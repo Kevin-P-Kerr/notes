@@ -107,7 +107,6 @@ let getstropt s =
   if s = "xor" then XOR else
   if s = "rp" then RP else
   if s = "lp" then LP else
-  if s = "nimp" then NIMP else
   if s = "cnip" then CNIMP else
   if s = "nand" then NAND else
   if s = "imp" then IMP else
@@ -220,7 +219,7 @@ let rec parse ts =
  1100 RCOMPL
  1101 CIMP
  1110 NAND *)
-let primTruthTables = [AND;CNIMP;RP;CIMP;LP;XOR;OR;NOR;EQV;LCOMPL;IMP;RCOMPL;CIMP;NAND];;
+let primTruthTables = [AND;CNIMP;RP;NIMP;LP;XOR;OR;NOR;EQV;LCOMPL;IMP;RCOMPL;CIMP;NAND];;
 let getPrimTruthTable o = 
     let rec helper x i = 
     match x with
@@ -333,7 +332,7 @@ let fromop o =
   |XOR -> "xor" 
   |RP -> "rp"
   |LP -> "lp"
-  |NIMP -> "np"
+  |NIMP -> "-"
   |CNIMP -> "cnimp"
   |NAND -> "nand"
   |IMP -> "imp" 
