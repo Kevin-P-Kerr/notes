@@ -276,8 +276,11 @@ let getInverseOp o =
     match idi with
     | NONE ->
       let z = ((if b=0 then 8 else 2)+(if a=0 then 4 else 1)) in
-      List.nth primTruthTables (z-1);;
+      List.nth primTruthTables (z-1)
     | IDI(c,d) ->
+    let ident = if c = CONE then 1 else 0 in
+      let z = ((if b=0 and d=0 then begin if ident=1 then 8 end else if b=0 then 8)+(if a=0 and c=0 the begin if ident=1 then 4 end else if a=0 then 4)) in
+      List.nth primTruthTables(z-1);;
 
 let getAllInverses u = 
     let rec helper l x = 
