@@ -237,24 +237,36 @@ let toistr l =
     in
     (helper l "")^"\n";;
 
+(* a+b=b *)
 let getLeftIdentity o =
-  let tt = getPrimTruthTable o in
+  let i = getPrimTruthTable o in
   let a = i land 1 in
   let b = i land 2 in
   let c = i land 4 in
   let d = i land 8 in
-  if (d=0 && c =1) then 0 else
-  if (b=0 and a=1) then 1 else -1;;
+  if (d=0 && c>0) then 0 else
+  if (b=0 && a>0) then 1 else 16;;
+
+(*a+b=a*)
+let getRightIdentity o =
+  let i = getPrimTruthTable o in
+  let a = i land 1 in
+  let b = i land 2 in
+  let c = i land 4 in
+  let d = i land 8 in
+  if (d=0 && b>0) then 0 else
+  if (c=0 && a>0) then 1 else 16;
 
 let getInverseOp o =
-    let ident = getLeftIdentity o in
+    let lident = getLeftIdentity o in
+    let rident = getRightIdentity o in
     let i = getPrimTruthTable o in
     let a = i land 1 in
     let b = i land 2 in
     let c = i land 4 in
     let d = i land 8 in
     let z = ((if b=0 then 8 else 2)+(if a=0 then 4 else 1)) in
-    print_string (toistr [i;d;c;b;a;z]);
+    print_string (toistr [i;d;c;b;a;z;lident;rident]);
     List.nth primTruthTables (z-1);;
 
 let getAllInverses u = 
