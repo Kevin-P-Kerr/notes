@@ -264,7 +264,7 @@ let getIdentInfo o =
     let rident = getRightIdentity o in
     if (lident = -1 && rident = -1) then NONE else
     (* if there is both a left identity element and a right identity element, then, for the 14 operations defined on 2 boolean variables, the identity element is the same in both directions. we can take advanatge of that here *)
-      if (lident >= 0 && rident >= 0) then IDI(lident,BI) else if (lident >= 0) then IDI(lident,LEFT) else IDI(rident,RIGHT);;
+    if (lident >= 0 && rident >= 0) then IDI(lident,BI) else if (lident >= 0) then IDI(lident,LEFT) else IDI(rident,RIGHT);;
 
 let getInverseOp o =
     let idi = getIdentInfo o in
