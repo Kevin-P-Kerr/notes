@@ -276,12 +276,12 @@ let getLeftInverseOp o =
     let d = i land 8 in
     match idi with
     | NONE ->
-      (if b=0 then 8 else 2)+(if a=0 then 4 else 1) in
+      let z = (if b=0 then 8 else 2)+(if a=0 then 4 else 1) in
       List.nth primTruthTables (z-1)
-    | IDI(c,d) ->
+    | IDI(constant,direction) ->
     (* it doesn't really matter what direction the ident is in, since it never differs in either direction if both directions have an identity *)
-    let ident = if c = CONE then 1 else 0 in
-    (if 
+    let ident = if constant = CONE then 1 else 0 in
+    (if d=0 && b=0 then if ident=1 then 8 else 0 else if b=0 then 8 else 0) + (if c=0 && a=0 then if ident=1 then 4 else if a=0 then 4else 0) + (
       
       List.nth primTruthTables(z-1);;
 
