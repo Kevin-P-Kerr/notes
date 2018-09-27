@@ -266,6 +266,14 @@ let getIdentInfo o =
     (* if there is both a left identity element and a right identity element, then, for the 14 operations defined on 2 boolean variables, the identity element is the same in both directions. we can take advanatge of that here *)
     if (lident >= 0 && rident >= 0) then IDI(lident,BI) else if (lident >= 0) then IDI(lident,LEFT) else IDI(rident,RIGHT);;
 
+let testForCommut o =
+    let i = getPrimTruthTable o in
+    let a = i land 1 in
+    let b = i land 2 in
+    let c = i land 4 in
+    let d = i land 8 in
+    b=c;;
+
 (*a~b=c -> c~b=a*)
 let getLeftInverseOp o =
     let idi = getIdentInfo o in
@@ -281,7 +289,7 @@ let getLeftInverseOp o =
     | IDI(constant,direction) ->
     (* it doesn't really matter what direction the ident is in, since it never differs in either direction if both directions have an identity *)
     let ident = if constant = CONE then 1 else 0 in
-    (if d=0 && b=0 then if ident=1 then 8 else 0 else if b=0 then 8 else 0) + (if c=0 && a=0 then if ident=1 then 4 else if a=0 then 4 else 0) + (
+    (if d=0 && b=0 then if ident=1 then 8 else 0 else if b=0 then 8 else 0) + (if c=0 && a=0 then if ident=1 then 4 else if a=0 then 4 else 0) + (if 
       
       List.nth primTruthTables(z-1);;
 
