@@ -281,7 +281,7 @@ let getLeftInverseOp o =
     | IDI(constant,direction) ->
     (* it doesn't really matter what direction the ident is in, since it never differs in either direction if both directions have an identity *)
     let ident = if constant = CONE then 1 else 0 in
-    (if d=0 && b=0 then if ident=1 then 8 else 0 else if b=0 then 8 else 0) + (if c=0 && a=0 then if ident=1 then 4 else if a=0 then 4else 0) + (
+    (if d=0 && b=0 then if ident=1 then 8 else 0 else if b=0 then 8 else 0) + (if c=0 && a=0 then if ident=1 then 4 else if a=0 then 4 else 0) + (
       
       List.nth primTruthTables(z-1);;
 
