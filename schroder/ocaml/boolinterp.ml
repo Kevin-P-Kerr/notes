@@ -263,6 +263,8 @@ let getRightIdentity o =
 let getIdentInfo o = 
     let lident = getLeftIdentity o in
     let rident = getRightIdentity o in
+    if lident=rident then lident else
+    if lident=NONE then rident else lident;;
 
 let testForCommut o =
     let i = getPrimTruthTable o in
