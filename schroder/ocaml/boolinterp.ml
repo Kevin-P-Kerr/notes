@@ -259,12 +259,10 @@ let getRightIdentity o =
   if (d=0 && b>0) then IDI(CZERO,RIGHT) else
   if (c=0 && a>0) then IDI(CONE,RIGHT) else NONE;;
 
+    (* if there is both a left identity element and a right identity element, then, for the 14 operations defined on 2 boolean variables, the identity element is the same in both directions. we can take advanatge of that here *)
 let getIdentInfo o = 
     let lident = getLeftIdentity o in
     let rident = getRightIdentity o in
-    if (lident = -1 && rident = -1) then NONE else
-    (* if there is both a left identity element and a right identity element, then, for the 14 operations defined on 2 boolean variables, the identity element is the same in both directions. we can take advanatge of that here *)
-    if (lident >= 0 && rident >= 0) then IDI(lident,BI) else if (lident >= 0) then IDI(lident,LEFT) else IDI(rident,RIGHT);;
 
 let testForCommut o =
     let i = getPrimTruthTable o in
