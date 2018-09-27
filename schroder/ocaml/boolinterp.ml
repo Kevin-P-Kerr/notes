@@ -274,6 +274,10 @@ let testForCommut o =
     let d = i land 8 in
     b=c;;
 
+let testForAssoc o = 
+    let i = getPrimTruthTable o in
+    
+
 (*a~b=c -> c~b=a*)
 let getLeftInverseOp o =
     let idi = getIdentInfo o in
