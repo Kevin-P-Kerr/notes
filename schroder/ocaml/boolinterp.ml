@@ -297,6 +297,7 @@ let getLeftInverseOp o =
       if (ia <0 || ib <0 || ic<0 || id <0) then NOIN else
       List.nth primTruthTables(z-1);;
 
+(* a~b=c b~c=a *)
 let rightInverseOp o =
     let idi = getIdentInfo o in
     let i = getPrimTruthTable o in
@@ -310,6 +311,7 @@ let rightInverseOp o =
       List.nth primTruthTables (z-1)
     | IDI(constant,direction) ->
     (* it doesn't really matter what direction the ident is in, since it never differs in either direction if both directions have an identity *)
+        let id =  
 
 let getAllInverses u = 
     let rec helper l x = 
