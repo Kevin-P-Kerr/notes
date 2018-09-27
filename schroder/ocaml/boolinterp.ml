@@ -2,7 +2,7 @@ open Str;;
 open List;;
 
 type token = COLON | QUASI | ASTER | PLUS | MINUS | VAR | ONE | ZERO | WHITE | EQUAL;;
-type op = DENY|AND|OR|XOR|RP|LP|NIMP|CNIMP|NAND|IMP|CIMP|EQV|RCOMPL|LCOMPL|NOR;;
+type op = NOIN|AND|OR|XOR|RP|LP|NIMP|CNIMP|NAND|IMP|CIMP|EQV|RCOMPL|LCOMPL|NOR;;
 type metaop = SET|EVAL;;
 type constant = CONE|CZERO;;
 type identdirection = RIGHT|LEFT|BI;;
@@ -289,12 +289,12 @@ let getLeftInverseOp o =
     | IDI(constant,direction) ->
     (* it doesn't really matter what direction the ident is in, since it never differs in either direction if both directions have an identity *)
     let ident = if constant = CONE then 1 else 0 in
-    let id = (if d=0 && b=0 then if ident=1 then 8 else 0 else if b=0 then 8 else 0) in
-    let ic =  (if c=0 && a=0 then if ident=1 then 4 else 0 else if a=0 then 4 else 0) in
-    let ib =  (if b>0 && d>0 then if ident=1 then 2 else 0 else if b>0 then 2 else 0) in
-    let ia =  (if a>0 && c>0 then if ident=1 then 1 else 0 else if a>0 then 1 else 0) in
+    let id = (if d=0 && b=0 then -10 else if b=0 then 8 else 0) in
+    let ic =  (if c=0 && a=0 then -10  else if a=0 then 4 else 0) in
+    let ib =  (if b>0 && d>0 then -10 else if b>0 then 2 else 0) in
+    let ia =  (if a>0 && c>0 then  -10  else if a>0 then 1 else 0) in
     let z = id+ic+ib+ia in
-      if z=0 then DENY else
+      if (ia <0 || ib <0 || ic<0 || id <0) then NOIN else
       List.nth primTruthTables(z-1);;
 
 let getAllInverses u = 
@@ -356,7 +356,7 @@ let fromtokens ta =
 
 let fromop o =
   match o with 
-  |DENY -> "deny"
+  |NOIN -> "none"
   |AND -> "*"
   |OR -> "+"
   |XOR -> "xor" 
