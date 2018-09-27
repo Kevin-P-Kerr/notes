@@ -235,7 +235,7 @@ let toistr l =
     let rec helper l s = 
         match l with
         | [] -> s
-        | x::xs -> helper xs (s^" "^(List.nth a x))
+        | x::xs -> if x<0 then helper xs (s^" "^"-1") else helper xs (s^" "^(List.nth a x))
     in
     (helper l "")^"\n";;
 
@@ -294,13 +294,14 @@ let getLeftInverseOp o =
     let ib =  (if b=1 && d=1 then if ident=1 then 2 else 0 else if b=1 then 2 else 0) in
     let ia =  (if a=1 && c=1 then if ident=1 then 1 else 0 else if a=1 then 1 else 0) in
     let z = id+ic+ib+ia in
+      print_string((toistr [z]));
       List.nth primTruthTables(z-1);;
 
 let getAllInverses u = 
     let rec helper l x = 
     match l with 
     | [] -> x
-    | n::ns -> helper ns ((n,(getInverseOp n))::x)
+    | n::ns -> helper ns ((n,(getLeftInverseOp n))::x)
     in
     helper primTruthTables [];;
 
