@@ -271,7 +271,7 @@ let getConstantFromIdent i =
 let getIdentInfo o = 
     let lident = getLeftIdentity o in
     let rident = getRightIdentity o in
-    if lident!=NONE && lident=rident then IDI((getConstantFromIdent lident),BI) else
+    if lident!=NONE && rident!=NONE  then IDI((getConstantFromIdent lident),BI) else
     if lident=NONE then rident else lident;;
 
 let testForCommut o =
