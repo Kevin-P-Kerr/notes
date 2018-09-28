@@ -11,7 +11,7 @@ type baseOpRule = BOR of (op*int);;
 type identinfo = IDI of (constant*direction) | NONE;;
 type identRule = IR of (op*identinfo);;
 type inverseinfo = IVI of (op*direction) | NOIN;;
-type opRule = OR of (baseOpRule) | ORI of (baseOpRule*inverseinfo*inverseinfo);;
+type opRule = OR of (baseOpRule) | ORI of (baseOpRule*inverseinfo*inverseinfo*identinfo);;
 type lexrule = LR of (Str.regexp * token);;
 type lextoken = LT of (token*string);;
 type tokenstack = TSLT of lextoken | TS of (lextoken list) | EMPTY;;
@@ -263,11 +263,15 @@ let getRightIdentity o =
   if (d=0 && b>0) then IDI(CZERO,RIGHT) else
   if (c=0 && a>0) then IDI(CONE,RIGHT) else NONE;;
 
+let getConstantFromIdent i =
+    match i with
+    |IDI(c,d) -> c;;
+
     (* if there is both a left identity element and a right identity element, then, for the 14 operations defined on 2 boolean variables, the identity element is the same in both directions. we can take advanatge of that here *)
 let getIdentInfo o = 
     let lident = getLeftIdentity o in
     let rident = getRightIdentity o in
-    if lident=rident then lident else
+    if lident!=NONE && lident=rident then IDI((getConstantFromIdent lident),BI) else
     if lident=NONE then rident else lident;;
 
 let testForCommut o =
@@ -317,11 +321,12 @@ let getAllInverses u =
     match l with 
     | [] -> x
     | n::ns ->
+        let ident = getIdentInfo n in 
         let li = getLeftInverseOp n in
         let ri = getRightInverseOp n in
         let t = getPrimTruthTable n in
         let b = BOR(n,t) in
-        let oprule = ORI(b,li,ri) in
+        let oprule = ORI(b,li,ri,ident) in
         helper ns (oprule::x)
     in
     helper primTruthTables [];;
@@ -408,6 +413,14 @@ let toInverseInfoStr iv =
    | NOIN -> "none"
    | IVI(o,d) -> fromop o;;
 
+let toIdentInfoStr id = 
+    match id with
+    |NONE -> "none"
+    |IDI(c,d) -> 
+        let s = if c = CZERO then "0 " else "1 " in
+        let ss = if d = BI then "bi" else if d=LEFT then "left" else "right"
+        in s^ss;;
+
 let printAllInverses u =
     let v = getAllInverses () in
     let rec helper l = 
@@ -415,11 +428,12 @@ let printAllInverses u =
     | [] -> print_string "\n" 
     | x::xs ->
         match x with
-        | ORI(b,iv,ivv) ->
+        | ORI(b,iv,ivv,ident) ->
         let s = toBaseOpRuleStr b in
         let y = toInverseInfoStr iv in
         let z = toInverseInfoStr ivv in
-        print_string (s^" "^y^" "^z^"\n");
+        let ii = toIdentInfoStr ident in
+        print_string (s^" "^y^" "^z^" "^ii^"\n");
         helper xs
     in
     helper v;;
