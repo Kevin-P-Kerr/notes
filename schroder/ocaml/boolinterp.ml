@@ -306,6 +306,9 @@ let rightInverseOp o =
     let ic = (if b=1 && d=1 then -10 else if b=1 then 4 else 0) in
     let ib = (if c=0 && a=0 then -10 else if a=0 then 2 else 0) in
     let ia = (if c=1 && a=1 then -10 else if a=1 then 1 else 0) in
+    let z = id+ic+ib+ia in
+      if (ia <0 || ib <0 || ic<0 || id <0) then NOOP else
+      List.nth primTruthTables(z-1);;
 
 let getAllInverses u = 
     let rec helper l x = 
