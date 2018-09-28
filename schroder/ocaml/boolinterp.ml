@@ -241,7 +241,7 @@ let toistr l =
         | [] -> s
         | x::xs -> if x<0 then helper xs (s^" "^"-1") else helper xs (s^" "^(List.nth a x))
     in
-    (helper l "")^"\n";;
+    (helper l "");;
 
 (* a+b=b *)
 let getLeftIdentity o =
