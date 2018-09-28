@@ -393,8 +393,36 @@ let fromop o =
   |LCOMPL -> "lcompl"
   |NOR -> "nor";;
 
+let toBaseOpRuleStr b = 
+    match b with
+    | BOR(o,i) ->
+        let s = fromop o in
+        let d = i land 8 in
+        let c = i land 4 in
+        let b = i land 2 in
+        let a = i land 1 in
+        s^" "^(toistr [d;c;b;a]);;
+
+let toInverseInfoStr iv = 
+   match iv with
+   | NOIN -> "none"
+   | IVI(o,d) -> fromop o;;
+
 let printAllInverses u =
     let v = getAllInverses () in
+    let rec helper l = 
+    match l with
+    | [] -> print_string "\n" 
+    | x::xs ->
+        match x with
+        | ORI(b,iv,ivv) ->
+        let s = toBaseOpRuleStr b in
+        let y = toInverseInfoStr iv in
+        let z = toInverseInfoStr ivv in
+        print_string (s^" "^y^" "^z^"\n");
+        helper xs
+    in
+    helper v;;
 
 printAllInverses ();;
 
