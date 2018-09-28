@@ -11,7 +11,7 @@ type baseOpRule = BOR of (op*int);;
 type identinfo = IDI of (constant*direction) | NONE;;
 type identRule = IR of (op*identinfo);;
 type inverseinfo = IVI of (op*direction) | NOIN;;
-type opRule = OR of (baseOpRule) | ORI of (baseOpRule*inverseInfo*inverseInfo);;
+type opRule = OR of (baseOpRule) | ORI of (baseOpRule*inverseinfo*inverseinfo);;
 type lexrule = LR of (Str.regexp * token);;
 type lextoken = LT of (token*string);;
 type tokenstack = TSLT of lextoken | TS of (lextoken list) | EMPTY;;
@@ -292,11 +292,11 @@ let getLeftInverseOp o =
     let ia =  (if a>0 && c>0 then  -10  else if a>0 then 1 else 0) in
     let z = id+ic+ib+ia in
       if (ia <0 || ib <0 || ic<0 || id <0) then NOIN else
-      let io = List.nth primTruthTables(z-1)
+      let io = List.nth primTruthTables(z-1) in
       IVI(io,LEFT);;
 
 (* a~b=c b~c=a *)
-let rightInverseOp o =
+let getRightInverseOp o =
     let idi = getIdentInfo o in
     let i = getPrimTruthTable o in
     let a = i land 1 in
@@ -317,8 +317,8 @@ let getAllInverses u =
     match l with 
     | [] -> x
     | n::ns ->
-        let li = getLeftInverse n in
-        let ri = getRightInverse n in
+        let li = getLeftInverseOp n in
+        let ri = getRightInverseOp n in
         let t = getPrimTruthTable n in
         let b = BOR(n,t) in
         let oprule = ORI(b,li,ri) in
@@ -395,25 +395,6 @@ let fromop o =
 
 let printAllInverses u =
     let v = getAllInverses () in
-    let rec helper z t =
-    match z with
-    | [] -> z
-    | zf::zs ->
-    begin
-    match t with
-    | tf::ts -> 
-        begin
-        match tf with
-        | (o1,o2) ->
-        let a = fromop o1 in
-        let b =  fromop o2 in
-        print_string (a^" "^b^"\n");
-        helper zs ts
-        end
-    | [] -> z
-    end
-    in
-    helper primTruthTables v;;
 
 printAllInverses ();;
 
