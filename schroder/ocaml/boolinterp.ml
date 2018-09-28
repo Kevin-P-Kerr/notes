@@ -6,11 +6,12 @@ type token = COLON | QUASI | ASTER | PLUS | MINUS | VAR | ONE | ZERO | WHITE | E
 type op = NOOP|AND|OR|XOR|RP|LP|NIMP|CNIMP|NAND|IMP|CIMP|EQV|RCOMPL|LCOMPL|NOR;;
 type metaop = SET|EVAL;;
 type constant = CONE|CZERO;;
-type identdirection = RIGHT|LEFT|BI;;
+type direction = RIGHT|LEFT|BI;;
 type baseOpRule = BOR of (op*int);;
-type identinfo = IDI of (constant*identdirection) | NONE;;
+type identinfo = IDI of (constant*direction) | NONE;;
 type identRule = IR of (op*identinfo);;
-type opRule = OR of (baseOpRule) | ORI of (baseOpRule*identRule*identRule);;
+type inverseinfo = IVI of (op*direction) | NOIN;;
+type opRule = OR of (baseOpRule) | ORI of (baseOpRule*inverseInfo*inverseInfo);;
 type lexrule = LR of (Str.regexp * token);;
 type lextoken = LT of (token*string);;
 type tokenstack = TSLT of lextoken | TS of (lextoken list) | EMPTY;;
@@ -290,8 +291,9 @@ let getLeftInverseOp o =
     let ib =  (if b>0 && d>0 then -10 else if b>0 then 2 else 0) in
     let ia =  (if a>0 && c>0 then  -10  else if a>0 then 1 else 0) in
     let z = id+ic+ib+ia in
-      if (ia <0 || ib <0 || ic<0 || id <0) then NOOP else
-      List.nth primTruthTables(z-1);;
+      if (ia <0 || ib <0 || ic<0 || id <0) then NOIN else
+      let io = List.nth primTruthTables(z-1)
+      IVI(io,LEFT);;
 
 (* a~b=c b~c=a *)
 let rightInverseOp o =
@@ -306,8 +308,9 @@ let rightInverseOp o =
     let ib = (if c=0 && a=0 then -10 else if a=0 then 2 else 0) in
     let ia = (if c=1 && a=1 then -10 else if a=1 then 1 else 0) in
     let z = id+ic+ib+ia in
-      if (ia <0 || ib <0 || ic<0 || id <0) then NOOP else
-      List.nth primTruthTables(z-1);;
+      if (ia <0 || ib <0 || ic<0 || id <0) then NOIN else
+      let io = List.nth primTruthTables(z-1) in
+      IVI(io,RIGHT);;
 
 let getAllInverses u = 
     let rec helper l x = 
@@ -317,7 +320,9 @@ let getAllInverses u =
         let li = getLeftInverse n in
         let ri = getRightInverse n in
         let t = getPrimTruthTable n in
-        let info = ORI((BOR(n,t)),(BIR(
+        let b = BOR(n,t) in
+        let oprule = ORI(b,li,ri) in
+        helper ns (oprule::x)
     in
     helper primTruthTables [];;
 
