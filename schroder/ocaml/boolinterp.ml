@@ -299,7 +299,10 @@ let rightInverseOp o =
     let b = i land 2 in
     let c = i land 4 in
     let d = i land 8 in
-    let ia =   
+    let id = (if d=0 && b=0 then -10 else if b=0 then 8 else 0) in
+    let ic = (if b=1 && d=1 then -10 else if b=1 then 4 else 0) in
+    let ib = (if c=0 && a=0 then -10 else if a=0 then 2 else 0) in
+    let ia = (if c=1 && a=1 then -10 else if a=1 then 1 else 0) in
 
 let getAllInverses u = 
     let rec helper l x = 
