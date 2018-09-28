@@ -8,10 +8,9 @@ type metaop = SET|EVAL;;
 type constant = CONE|CZERO;;
 type identdirection = RIGHT|LEFT|BI;;
 type baseOpRule = BOR of (op*int);;
-type baseIdentRule = BIR of (op*identdirection);;
-type identRule = IR of (baseIdentRule) | IRR of (baseIdentRule*identRule);;
-type opRule = OR of (baseOpRule) | ORI of (baseOpRule*identRule);;
 type identinfo = IDI of (constant*identdirection) | NONE;;
+type identRule = IR of (op*identinfo);;
+type opRule = OR of (baseOpRule) | ORI of (baseOpRule*identRule*identRule);;
 type lexrule = LR of (Str.regexp * token);;
 type lextoken = LT of (token*string);;
 type tokenstack = TSLT of lextoken | TS of (lextoken list) | EMPTY;;
@@ -314,7 +313,11 @@ let getAllInverses u =
     let rec helper l x = 
     match l with 
     | [] -> x
-    | n::ns -> helper ns ((n,(getLeftInverseOp n))::x)
+    | n::ns ->
+        let li = getLeftInverse n in
+        let ri = getRightInverse n in
+        let t = getPrimTruthTable n in
+        let info = ORI((BOR(n,t)),(BIR(
     in
     helper primTruthTables [];;
 
