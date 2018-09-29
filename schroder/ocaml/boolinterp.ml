@@ -10,7 +10,7 @@ type direction = RIGHT|LEFT|BI;;
 type baseOpRule = BOR of (op*int);;
 type identinfo = IDI of (constant*direction) | NONE;;
 type identRule = IR of (op*identinfo);;
-type inverseinfo = IVI of (op*direction) | IVIN of (op*direction*constant) | NOIN;;
+type inverseinfo = IVI of (op*direction) | IVIN of (op*direction*constant*direction) | NOIN;;
 type opRule = OR of (baseOpRule) | ORI of (baseOpRule*inverseinfo*inverseinfo*identinfo);;
 type lexrule = LR of (Str.regexp * token);;
 type lextoken = LT of (token*string);;
@@ -286,12 +286,6 @@ let getInverseElement o =
     | NONE -> NONE
     | IDI(co,d) ->
         let c = if co=CONE then 1 else 0 in
-        if c=0 then
-            if d=BI then
-                if d=0 && b=0 && c=0 then IVIN(co,d,co) else
-                if c=0 && a=0 && b=0 then IVIN(co,d,CONE) else
-                NONE else
-            if d=LEFT then
 
 let testForCommut o =
     let i = getPrimTruthTable o in
