@@ -23,7 +23,7 @@ type lookupresult = LRS of ast | FAIL;;
 exception LexError of string;;
 exception ParseError of string;;
 exception EvaluationError of string;;
-exception PrintError of string;
+exception PrintError of string;;
 let asterMatch = LR(Str.regexp "^\\*",ASTER);;
 let plusMatch = LR(Str.regexp "^\\+",PLUS);;
 let minusMath = LR(Str.regexp "^-",MINUS);;
@@ -121,11 +121,11 @@ let getstropt s =
   if s = "eqv" then EQV else
   if s = "rcompl" then RCOMPL else
   if s = "lcompl" then LCOMPL else
-    if s = "nor" then NOR else raise (ParseException ("unknown operator"^s));;
+    if s = "nor" then NOR else raise (ParseError ("unknown operator"^s));;
 
 let getopt t = 
   match t with
-  | TS(l) -> raise (ParseException "parse error")
+  | TS(l) -> raise (ParseError "parse error")
   | TSLT(LT(t,n)) ->
       match t with 
       | ASTER -> AND
@@ -137,8 +137,8 @@ let getopt t =
 let rec parseExpr ts =
   let ct = ts POP in
   match ct with
-  | EMPTY -> raise (ParseException "parse error")
-  | TS(l) -> raise (ParseException "parse error")
+  | EMPTY -> raise (ParseError "parse error")
+  | TS(l) -> raise (ParseError "parse error")
   | TSLT(LT(t,m)) ->
       if isop (LT(t,m)) then 
         let opType = getopt ct in
@@ -150,8 +150,8 @@ let rec parseExpr ts =
 let parseFormula ts = 
   let ct = ts POP in
   match ct with
-  | TS(l) -> raise (ParseException "parse error")
-  | EMPTY -> raise (ParseException "parse error")
+  | TS(l) -> raise (ParseError "parse error")
+  | EMPTY -> raise (ParseError "parse error")
   | TSLT(LT(t,m)) ->
       let left = parseExpr ts in
       let right = parseExpr ts in
@@ -177,7 +177,7 @@ let getConstantList ts =
             match tk with
             | ONE -> helper (CONE::l)
             | ZERO -> helper (CZERO::l)
-            | _ -> raise (ParseException "parse error")
+            | _ -> raise (ParseError "parse error")
             end
         | _ -> l in
     let l = helper [] in
@@ -207,7 +207,7 @@ let rec parse ts =
       | EQUAL -> parseFormula ts
       | _ -> parseExpr ts
       end 
-  | _ -> raise (ParseException "parse error");; 
+  | _ -> raise (ParseError "parse error");; 
 
 (* evaluation *)
 (* literal evaluation 
@@ -508,13 +508,17 @@ let printOpRules u =
         match x with
         | ORI(b,io) ->
         let s = toBaseOpRuleStr b in
-        let y = toInverseInfoStr iv in
-        print_string (s^" "^y"\n");
+        let y = toInverseInfoStr io in
+        print_string (s^" "^y^"\n");
         helper xs
+        | OR(b) ->
+          let s = toBaseOpRuleStr b in
+          print_string(s^"\n");
+          helper xs
     in
     helper v;;
 
-printAllInverses ();;
+printOpRules ();;
 
 let rec fromast ast = 
   match ast with
