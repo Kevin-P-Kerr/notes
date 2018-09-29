@@ -300,13 +300,13 @@ let getInverseElement o =
             NONE
         else 
           if a=1 then
-            if b=1 && c=1 then
+            if b>0 && c>0 then
               let invertInfo = IDI(co,BI) in
               IVIN(co,d,ident,invertInfo)
-            else if b=1 then
+            else if b>0 then
               let invertInfo = IDI(co,LEFT) in
               IVIN(co,d,ident,invertInfo)
-            else if c=1 then
+            else if c>0 then
               let invertInfo = IDI(co,RIGHT) in
               IVIN(co,d,ident,invertInfo)
             else
