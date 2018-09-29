@@ -299,8 +299,18 @@ let getInverseElement o =
           else
             NONE
         else 
-
-
+          if a=1 then
+            if b=1 && c=1 then
+              let invertInfo = IDI(co,BI) in
+              IVIN(co,d,ident,invertInfo)
+            else if b=1 then
+              let invertInfo = IDI(co,LEFT) in
+              IVIN(co,d,ident,invertInfo)
+            else if c=1 then
+              let invertInfo = IDI(co,RIGHT) in
+              IVIN(co,d,ident,invertInfo)
+            else
+              NONE;;
 
 let testForCommut o =
     let i = getPrimTruthTable o in
