@@ -495,9 +495,7 @@ let fromidi idi =
 let toInverseInfoStr iv = 
    match iv with
    | NOIN -> "none"
-   | IVI(o,d) -> (fromop o)^" "^(fromDirection d)
-   | IVE(id1,id2) -> "none"^" "^(fromidi id1)^" "^(fromidi id2)
-   | FIVI(o,d,id1,id2) -> (fromop o)^" "^(fromDirection d)^" "^(fromidi id1)^" "^(fromidi id2)
+   | IVI(o,d) -> (fromop o)^" "^(fromDirection d);;
 
 let printOpRules u =
     let v = getAllOpRules () in
