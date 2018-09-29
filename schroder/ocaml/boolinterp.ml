@@ -21,8 +21,9 @@ type environment = ENV of metavar list | HIER of ((metavar list)*environment);;
 type evalresult = ER of (ast*environment);;
 type lookupresult = LRS of ast | FAIL;;
 exception LexError of string;;
-exception ParseException of string;;
+exception ParseError of string;;
 exception EvaluationError of string;;
+exception PrintError of string;
 let asterMatch = LR(Str.regexp "^\\*",ASTER);;
 let plusMatch = LR(Str.regexp "^\\+",PLUS);;
 let minusMath = LR(Str.regexp "^-",MINUS);;
@@ -478,10 +479,12 @@ let toIdentInfoStr id =
         let ss = if d = BI then "bi" else if d=LEFT then "left" else "right"
         in s^ss;;
 
+(* inverse op, direction, inverse element, direction*)
 let toInverseInfoStr iv = 
    match iv with
    | NOIN -> "none"
-   | IVI(o,d) -> fromop o;;
+   | IVI(o,d) -> (fromop o)^" "^(fromDirection d)
+   | IVE(id1,id2) ->  
 
 let printOpRules u =
     let v = getAllOpRules () in
