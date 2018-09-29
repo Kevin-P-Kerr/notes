@@ -10,7 +10,7 @@ type direction = RIGHT|LEFT|BI;;
 type baseOpRule = BOR of (op*int);;
 type inverseinfo = IVI of (op*direction) | NOIN;;
 type identinfo = IDI of (constant*direction) | IDIE of (constant*direction*constant*direction) | IDII of (identinfo*inverseinfo) | NONE;;
-type opRule = OR of (baseOpRule) | ORI of (baseOpRule*inverseinfo);;
+type opRule = OR of (baseOpRule) | ORIE of (baseOpRule*identinfo) | ORI of (baseOpRule*inverseinfo) | ORIEIO of (baseOpRule*identinfo*inverseinfo);;
 type lexrule = LR of (Str.regexp * token);;
 type lextoken = LT of (token*string);;
 type tokenstack = TSLT of lextoken | TS of (lextoken list) | EMPTY;;
@@ -379,6 +379,7 @@ let getAllOpRules u =
         let li = getLeftInverseOp n in
         let ri = getRightInverseOp n in
         let base = BOR(n,t) in
+        
     in
     helper primTruthTables [];;
 
