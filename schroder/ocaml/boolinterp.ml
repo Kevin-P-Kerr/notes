@@ -293,9 +293,6 @@ let getInverseElement o =
                 NONE else
             if d=LEFT then
 
-
-
-
 let testForCommut o =
     let i = getPrimTruthTable o in
     let a = i land 1 in
