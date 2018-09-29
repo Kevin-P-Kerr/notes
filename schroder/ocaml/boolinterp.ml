@@ -502,11 +502,12 @@ let toInverseInfoStr iv =
    | NOIN -> "none"
    | IVI(o,d) -> (fromop o)^" "^(fromDirection d);;
 
-let toIdentityStr id = 
+let rec toIdentityStr id = 
     match id with
     |NONE -> "NONE"
     |IDI(c,d) -> fromidi c d
-    |IDIE(c,d,cc,dd) -> (fromidi c d)^" "^(fromidi cc dd);;
+    |IDIE(c,d,cc,dd) -> (fromidi c d)^" "^(fromidi cc dd)
+    |IDII(idf,inf) -> (toIdentityStr idf)^" "^(toInverseInfoStr inf);;
 
 let printOpRules u =
     let v = getAllOpRules () in
