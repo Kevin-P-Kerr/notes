@@ -375,20 +375,10 @@ let getAllOpRules u =
         let t = getPrimTruthTable n in
         let ii = getIdentInfo n in
         let ie = getInverseElement n in
+        let trueIdentityInfo = if ie=NONE then ii else ie in
         let li = getLeftInverseOp n in
         let ri = getRightInverseOp n in
         let base = BOR(n,t) in
-        if li=NOIN && ri=NOIN then
-          if ie=NOIN then
-            cont (OR(base)) helper ns x
-          else 
-            cont (ORI(base,ie)) helper ns x
-        else
-          let rule = if li=NOIN then ri else li in
-          if ie=NOIN then
-            cont (ORI(base,rule)) helper ns x
-          else
-            cont (ORI(base,(makeFullRule rule ie))) helper ns x
     in
     helper primTruthTables [];;
 
