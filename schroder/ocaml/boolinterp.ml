@@ -9,8 +9,7 @@ type constant = CONE|CZERO;;
 type direction = RIGHT|LEFT|BI;;
 type baseOpRule = BOR of (op*int);;
 type identinfo = IDI of (constant*direction) | NONE;;
-type identRule = IR of (op*identinfo);;
-type inverseinfo = IVI of (op*direction) | IVIN of (op*direction*identinfo*identinfo) | NOIN;;
+type inverseinfo = IVI of (op*direction) | IVE of (identinfo*identinfo) | NOIN;;
 type opRule = OR of (baseOpRule) | ORI of (baseOpRule*inverseinfo*inverseinfo*identinfo);;
 type lexrule = LR of (Str.regexp * token);;
 type lextoken = LT of (token*string);;
@@ -283,34 +282,36 @@ let getInverseElement o =
       let c = i land 4 in
       let d = i land 8 in
     match ident with
-    | NONE -> NONE
-    | IDI(co,d) ->
-        let c = if co=CONE then 1 else 0 in
-        if c=0 then
+    | NONE -> NOIN
+    | IDI(co,direction) ->
+        let ci = if co=CONE then 1 else 0 in
+        if ci=0 then
           if d=0 && b=0 && c=0 then
-            let ivertInfo = IDI(co,BI) in
-            IVIN(co,d,ident,invertInfo)
+            let invertInfo = IDI(co,BI) in
+            IVE(ident,invertInfo)
           else if d=0 && c=0 then
             let invertInfo = IDI(co,LEFT) in
-            IVIN(co,d,ident,invertInfo)
+            IVE(ident,invertInfo)
           else if d=0 && b=0 then
             let invertInfo = IDI(co,RIGHT) in
-            IVIN(co,d,ident,invertInfo)
+            IVE(ident,invertInfo)
           else
-            NONE
+            NOIN
         else 
           if a=1 then
             if b>0 && c>0 then
               let invertInfo = IDI(co,BI) in
-              IVIN(co,d,ident,invertInfo)
+              IVE(ident,invertInfo)
             else if b>0 then
               let invertInfo = IDI(co,LEFT) in
-              IVIN(co,d,ident,invertInfo)
+              IVE(ident,invertInfo)
             else if c>0 then
               let invertInfo = IDI(co,RIGHT) in
-              IVIN(co,d,ident,invertInfo)
+              IVE(ident,invertInfo)
             else
-              NONE;;
+              NOIN
+            else 
+              NOIN;;
 
 let testForCommut o =
     let i = getPrimTruthTable o in
