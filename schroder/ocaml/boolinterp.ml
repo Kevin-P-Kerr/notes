@@ -355,17 +355,11 @@ let getRightInverseOp o =
       let io = List.nth primTruthTables(z-1) in
       IVI(io,RIGHT);;
 
-let getAllInverses u = 
+let getAllOpRules u = 
     let rec helper l x = 
     match l with 
     | [] -> x
     | n::ns ->
-        let ident = getIdentInfo n in 
-        let li = getLeftInverseOp n in
-        let ri = getRightInverseOp n in
-        let t = getPrimTruthTable n in
-        let b = BOR(n,t) in
-        let oprule = ORI(b,li,ri,ident) in
         helper ns (oprule::x)
     in
     helper primTruthTables [];;
