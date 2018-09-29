@@ -485,17 +485,20 @@ let fromDirection d =
   | RIGHT -> "right"
   | BI -> "bi";;
 
-let fromidi idi =
-  match idi with
-  | IDI(c,d) ->
+let fromidi c d =
     if c = CONE then "1 "^(fromDirection d) else "0 "^(fromDirection d) 
-  | _ -> raise (PrintError "print error");;
 
 (* inverse op, direction, identity element, direction, inverse element, direction*)
 let toInverseInfoStr iv = 
    match iv with
    | NOIN -> "none"
    | IVI(o,d) -> (fromop o)^" "^(fromDirection d);;
+
+let toIdentityStr id = 
+    match id with
+    |NONE -> "NONE"
+    |IDI(c,d) -> fromidi c d
+    |IDIE(c,d,cc,dd) -> (fromidi c d)^" "^(fromidi cc dd);;
 
 let printOpRules u =
     let v = getAllOpRules () in
@@ -513,6 +516,17 @@ let printOpRules u =
           let s = toBaseOpRuleStr b in
           print_string(s^"\n");
           helper xs
+        | ORIE(b,id) ->
+          let s = toIdentityStr id in
+          let y = toBaseOpRuleStr b in
+          print_string(y^" none "^s^"\n");
+          helper xs
+        | ORIEIO(b,id,io) ->
+            let s = toIdentityStr id in
+            let y = toBaseOpRuleStr b in
+            let z = toInverseInfoStr io in
+            print_string(y^" "^z^s^"\n");
+            helper xs
     in
     helper v;;
 
