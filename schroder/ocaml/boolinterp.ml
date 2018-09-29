@@ -378,8 +378,19 @@ let getAllOpRules u =
         let trueIdentityInfo = if ie=NONE then ii else ie in
         let li = getLeftInverseOp n in
         let ri = getRightInverseOp n in
+        let inverseOp = if li=NOIN then ri else li in
         let base = BOR(n,t) in
-        
+        if trueIdentityInfo=NONE && inverseOp=NOIN then 
+            let next = OR(base) in
+            cont next helper ns x else
+        if trueIdentityInfo=NONE then
+            let next = ORI(base,inverseOp) in
+            cont next helper ns x else
+        if inverseOp=NOIN then
+            let next = ORIE(base,trueIdentityInfo) in
+            cont next helper ns x else
+        let next  = ORIEIO(base,trueIdentityInfo,inverseOp) in
+        cont next helper ns x
     in
     helper primTruthTables [];;
 
