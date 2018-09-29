@@ -10,7 +10,7 @@ type direction = RIGHT|LEFT|BI;;
 type baseOpRule = BOR of (op*int);;
 type identinfo = IDI of (constant*direction) | NONE;;
 type inverseinfo = IVI of (op*direction) | IVE of (identinfo*identinfo)| FIVI of (op*direction*identinfo*identinfo) | NOIN;;
-type opRule = OR of (baseOpRule) | ORI of (baseOpRule*inverseInfo);;
+type opRule = OR of (baseOpRule) | ORI of (baseOpRule*inverseinfo);;
 type lexrule = LR of (Str.regexp * token);;
 type lextoken = LT of (token*string);;
 type tokenstack = TSLT of lextoken | TS of (lextoken list) | EMPTY;;
@@ -362,9 +362,9 @@ let makeFullRule invf inve =
         match inve with
         | IVE(id1,id2) ->
             FIVI(o,d,id1,id2)
-        | _ -> raise EvaluationError("full rule")
+        | _ -> raise (EvaluationError "full rule")
       end
-  | _ -> raise EvaluationError("full rule");;
+  | _ -> raise (EvaluationError "full rule");;
 
 let getAllOpRules u = 
     let cont e f l i =
@@ -389,7 +389,7 @@ let getAllOpRules u =
           if ie=NOIN then
             cont (ORI(base,rule)) helper ns x
           else
-            cont (makeFullRule rule ie) helper ns x
+            cont (ORI(base,(makeFullRule rule ie))) helper ns x
     in
     helper primTruthTables [];;
 
@@ -470,11 +470,6 @@ let toBaseOpRuleStr b =
         let a = i land 1 in
         s^" "^(toistr [d;c;b;a]);;
 
-let toInverseInfoStr iv = 
-   match iv with
-   | NOIN -> "none"
-   | IVI(o,d) -> fromop o;;
-
 let toIdentInfoStr id = 
     match id with
     |NONE -> "none"
@@ -483,19 +478,22 @@ let toIdentInfoStr id =
         let ss = if d = BI then "bi" else if d=LEFT then "left" else "right"
         in s^ss;;
 
-let printAllInverses u =
-    let v = getAllInverses () in
+let toInverseInfoStr iv = 
+   match iv with
+   | NOIN -> "none"
+   | IVI(o,d) -> fromop o;;
+
+let printOpRules u =
+    let v = getAllOpRules () in
     let rec helper l = 
     match l with
     | [] -> print_string "\n" 
     | x::xs ->
         match x with
-        | ORI(b,iv,ivv,ident) ->
+        | ORI(b,io) ->
         let s = toBaseOpRuleStr b in
         let y = toInverseInfoStr iv in
-        let z = toInverseInfoStr ivv in
-        let ii = toIdentInfoStr ident in
-        print_string (s^" "^y^" "^z^" "^ii^"\n");
+        print_string (s^" "^y"\n");
         helper xs
     in
     helper v;;
