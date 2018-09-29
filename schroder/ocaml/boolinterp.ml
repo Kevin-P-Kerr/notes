@@ -355,12 +355,33 @@ let getRightInverseOp o =
       let io = List.nth primTruthTables(z-1) in
       IVI(io,RIGHT);;
 
+let makeFullRule 
+
+
 let getAllOpRules u = 
+    let cont e f l i =
+      f l (e::i) in
     let rec helper l x = 
     match l with 
     | [] -> x
     | n::ns ->
-        helper ns (oprule::x)
+        let t = getPrimTruthTable n in
+        let ii = getIdentInfo n in
+        let ie = getInverseElement n in
+        let li = getLeftInverseOp n in
+        let ri = getRightInverseOp n in
+        let base = BOR(n,t) in
+        if li=NOIN && ri=NOIN then
+          if ie=NOIN then
+            cont (OR(base)) helper ns x
+          else 
+            cont (ORI(base,ie)) helper ns x
+        else
+          let rule = if li=NOIN then ri else li in
+          if ie=NOIN then
+            cont (ORI(base,rule)) helper ns x
+          else
+            cont (makeFullRule rule ie) helper ns x
     in
     helper primTruthTables [];;
 
