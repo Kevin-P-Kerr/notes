@@ -479,12 +479,25 @@ let toIdentInfoStr id =
         let ss = if d = BI then "bi" else if d=LEFT then "left" else "right"
         in s^ss;;
 
-(* inverse op, direction, inverse element, direction*)
+let fromDirection d = 
+  match d with
+  | LEFT -> "left"
+  | RIGHT -> "right"
+  | BI -> "bi";;
+
+let fromidi idi =
+  match idi with
+  | IDI(c,d) ->
+    if c = CONE then "1 "^(fromDirection d) else "0 "^(fromDirection d) 
+  | _ -> raise (PrintError "print error");;
+
+(* inverse op, direction, identity element, direction, inverse element, direction*)
 let toInverseInfoStr iv = 
    match iv with
    | NOIN -> "none"
    | IVI(o,d) -> (fromop o)^" "^(fromDirection d)
-   | IVE(id1,id2) ->  
+   | IVE(id1,id2) -> "none"^" "^(fromidi id1)^" "^(fromidi id2)
+   | FIVI(o,d,id1,id2) -> (fromop o)^" "^(fromDirection d)^" "^(fromidi id1)^" "^(fromidi id2)
 
 let printOpRules u =
     let v = getAllOpRules () in
