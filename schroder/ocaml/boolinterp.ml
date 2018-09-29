@@ -525,7 +525,7 @@ let printOpRules u =
             let s = toIdentityStr id in
             let y = toBaseOpRuleStr b in
             let z = toInverseInfoStr io in
-            print_string(y^" "^z^s^"\n");
+            print_string(y^" "^z^" "^s^"\n");
             helper xs
     in
     helper v;;
