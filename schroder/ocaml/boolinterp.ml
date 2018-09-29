@@ -269,14 +269,14 @@ let getConstantFromIdent i =
     |IDI(c,d) -> c;;
 
     (* if there is both a left identity element and a right identity element, then, for the 14 operations defined on 2 boolean variables, the identity element is the same in both directions. we can take advanatge of that here *)
-let getIdentInfo o = 
+let getIdentElement o = 
     let lident = getLeftIdentity o in
     let rident = getRightIdentity o in
     if lident!=NONE && rident!=NONE  then IDI((getConstantFromIdent lident),BI) else
     if lident=NONE then rident else lident;;
 
 let getInverseElement o = 
-    let ident = getIdentInfo o in
+    let ident = getIdentElement o in
     let i = getPrimTruthTable o in
       let a = i land 1 in
       let b = i land 2 in
@@ -323,6 +323,17 @@ let getInverseElement o =
                 else NONE
             else NONE;;
 
+let getIdentInfo o =
+    let one = IVI(EQV,BI) in
+    let zero = IVI(XOR,BI) in
+    let e = getIdentElement o in
+    let ie = getInverseElement o in
+    let trueIdent = if ie=NONE then e else ie in
+    match trueIdent with
+    | NONE -> NONE
+    | IDI(c,d)|IDIE(c,d,_,_) -> if c=CZERO then IDII(trueIdent,zero) else IDII(trueIdent,one)
+    | _ -> raise (ParseError "get ident info");;
+
 let testForCommut o =
     let i = getPrimTruthTable o in
     let a = i land 1 in
@@ -333,7 +344,6 @@ let testForCommut o =
 
 (*a~b=c -> c~b=a*)
 let getLeftInverseOp o =
-    let idi = getIdentInfo o in
     let i = getPrimTruthTable o in
     let a = i land 1 in
     let b = i land 2 in
@@ -350,7 +360,6 @@ let getLeftInverseOp o =
 
 (* a~b=c b~c=a *)
 let getRightInverseOp o =
-    let idi = getIdentInfo o in
     let i = getPrimTruthTable o in
     let a = i land 1 in
     let b = i land 2 in
@@ -374,8 +383,7 @@ let getAllOpRules u =
     | n::ns ->
         let t = getPrimTruthTable n in
         let ii = getIdentInfo n in
-        let ie = getInverseElement n in
-        let trueIdentityInfo = if ie=NONE then ii else ie in
+        let trueIdentityInfo = ii in
         let li = getLeftInverseOp n in
         let ri = getRightInverseOp n in
         let inverseOp = if li=NOIN then ri else li in
