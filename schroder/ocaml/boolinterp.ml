@@ -283,36 +283,45 @@ let getInverseElement o =
       let c = i land 4 in
       let d = i land 8 in
     match ident with
-    | NONE -> NOIN
+    | NONE -> NONE
     | IDI(co,direction) ->
         let ci = if co=CONE then 1 else 0 in
         if ci=0 then
-          if d=0 && b=0 && c=0 then
-            let invertInfo = IDI(co,BI) in
-            IVE(ident,invertInfo)
-          else if d=0 && c=0 then
-            let invertInfo = IDI(co,LEFT) in
-            IVE(ident,invertInfo)
-          else if d=0 && b=0 then
-            let invertInfo = IDI(co,RIGHT) in
-            IVE(ident,invertInfo)
-          else
-            NOIN
-        else 
-          if a=1 then
-            if b>0 && c>0 then
-              let invertInfo = IDI(co,BI) in
-              IVE(ident,invertInfo)
-            else if b>0 then
-              let invertInfo = IDI(co,LEFT) in
-              IVE(ident,invertInfo)
-            else if c>0 then
-              let invertInfo = IDI(co,RIGHT) in
-              IVE(ident,invertInfo)
-            else
-              NOIN
-            else 
-              NOIN;;
+            if d=0 then
+                if c=0 && b=0 then
+                    IDIE(co,direction,co,BI)
+                else if c=0 then
+                    IDIE(co,direction,co,LEFT)
+                else if b=0 then
+                    IDIE(co,direction,co,RIGHT)
+                else NONE
+            else if a=0 then
+                if c=0 && b=0 then
+                    IDIE(co,direction,CONE,BI)
+                else if c=0 then
+                    IDIE(co,direction,CONE,RIGHT)
+                else if b=0 then
+                    IDIE(co,direction,CONE,LEFT)
+                else NONE
+            else NONE
+        else
+            if d>0 then
+                if c>0 && b>0 then
+                    IDIE(co,direction,CZERO,BI)
+                else if c>0 then
+                    IDIE(co,direction,CZERO,LEFT)
+                else if b>0 then
+                    IDIE(co,direction,CZERO,RIGHT)
+                else NONE
+            else if a>0 then
+                if c>0 && b>0 then
+                    IDIE(co,direction,co,BI)
+                else if c>0 then
+                    IDIE(co,direction,co,RIGHT)
+                else if b>0 then
+                    IDIE(co,direction,co,LEFT)
+                else NONE
+            else NONE;;
 
 let testForCommut o =
     let i = getPrimTruthTable o in
