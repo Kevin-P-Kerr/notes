@@ -365,17 +365,6 @@ let getRightInverseOp o =
       let io = List.nth primTruthTables(z-1) in
       IVI(io,RIGHT);;
 
-let makeFullRule invf inve =
-  match invf with
-  |IVI(o,d) -> 
-      begin
-        match inve with
-        | IVE(id1,id2) ->
-            FIVI(o,d,id1,id2)
-        | _ -> raise (EvaluationError "full rule")
-      end
-  | _ -> raise (EvaluationError "full rule");;
-
 let getAllOpRules u = 
     let cont e f l i =
       f l (e::i) in
