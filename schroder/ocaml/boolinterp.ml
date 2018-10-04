@@ -295,8 +295,9 @@ let getInverseElement o =
               | RIGHT -> if c=0 && a=0 then IDIE(co,direction,CONE,LEFT) else if c=0 then IDIE(co,direction,CZERO,RIGHT) else NONE
             end
         else
-          if d>0 then IDIE(co,direction,CZERO,BI)
-            else NONE;;
+          begin
+            match direction with
+            | BI -> 
 
 let getIdentInfo o =
     let e = getIdentElement o in
