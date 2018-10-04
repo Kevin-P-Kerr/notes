@@ -458,8 +458,6 @@ let printOpRules u =
     in
     helper v;;
 
-printOpRules ();;
-
 let rec fromast ast = 
   match ast with
   | ASTF(aa,aaa) ->
@@ -475,7 +473,6 @@ let rec fromast ast =
       (fromast a)^" "^(fromop o)^" "^(fromast aa)
   | _ -> "bad";;
 
-
 let rec repl env = 
   let s = read_line () in
   let ts = tokenize s in
@@ -489,4 +486,5 @@ let rec repl env =
   print_string (ns^"\n");
   repl e;;
 
+printOpRules ();;
 repl (ENV([]));;
