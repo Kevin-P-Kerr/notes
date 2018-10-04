@@ -302,6 +302,13 @@ let getInverseElement o =
             | RIGHT -> if d>0 && b>0 then IDIE(co,direction,CZERO,RIGHT) else if b>0 then IDIE(co,direction,CONE,LEFT) else NONE
           end;;
 
+let getInverseOp identinfo = 
+  match identinfo with
+  | NONE -> NONE
+  | IDI(c,d) -> identinfo
+  | IDIE(c,d,cc,dd) ->
+
+
 let getIdentInfo o =
     let e = getIdentElement o in
     let ie = getInverseElement o in
