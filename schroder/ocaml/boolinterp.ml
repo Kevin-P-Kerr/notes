@@ -322,15 +322,9 @@ let getInverseElement o =
             else NONE;;
 
 let getIdentInfo o =
-    let one = IVI(EQV,BI) in
-    let zero = IVI(XOR,BI) in
     let e = getIdentElement o in
     let ie = getInverseElement o in
-    let trueIdent = if ie=NONE then e else ie in
-    match trueIdent with
-    | NONE -> NONE
-    | IDI(c,d)|IDIE(c,d,_,_) -> if c=CZERO then IDII(trueIdent,zero) else IDII(trueIdent,one)
-    | _ -> raise (ParseError "get ident info");;
+    if ie=NONE then e else ie;;
 
 let getAllOpRules u = 
     let cont e f l i =
@@ -350,7 +344,7 @@ let getAllOpRules u =
           | _ ->
             let next = ORIE(base,ii) in
             cont next helper ns x
-        end;;
+        end
     in
     helper primTruthTables [];;
 
@@ -453,7 +447,6 @@ let rec toIdentityStr id =
     |NONE -> "NONE"
     |IDI(c,d) -> fromidi c d
     |IDIE(c,d,cc,dd) -> (fromidi c d)^" "^(fromidi cc dd)
-    |IDII(idf,inf) -> (toIdentityStr idf)^" "^(toInverseInfoStr inf);;
 
 let printOpRules u =
     let v = getAllOpRules () in
@@ -469,7 +462,7 @@ let printOpRules u =
         | ORIE(b,id) ->
           let s = toIdentityStr id in
           let y = toBaseOpRuleStr b in
-          print_string(y^" none "^s^"\n");
+          print_string(y^" "^s^"\n");
           helper xs
     in
     helper v;;
