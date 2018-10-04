@@ -345,14 +345,6 @@ let getAllOpRules u =
         if ii=NONE then 
             let next = OR(base) in
             cont next helper ns x else
-        if trueIdentityInfo=NONE then
-            let next = ORI(base,inverseOp) in
-            cont next helper ns x else
-        if inverseOp=NOIN then
-            let next = ORIE(base,trueIdentityInfo) in
-            cont next helper ns x else
-        let next  = ORIEIO(base,trueIdentityInfo,inverseOp) in
-        cont next helper ns x
     in
     helper primTruthTables [];;
 
