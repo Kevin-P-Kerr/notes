@@ -9,12 +9,12 @@ type constant = CONE|CZERO;;
 type direction = RIGHT|LEFT|BI;;
 type baseOpRule = BOR of (op*int);;
 type identinfo = IDI of (constant*direction) | IDIE of (constant*direction*constant*direction) | NONE;;
-type opRule = OR of (baseOpRule) | ORIE of (baseOpRule*identinfo) | ORI of (baseOpRule*inverseinfo) | ORIEIO of (baseOpRule*identinfo*inverseinfo);;
+type opRule = OR of (baseOpRule) | ORIE of (baseOpRule*identinfo);;
 type lexrule = LR of (Str.regexp * token);;
 type lextoken = LT of (token*string);;
 type tokenstack = TSLT of lextoken | TS of (lextoken list) | EMPTY;;
 type tokenstackcommand = PEEK|POP;;
-type ast = ASTF of (ast*ast) | ASTV of string |ASTC of constant | ASTE of (op*ast*ast) | ASTAS of (string*ast) | ASTEV of (ast*constant list);;
+type ast = ASTF of (ast*ast) | ASTV of string | ASTC of constant | ASTE of (op*ast*ast) | ASTAS of (string*ast) | ASTEV of (ast*constant list);;
 type metavar = MV of (string*ast);;
 type environment = ENV of metavar list | HIER of ((metavar list)*environment);;
 type evalresult = ER of (ast*environment);;
@@ -342,9 +342,15 @@ let getAllOpRules u =
         let t = getPrimTruthTable n in
         let ii = getIdentInfo n in
         let base = BOR(n,t) in
-        if ii=NONE then 
+        begin
+          match ii with
+          | NONE ->
             let next = OR(base) in
-            cont next helper ns x else
+            cont next helper ns x
+          | _ ->
+            let next = ORIE(base,ii) in
+            cont next helper ns x
+        end;;
     in
     helper primTruthTables [];;
 
@@ -442,12 +448,6 @@ let fromDirection d =
 let fromidi c d =
     if c = CONE then "1 "^(fromDirection d) else "0 "^(fromDirection d) 
 
-(* inverse op, direction, identity element, direction, inverse element, direction*)
-let toInverseInfoStr iv = 
-   match iv with
-   | NOIN -> "none"
-   | IVI(o,d) -> (fromop o)^" "^(fromDirection d);;
-
 let rec toIdentityStr id = 
     match id with
     |NONE -> "NONE"
@@ -462,11 +462,6 @@ let printOpRules u =
     | [] -> print_string "\n" 
     | x::xs ->
         match x with
-        | ORI(b,io) ->
-        let s = toBaseOpRuleStr b in
-        let y = toInverseInfoStr io in
-        print_string (s^" "^y^"\n");
-        helper xs
         | OR(b) ->
           let s = toBaseOpRuleStr b in
           print_string(s^"\n");
@@ -476,12 +471,6 @@ let printOpRules u =
           let y = toBaseOpRuleStr b in
           print_string(y^" none "^s^"\n");
           helper xs
-        | ORIEIO(b,id,io) ->
-            let s = toIdentityStr id in
-            let y = toBaseOpRuleStr b in
-            let z = toInverseInfoStr io in
-            print_string(y^" "^z^" "^s^"\n");
-            helper xs
     in
     helper v;;
 
