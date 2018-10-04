@@ -286,9 +286,14 @@ let getInverseElement o =
     | IDI(co,direction) ->
         let ci = if co=CONE then 1 else 0 in
         if ci=0 then
-            (* only 1 can be the inverse, since by def 0~a=a *)
-            if a=0 then IDIE(co,direction,CONE,BI)
-            else NONE
+            begin
+              match direction with
+              |BI ->
+                if a=0 then IDIE(co,direction,CONE,BI) else NONE
+              | LEFT ->
+                if b=0 && a=0 then IDIE(co,direction,CONE,LEFT) else if b=0 then IDIE(co,direction,CZERO,RIGHT) else NONE
+              | RIGHT -> if c=0 && a=0 then IDIE(co,direction,CONE,LEFT) else if c=0 then IDIE(co,direction,CZERO,RIGHT) else NONE
+            end
         else
           if d>0 then IDIE(co,direction,CZERO,BI)
             else NONE;;
