@@ -304,9 +304,12 @@ let getInverseElement o =
 
 let getInverseOp identinfo = 
   match identinfo with
-  | NONE -> NONE
-  | IDI(c,d) -> identinfo
-  | IDIE(c,d,cc,dd) ->
+  | NONE -> NOOP
+  | IDI(c,d) -> NOOP
+  | IDIE(_,_,c,d) ->
+      match c with
+      | CONE -> EQV
+      | CZERO -> XOR;;
 
 
 let getIdentInfo o =
