@@ -282,6 +282,7 @@ let getInverseElement o =
       let d = i land 8 in
     match ident with
     | NONE -> NONE
+    | IDIE(c,d,cc,dd) -> raise EvaluationError("get inverse")
     | IDI(co,direction) ->
         let ci = if co=CONE then 1 else 0 in
         if ci=0 then
