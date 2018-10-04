@@ -8,8 +8,7 @@ type metaop = SET|EVAL;;
 type constant = CONE|CZERO;;
 type direction = RIGHT|LEFT|BI;;
 type baseOpRule = BOR of (op*int);;
-type inverseinfo = IVI of (op*direction) | NOIN;;
-type identinfo = IDI of (constant*direction) | IDIE of (constant*direction*constant*direction) | IDII of (identinfo*inverseinfo) | NONE;;
+type identinfo = IDI of (constant*direction) | IDIE of (constant*direction*constant*direction) | NONE;;
 type opRule = OR of (baseOpRule) | ORIE of (baseOpRule*identinfo) | ORI of (baseOpRule*inverseinfo) | ORIEIO of (baseOpRule*identinfo*inverseinfo);;
 type lexrule = LR of (Str.regexp * token);;
 type lextoken = LT of (token*string);;
@@ -263,7 +262,6 @@ let getRightIdentity o =
   if (d=0 && b>0) then IDI(CZERO,RIGHT) else
   if (c=0 && a>0) then IDI(CONE,RIGHT) else NONE;;
 
-
 let getConstantFromIdent i =
     match i with
     |IDI(c,d) -> c;;
@@ -334,46 +332,6 @@ let getIdentInfo o =
     | IDI(c,d)|IDIE(c,d,_,_) -> if c=CZERO then IDII(trueIdent,zero) else IDII(trueIdent,one)
     | _ -> raise (ParseError "get ident info");;
 
-let testForCommut o =
-    let i = getPrimTruthTable o in
-    let a = i land 1 in
-    let b = i land 2 in
-    let c = i land 4 in
-    let d = i land 8 in
-    b=c;;
-
-(*a~b=c -> c~b=a*)
-let getLeftInverseOp o =
-    let i = getPrimTruthTable o in
-    let a = i land 1 in
-    let b = i land 2 in
-    let c = i land 4 in
-    let d = i land 8 in
-    let id = (if d=0 && b=0 then -10 else if b=0 then 8 else 0) in
-    let ic =  (if c=0 && a=0 then -10  else if a=0 then 4 else 0) in
-    let ib =  (if b>0 && d>0 then -10 else if b>0 then 2 else 0) in
-    let ia =  (if a>0 && c>0 then  -10  else if a>0 then 1 else 0) in
-    let z = id+ic+ib+ia in
-      if (ia <0 || ib <0 || ic<0 || id <0) then NOIN else
-      let io = List.nth primTruthTables(z-1) in
-      IVI(io,LEFT);;
-
-(* a~b=c b~c=a *)
-let getRightInverseOp o =
-    let i = getPrimTruthTable o in
-    let a = i land 1 in
-    let b = i land 2 in
-    let c = i land 4 in
-    let d = i land 8 in
-    let id = (if d=0 && b=0 then -10 else if b=0 then 8 else 0) in
-    let ic = (if b=1 && d=1 then -10 else if b=1 then 4 else 0) in
-    let ib = (if c=0 && a=0 then -10 else if a=0 then 2 else 0) in
-    let ia = (if c=1 && a=1 then -10 else if a=1 then 1 else 0) in
-    let z = id+ic+ib+ia in
-      if (ia <0 || ib <0 || ic<0 || id <0) then NOIN else
-      let io = List.nth primTruthTables(z-1) in
-      IVI(io,RIGHT);;
-
 let getAllOpRules u = 
     let cont e f l i =
       f l (e::i) in
@@ -383,12 +341,8 @@ let getAllOpRules u =
     | n::ns ->
         let t = getPrimTruthTable n in
         let ii = getIdentInfo n in
-        let trueIdentityInfo = ii in
-        let li = getLeftInverseOp n in
-        let ri = getRightInverseOp n in
-        let inverseOp = if li=NOIN then ri else li in
         let base = BOR(n,t) in
-        if trueIdentityInfo=NONE && inverseOp=NOIN then 
+        if ii=NONE then 
             let next = OR(base) in
             cont next helper ns x else
         if trueIdentityInfo=NONE then
