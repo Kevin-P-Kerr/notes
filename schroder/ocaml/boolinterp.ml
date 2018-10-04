@@ -292,12 +292,15 @@ let getInverseElement o =
                 if a=0 then IDIE(co,direction,CONE,BI) else NONE
               | LEFT ->
                 if b=0 && a=0 then IDIE(co,direction,CONE,LEFT) else if b=0 then IDIE(co,direction,CZERO,RIGHT) else NONE
-              | RIGHT -> if c=0 && a=0 then IDIE(co,direction,CONE,LEFT) else if c=0 then IDIE(co,direction,CZERO,RIGHT) else NONE
+              | RIGHT -> if c=0 && a=0 then IDIE(co,direction,CONE,RIGHT) else if c=0 then IDIE(co,direction,CZERO,LEFT) else NONE
             end
         else
           begin
             match direction with
-            | BI -> 
+            | BI ->  if d>0 then IDIE(co,direction,CZERO,BI) else NONE
+            | LEFT -> if c>0 && d>0 then IDIE(co,direction,CZERO,LEFT) else if c>0 then IDIE(co,direction,CONE,RIGHT) else NONE
+            | RIGHT -> if d>0 && b>0 then IDIE(co,direction,CZERO,RIGHT) else if b>0 then IDIE(co,direction,CONE,LEFT) else NONE
+          end;;
 
 let getIdentInfo o =
     let e = getIdentElement o in
