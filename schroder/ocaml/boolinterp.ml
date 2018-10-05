@@ -356,7 +356,7 @@ let rec lookup s env =
       | _ -> r;;
 
 let evalop o a1 a2 env =
-  let t = getPrimTruthTable o in
+  let i = getPrimTruthTable o in
   let a = i land 1 in
   let b = i land 2 in
   let c = i land 4 in
@@ -374,7 +374,7 @@ let evalop o a1 a2 env =
         | ASTF(_,_) -> raise (EvaluationError "evalop")
         | ASTC(c2) ->
           if c=CONE then
-            if c2=CONE then if a=0 then ER(zero,env) else ER(one,evn) else if b=0 then ER(zero,env) else ER(one,env)
+            if c2=CONE then if a=0 then ER(zero,env) else ER(one,env) else if b=0 then ER(zero,env) else ER(one,env)
           else if c2=CONE then if c=0 then ER(zero,env) else ER(one,env) else if d=0 then ER(zero,env) else ER(one,env)
         | _ -> if c=CONE then if a=0 && b=0 then ER(zero,env) else if a>0 && b>0 then ER(zero,env) else if a>0 && b=0 then ER(a2,env) else ER((ASTE(NIMP,one,a2))) else if d=0 && c=0 then ER(zero,env) else if d>0 && c>0 then ER(one,env) else if d=0 && c>0 then ER(a2,env) else ER((ASTE(NIMP,one,a2)),env)
         end
@@ -385,11 +385,12 @@ let evalop o a1 a2 env =
         | ASTF(_,_) -> raise (EvaluationError "evalop")
         | ASTEV(_,_,_) -> raise (EvaluationError "evalop")
         | ASTC(c2) ->
-            if c2=CONE then if a>0 && c>0 then ER(one,evn) else if a=0 && c=0 then ER(zero,env) else if a>0 && c=0 then ER(a1,env) else ER((ASTE(NIMP,one,a1),env) else if d>0 && b>0 then ER(one,env) else if d=0 && c=0 then ER(zoer,env) else if d=0 && b>0 then ER(a1,env) else ER((ASTE(NIMP,one,a1)),env)
+            if c2=CONE then if a>0 && c>0 then ER(one,env) else if a=0 && c=0 then ER(zero,env) else if a>0 && c=0 then ER(a1,env) else ER((ASTE(NIMP,one,a1),env)) else if d>0 && b>0 then ER(one,env) else if d=0 && c=0 then ER(zoer,env) else if d=0 && b>0 then ER(a1,env) else ER((ASTE(NIMP,one,a1)),env)
         | _ -> 
-            if a1=a1 then if d=0 && a=0 then ER(zero,env) else if d=1 && a>0 then ER(one,env) else if d=0 && a>0 then ER(a1,env) else ER((ASTE(NIMP,one,a1)),env) else if d=0 && b=0 && a>0 && c>0 then ER(a2,env) else if d>0 && b>0 && a=0 && c=0 then ER((ASTE(NIMP,one,s2)),env) else if d=0 && b=0 && c>0 && a>0 then ER(a1,env) else if d>0 && b>0 && c=0 && a=0 then ER((ASTE(NIMP,one,a1)),env) else ER(ASTE(o,a1 s2)) in
+            if a1=a1 then if d=0 && a=0 then ER(zero,env) else if d=1 && a>0 then ER(one,env) else if d=0 && a>0 then ER(a1,env) else ER((ASTE(NIMP,one,a1)),env) else if d=0 && b=0 && a>0 && c>0 then ER(a2,env) else if d>0 && b>0 && a=0 && c=0 then ER((ASTE(NIMP,one,s2)),env) else if d=0 && b=0 && c>0 && a>0 then ER(a1,env) else if d>0 && b>0 && c=0 && a=0 then ER((ASTE(NIMP,one,a1)),env) else ER(ASTE(o,a1 s2)) 
+            end 
+  in
   evalhelper ();;
-
 
 let rec eval a env =
   match a with
