@@ -25,16 +25,15 @@ exception EvaluationError of string;;
 exception PrintError of string;;
 let asterMatch = LR(Str.regexp "^\\*",ASTER);;
 let plusMatch = LR(Str.regexp "^\\+",PLUS);;
-let minusMath = LR(Str.regexp "^-",MINUS);;
+let minusMatch = LR(Str.regexp "^-",MINUS);;
 let varMatch = LR(Str.regexp "^[A-Za-z]+",VAR);;
 let oneMatch = LR(Str.regexp "^1",ONE);;
 let zeroMatch = LR(Str.regexp "^0",ZERO);;
 let equalMatch = LR(Str.regexp "^=",EQUAL);;
-(*let quasiMatch = LR(Str.regexp "^`",EQUAL);; *)
 let colonMatch = LR(Str.regexp "^:",EQUAL);; 
 let whiteRE = Str.regexp "^[ \n\r\t]+";;
 let whiteMatch = LR(whiteRE,WHITE);;
-let reglist = [whiteMatch;varMatch;asterMatch;plusMatch;zeroMatch;oneMatch;equalMatch];;
+let reglist = [minusMatch;whiteMatch;varMatch;asterMatch;plusMatch;zeroMatch;oneMatch;equalMatch];;
 
 let ismatch r s =
   Str.string_match r s 0;;
@@ -388,7 +387,7 @@ let evalop o a1 a2 env =
         | ASTC(c2) ->
             if c2=CONE then if a>0 && c>0 then ER(one,env) else if a=0 && c=0 then ER(zero,env) else if a>0 && c=0 then ER(a1,env) else ER((ASTE(NIMP,one,a1),env)) else if d>0 && b>0 then ER(one,env) else if d=0 && c=0 then ER(zero,env) else if d=0 && b>0 then ER(a1,env) else ER((ASTE(NIMP,one,a1)),env)
         | _ -> 
-            if a1=a1 then if d=0 && a=0 then ER(zero,env) else if d=1 && a>0 then ER(one,env) else if d=0 && a>0 then ER(a1,env) else ER((ASTE(NIMP,one,a1)),env) else if d=0 && b=0 && a>0 && c>0 then ER(a2,env) else if d>0 && b>0 && a=0 && c=0 then ER((ASTE(NIMP,one,a2)),env) else if d=0 && b=0 && c>0 && a>0 then ER(a1,env) else if d>0 && b>0 && c=0 && a=0 then ER((ASTE(NIMP,one,a1)),env) else ER((ASTE(o,a1,a2)),env) 
+            if a1=a1 then if d=0 && a=0 then ER(zero,env) else if d>1 && a>0 then ER(one,env) else if d=0 && a>0 then ER(a1,env) else ER((ASTE(NIMP,one,a1)),env) else if d=0 && b=0 && a>0 && c>0 then ER(a2,env) else if d>0 && b>0 && a=0 && c=0 then ER((ASTE(NIMP,one,a2)),env) else if d=0 && b=0 && c>0 && a>0 then ER(a1,env) else if d>0 && b>0 && c=0 && a=0 then ER((ASTE(NIMP,one,a1)),env) else ER((ASTE(o,a1,a2)),env) 
             end 
   in
   evalhelper ();;
