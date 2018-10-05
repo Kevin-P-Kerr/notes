@@ -178,8 +178,7 @@ let getConstantList ts =
             | _ -> raise (ParseError "parse error")
             end
         | _ -> l in
-    let l = helper [] in
-    List.rev l;;
+    helper [];;
 
 let rec parse ts =
   let t = ts PEEK in
