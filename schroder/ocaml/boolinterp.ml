@@ -383,10 +383,7 @@ let evalop o a1 a2 env =
     
 
 
-  if a1=a2 then
-    if a=0 && d=0 then ER((ASTC CZERO),env)
-    else if a>0 && d>0 then ER((ASTC CONE),env) else nonequaleval ()
-  else nonequaleval ();;
+  nonequaleval ();;
 
 
 let rec eval a env =
