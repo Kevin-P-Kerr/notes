@@ -366,10 +366,13 @@ let evalop o a1 a2 env =
     | ASTC(c) ->
         begin
         match a2 with
-        ASTC(c2) ->
+        | ASTF(_,_) -> raise (EvaluationError "evalop")
+        | ASTEV(_,_,_) -> raise (EvaluationError "evalop")
+        | ASTC(c2) ->
           if c=CONE then
             if c2=CONE then if a=0 then ER((ASTC CZERO),env) else ER((ASTC CONE),evn) else if b=0 then ER((ASTC CZERO),env) else ER((ASTC CONE),env)
-          else
+          else if c2=CONE then if c=0 then ER((ASTC(CZERO)),env) else ER((ASTC(CONE)),env) else if d=0 then ER((ASTC(CZERO)),env) else ER((ASTC(CONE)),env)
+        | _ -> 
 
 
   if a1=a2 then
