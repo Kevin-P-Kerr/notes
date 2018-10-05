@@ -363,7 +363,7 @@ let evalop o a1 a2 env =
   let d = i land 8 in
   let one = ASTC(CONE) in
   let zero = ASTC(CZERO) in
-  let nonequaleval u =
+  let evalhelper u =
     match a1 with
     | ASTF(_,_) -> raise (EvaluationError "evalop")
     | ASTAS(_,_) -> raise (EvaluationError "evalop")
@@ -386,11 +386,9 @@ let evalop o a1 a2 env =
         | ASTEV(_,_,_) -> raise (EvaluationError "evalop")
         | ASTC(c2) ->
             if c2=CONE then if a>0 && c>0 then ER(one,evn) else if a=0 && c=0 then ER(zero,env) else if a>0 && c=0 then ER(a1,env) else ER((ASTE(NIMP,one,a1),env) else if d>0 && b>0 then ER(one,env) else if d=0 && c=0 then ER(zoer,env) else if d=0 && b>0 then ER(a1,env) else ER((ASTE(NIMP,one,a1)),env)
-        | _ ->    
-    
-
-
-  nonequaleval ();;
+        | _ -> 
+            if a1=a1 then if d=0 && a=0 then ER(zero,env) else if d=1 && a>0 then ER(one,env) else if d=0 && a>0 then ER(a1,env) else ER((ASTE(NIMP,one,a1)),env) else if d=0 && b=0 && a>0 && c>0 then ER(a2,env) else if d>0 && b>0 && a=0 && c=0 then ER((ASTE(NIMP,one,s2)),env) else if d=0 && b=0 && c>0 && a>0 then ER(a1,env) else if d>0 && b>0 && c=0 && a=0 then ER((ASTE(NIMP,one,a1)),env) else ER(ASTE(o,a1 s2)) in
+  evalhelper ();;
 
 
 let rec eval a env =
