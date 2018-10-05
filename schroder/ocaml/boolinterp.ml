@@ -385,6 +385,8 @@ let evalop o a1 a2 env =
         | ASTF(_,_) -> raise (EvaluationError "evalop")
         | ASTEV(_,_,_) -> raise (EvaluationError "evalop")
         | ASTC(c2) ->
+            if c2=CONE then if a>0 && c>0 then ER((ASCT(CONE),evn)) else if a=0 && c=0 then ER(ASTC(CZERO),env) else if a>0 && c=0 then ER(a1,env) else ER((ASTE(NIMP,ASTC(CONE),a1),env) else if d>0 && b>0 then ER( 
+        | ASTV(s2) ->    
     
 
 
