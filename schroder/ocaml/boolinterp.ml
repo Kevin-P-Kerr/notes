@@ -366,21 +366,19 @@ let evalop o a1 a2 env =
   let nonequaleval u =
     match a1 with
     | ASTF(_,_) -> raise (EvaluationError "evalop")
-    | ASTEV(_,_,_) -> raise (EvaluationError "evalop")
     | ASTAS(_,_) -> raise (EvaluationError "evalop")
     | ASTC(c) ->
         begin
         match a2 with
         | ASTAS(_,_) -> raise (EvaluationError "evalop")
         | ASTF(_,_) -> raise (EvaluationError "evalop")
-        | ASTEV(_,_,_) -> raise (EvaluationError "evalop")
         | ASTC(c2) ->
           if c=CONE then
             if c2=CONE then if a=0 then ER(zero,env) else ER(one,evn) else if b=0 then ER(zero,env) else ER(one,env)
           else if c2=CONE then if c=0 then ER(zero,env) else ER(one,env) else if d=0 then ER(zero,env) else ER(one,env)
         | _ -> if c=CONE then if a=0 && b=0 then ER(zero,env) else if a>0 && b>0 then ER(zero,env) else if a>0 && b=0 then ER(a2,env) else ER((ASTE(NIMP,one,a2))) else if d=0 && c=0 then ER(zero,env) else if d>0 && c>0 then ER(one,env) else if d=0 && c>0 then ER(a2,env) else ER((ASTE(NIMP,one,a2)),env)
         end
-    |ASTV(s) ->
+    | _ ->
         begin
         match a2 with
         | ASTAS(_,_) -> raise (EvaluationError "evalop")
@@ -388,7 +386,7 @@ let evalop o a1 a2 env =
         | ASTEV(_,_,_) -> raise (EvaluationError "evalop")
         | ASTC(c2) ->
             if c2=CONE then if a>0 && c>0 then ER(one,evn) else if a=0 && c=0 then ER(zero,env) else if a>0 && c=0 then ER(a1,env) else ER((ASTE(NIMP,one,a1),env) else if d>0 && b>0 then ER(one,env) else if d=0 && c=0 then ER(zoer,env) else if d=0 && b>0 then ER(a1,env) else ER((ASTE(NIMP,one,a1)),env)
-        | ASTV(s2) ->    
+        | _ ->    
     
 
 
