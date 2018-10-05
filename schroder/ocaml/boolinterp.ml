@@ -128,7 +128,7 @@ let getopt t =
       match t with 
       | ASTER -> AND
       | PLUS -> OR
-      | MINUS -> NIMP
+      | MINUS -> CNIMP
       | _ ->
           getstropt n;;
 
@@ -376,7 +376,7 @@ let evalop o a1 a2 env =
           if c1=CONE then
             if c2=CONE then if a=0 then ER(zero,env) else ER(one,env) else if b=0 then ER(zero,env) else ER(one,env)
           else if c2=CONE then if c=0 then ER(zero,env) else ER(one,env) else if d=0 then ER(zero,env) else ER(one,env)
-        | _ -> if c1=CONE then if a=0 && b=0 then ER(zero,env) else if a>0 && b>0 then ER(zero,env) else if a>0 && b=0 then ER(a2,env) else ER((ASTE(NIMP,one,a2)),env) else if d=0 && c=0 then ER(zero,env) else if d>0 && c>0 then ER(one,env) else if d=0 && c>0 then ER(a2,env) else ER((ASTE(NIMP,one,a2)),env)
+        | _ -> if c1=CONE then if a=0 && b=0 then ER(zero,env) else if a>0 && b>0 then ER(zero,env) else if a>0 && b=0 then ER(a2,env) else ER((ASTE(CNIMP,one,a2)),env) else if d=0 && c=0 then ER(zero,env) else if d>0 && c>0 then ER(one,env) else if d=0 && c>0 then ER(a2,env) else ER((ASTE(CNIMP,one,a2)),env)
         end
     | _ ->
         begin
@@ -385,9 +385,9 @@ let evalop o a1 a2 env =
         | ASTF(_,_) -> raise (EvaluationError "evalop")
         | ASTEV(_,_) -> raise (EvaluationError "evalop")
         | ASTC(c2) ->
-            if c2=CONE then if a>0 && c>0 then ER(one,env) else if a=0 && c=0 then ER(zero,env) else if a>0 && c=0 then ER(a1,env) else ER((ASTE(NIMP,one,a1),env)) else if d>0 && b>0 then ER(one,env) else if d=0 && c=0 then ER(zero,env) else if d=0 && b>0 then ER(a1,env) else ER((ASTE(NIMP,one,a1)),env)
+            if c2=CONE then if a>0 && c>0 then ER(one,env) else if a=0 && c=0 then ER(zero,env) else if a>0 && c=0 then ER(a1,env) else ER((ASTE(CNIMP,one,a1),env)) else if d>0 && b>0 then ER(one,env) else if d=0 && c=0 then ER(zero,env) else if d=0 && b>0 then ER(a1,env) else ER((ASTE(CNIMP,one,a1)),env)
         | _ -> 
-            if a1=a1 then if d=0 && a=0 then ER(zero,env) else if d>1 && a>0 then ER(one,env) else if d=0 && a>0 then ER(a1,env) else ER((ASTE(NIMP,one,a1)),env) else if d=0 && b=0 && a>0 && c>0 then ER(a2,env) else if d>0 && b>0 && a=0 && c=0 then ER((ASTE(NIMP,one,a2)),env) else if d=0 && b=0 && c>0 && a>0 then ER(a1,env) else if d>0 && b>0 && c=0 && a=0 then ER((ASTE(NIMP,one,a1)),env) else ER((ASTE(o,a1,a2)),env) 
+            if a1=a1 then if d=0 && a=0 then ER(zero,env) else if d>1 && a>0 then ER(one,env) else if d=0 && a>0 then ER(a1,env) else ER((ASTE(CCNIMP,one,a1)),env) else if d=0 && b=0 && a>0 && c>0 then ER(a2,env) else if d>0 && b>0 && a=0 && c=0 then ER((ASTE(CNIMP,one,a2)),env) else if d=0 && b=0 && c>0 && a>0 then ER(a1,env) else if d>0 && b>0 && c=0 && a=0 then ER((ASTE(CNIMP,one,a1)),env) else ER((ASTE(o,a1,a2)),env) 
             end 
   in
   evalhelper ();;
