@@ -380,6 +380,11 @@ let evalop o a1 a2 env =
         end
     |ASTV(s) ->
         begin
+        match a2 with
+        | ASTAS(_,_) -> raise (EvaluationError "evalop")
+        | ASTF(_,_) -> raise (EvaluationError "evalop")
+        | ASTEV(_,_,_) -> raise (EvaluationError "evalop")
+        | ASTC(c2) ->
     
 
 
