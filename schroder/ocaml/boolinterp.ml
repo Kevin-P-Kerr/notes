@@ -411,9 +411,9 @@ let rec eval a env =
       let mv = MV(s,ea) in
       match env with
       | ENV(l) -> 
-          ER(a,ENV(mv::l))
+          ER(ea,ENV(mv::l))
       | HIER(l,e) ->
-          ER(a,HIER((mv::l),e))
+          ER(ea,HIER((mv::l),e))
       end
   | ASTE (o,a1,a2) ->
       let ea1 = getASTFromResult(eval a1 env) in
