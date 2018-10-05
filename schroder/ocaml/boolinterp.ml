@@ -410,6 +410,19 @@ let evalop o a1 a2 env =
   in
   evalhelper ();;
 
+let getVarlist a = 
+  let helper aa l = 
+    match aa with
+    | ASTF| ASTAS | ASTEV -> raise (ParseException "getvarlist")
+    | ASTC(_) -> l
+    | ASTV(s) -> s::l
+    | ASTE(o,a1,a2) ->
+        let l1 = helper a1 l in
+        let l2 = helper a2 l1 in
+        l2
+  in
+  helper a [];;
+
 let getASTFromResult r =
   match r with
   ER(a,e) -> a;;
@@ -437,6 +450,10 @@ let rec eval a env =
       let ea1 = getASTFromResult(eval a1 env) in
       let ea2 = getASTFromResult(eval a2 env) in
       evalop o ea1 ea2 env
+  | ASTEV(a1,l) ->
+      let ea1 = getASTFromResult(eval a1 env) in
+      let varlist = getVarlist ea1 in
+      partialeval ea1 varlist l
   | _ ->  ER(a,env);;
 
 (* to string method *)
