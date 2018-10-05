@@ -411,9 +411,9 @@ let evalop o a1 a2 env =
   evalhelper ();;
 
 let getVarlist a = 
-  let helper aa l = 
+  let rec helper aa l = 
     match aa with
-    | ASTF| ASTAS | ASTEV -> raise (ParseException "getvarlist")
+    | ASTF(_,_)| ASTAS(_,_) | ASTEV(_,_) -> raise (EvaluationError "getvarlist")
     | ASTC(_) -> l
     | ASTV(s) -> s::l
     | ASTE(o,a1,a2) ->
@@ -429,14 +429,14 @@ let makeMetaVarlist vl cl =
     if i = limit then l else
     let v = List.nth vl i in
     let c = List.nth cl i in
-    let mv = MV(v,ASTC(c))
+    let mv = MV(v,ASTC(c)) in
     helper (i+1) (mv::l) in
   helper 0 [];;
 
-let partialeval a vl cl e = 
+let partialeval a vl cl e eval = 
   let ml = makeMetaVarlist vl cl in
   let e1 = HIER(ml,e) in
-  eval a e;;
+  eval a e1;;
 
 let getASTFromResult r =
   match r with
@@ -468,7 +468,7 @@ let rec eval a env =
   | ASTEV(a1,l) ->
       let ea1 = getASTFromResult(eval a1 env) in
       let varlist = getVarlist ea1 in
-      partialeval ea1 varlist l env
+      partialeval ea1 varlist l env eval
   | _ ->  ER(a,env);;
 
 (* to string method *)
