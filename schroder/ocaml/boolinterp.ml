@@ -423,6 +423,21 @@ let getVarlist a =
   in
   helper a [];;
 
+let makeMetaVarlist vl cl =
+  let limit = List.length cl in
+  let rec helper i l = 
+    if i = limit then l else
+    let v = List.nth vl i in
+    let c = List.nth cl i in
+    let mv = MV(v,ASTC(c))
+    helper (i+1) (mv::l) in
+  helper 0 [];;
+
+let partialeval a vl cl e = 
+  let ml = makeMetaVarlist vl cl in
+  let e1 = HIER(ml,e) in
+  eval a e;;
+
 let getASTFromResult r =
   match r with
   ER(a,e) -> a;;
@@ -453,7 +468,7 @@ let rec eval a env =
   | ASTEV(a1,l) ->
       let ea1 = getASTFromResult(eval a1 env) in
       let varlist = getVarlist ea1 in
-      partialeval ea1 varlist l
+      partialeval ea1 varlist l env
   | _ ->  ER(a,env);;
 
 (* to string method *)
