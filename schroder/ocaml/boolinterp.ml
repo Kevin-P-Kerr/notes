@@ -420,7 +420,7 @@ let getVarlist a =
         let l2 = helper a2 l1 in
         l2
   in
-  helper a [];;
+  List.rev(helper a []);;
 
 let makeMetaVarlist vl cl =
   let limit = List.length cl in
