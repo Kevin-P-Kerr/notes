@@ -363,6 +363,8 @@ let evalop o a1 a2 env =
   let d = i land 8 in
   let nonequaleval u =
     match a1 with
+    | ASTF(_,_) -> raise (EvaluationError "evalop")
+    | ASTEV(_,_,_) -> raise (EvaluationError "evalop")
     | ASTC(c) ->
         begin
         match a2 with
@@ -372,7 +374,9 @@ let evalop o a1 a2 env =
           if c=CONE then
             if c2=CONE then if a=0 then ER((ASTC CZERO),env) else ER((ASTC CONE),evn) else if b=0 then ER((ASTC CZERO),env) else ER((ASTC CONE),env)
           else if c2=CONE then if c=0 then ER((ASTC(CZERO)),env) else ER((ASTC(CONE)),env) else if d=0 then ER((ASTC(CZERO)),env) else ER((ASTC(CONE)),env)
-        | _ -> 
+        | _ -> if c=CONE then if a=0 && b=0 then ER(ASTC(CZERO),env) else if a>0 && b>0 then ER((ASTC(CZERP)),env) else if a>0 && b=0 then ER(a2,env) else ER((ASTE(NIMP,ASTC(CONE),a2))) else if d=0 && c=0 then ER((ASTC(CZERO)),env) else if d>0 && c>0 then ER((ASCT(CONE)),env) else if d=0 && c>0 then ER(a2,env) else ER((ASTE(NIMP, ASTC(CONE),a2)),env)
+        end
+    
 
 
   if a1=a2 then
