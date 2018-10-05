@@ -361,6 +361,8 @@ let evalop o a1 a2 env =
   let b = i land 2 in
   let c = i land 4 in
   let d = i land 8 in
+  let one = ASTC(CONE) in
+  let zero = ASTC(CZERO) in
   let nonequaleval u =
     match a1 with
     | ASTF(_,_) -> raise (EvaluationError "evalop")
@@ -374,9 +376,9 @@ let evalop o a1 a2 env =
         | ASTEV(_,_,_) -> raise (EvaluationError "evalop")
         | ASTC(c2) ->
           if c=CONE then
-            if c2=CONE then if a=0 then ER((ASTC CZERO),env) else ER((ASTC CONE),evn) else if b=0 then ER((ASTC CZERO),env) else ER((ASTC CONE),env)
-          else if c2=CONE then if c=0 then ER((ASTC(CZERO)),env) else ER((ASTC(CONE)),env) else if d=0 then ER((ASTC(CZERO)),env) else ER((ASTC(CONE)),env)
-        | _ -> if c=CONE then if a=0 && b=0 then ER(ASTC(CZERO),env) else if a>0 && b>0 then ER((ASTC(CZERP)),env) else if a>0 && b=0 then ER(a2,env) else ER((ASTE(NIMP,ASTC(CONE),a2))) else if d=0 && c=0 then ER((ASTC(CZERO)),env) else if d>0 && c>0 then ER((ASCT(CONE)),env) else if d=0 && c>0 then ER(a2,env) else ER((ASTE(NIMP, ASTC(CONE),a2)),env)
+            if c2=CONE then if a=0 then ER(zero,env) else ER(one,evn) else if b=0 then ER(zero,env) else ER(one,env)
+          else if c2=CONE then if c=0 then ER(zero,env) else ER(one,env) else if d=0 then ER(zero,env) else ER(one,env)
+        | _ -> if c=CONE then if a=0 && b=0 then ER(zero,env) else if a>0 && b>0 then ER(zero,env) else if a>0 && b=0 then ER(a2,env) else ER((ASTE(NIMP,one,a2))) else if d=0 && c=0 then ER(zero,env) else if d>0 && c>0 then ER(one,env) else if d=0 && c>0 then ER(a2,env) else ER((ASTE(NIMP,one,a2)),env)
         end
     |ASTV(s) ->
         begin
@@ -385,7 +387,7 @@ let evalop o a1 a2 env =
         | ASTF(_,_) -> raise (EvaluationError "evalop")
         | ASTEV(_,_,_) -> raise (EvaluationError "evalop")
         | ASTC(c2) ->
-            if c2=CONE then if a>0 && c>0 then ER((ASCT(CONE),evn)) else if a=0 && c=0 then ER(ASTC(CZERO),env) else if a>0 && c=0 then ER(a1,env) else ER((ASTE(NIMP,ASTC(CONE),a1),env) else if d>0 && b>0 then ER( 
+            if c2=CONE then if a>0 && c>0 then ER(one,evn) else if a=0 && c=0 then ER(zero,env) else if a>0 && c=0 then ER(a1,env) else ER((ASTE(NIMP,one,a1),env) else if d>0 && b>0 then ER( 
         | ASTV(s2) ->    
     
 
