@@ -393,6 +393,10 @@ let evalop o a1 a2 env =
   in
   evalhelper ();;
 
+let getASTFromResult r =
+  match r with
+  ER(a,e) -> a;;
+
 let rec eval a env =
   match a with
   | ASTV(s) ->
@@ -404,7 +408,7 @@ let rec eval a env =
       end
   | ASTAS(s,aa) ->
       begin
-      let ea = eval aa env in 
+      let ea = getASTFromResult(eval aa env) in 
       let mv = MV(s,ea) in
       match env with
       | ENV(l) -> 
@@ -413,9 +417,9 @@ let rec eval a env =
           ER(a,HIER((mv::l),e))
       end
   | ASTE (o,a1,a2) ->
-      let ea1 = eval a1 env in
-      let ea2 = eval a2 env in
-      evalop o ea1 ea2
+      let ea1 = getASTFromResult(eval a1 env) in
+      let ea2 = getASTFromResult(eval a2 env) in
+      evalop o ea1 ea2 env
   | _ ->  ER(a,env);;
 
 (* to string method *)
