@@ -365,9 +365,11 @@ let evalop o a1 a2 env =
     match a1 with
     | ASTF(_,_) -> raise (EvaluationError "evalop")
     | ASTEV(_,_,_) -> raise (EvaluationError "evalop")
+    | ASTAS(_,_) -> raise (EvaluationError "evalop")
     | ASTC(c) ->
         begin
         match a2 with
+        | ASTAS(_,_) -> raise (EvaluationError "evalop")
         | ASTF(_,_) -> raise (EvaluationError "evalop")
         | ASTEV(_,_,_) -> raise (EvaluationError "evalop")
         | ASTC(c2) ->
@@ -376,6 +378,8 @@ let evalop o a1 a2 env =
           else if c2=CONE then if c=0 then ER((ASTC(CZERO)),env) else ER((ASTC(CONE)),env) else if d=0 then ER((ASTC(CZERO)),env) else ER((ASTC(CONE)),env)
         | _ -> if c=CONE then if a=0 && b=0 then ER(ASTC(CZERO),env) else if a>0 && b>0 then ER((ASTC(CZERP)),env) else if a>0 && b=0 then ER(a2,env) else ER((ASTE(NIMP,ASTC(CONE),a2))) else if d=0 && c=0 then ER((ASTC(CZERO)),env) else if d>0 && c>0 then ER((ASCT(CONE)),env) else if d=0 && c>0 then ER(a2,env) else ER((ASTE(NIMP, ASTC(CONE),a2)),env)
         end
+    |ASTV(s) ->
+        begin
     
 
 
