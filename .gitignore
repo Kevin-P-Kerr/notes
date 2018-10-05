@@ -2,6 +2,7 @@
 *.out
 *.cmi
 *.swp
+*.swo
 /.gradle/
 /build/
 /schroder/ocaml/bin/*
