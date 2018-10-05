@@ -387,7 +387,7 @@ let evalop o a1 a2 env =
         | ASTC(c2) ->
             if c2=CONE then if a>0 && c>0 then ER(one,env) else if a=0 && c=0 then ER(zero,env) else if a>0 && c=0 then ER(a1,env) else ER((ASTE(CNIMP,one,a1),env)) else if d>0 && b>0 then ER(one,env) else if d=0 && c=0 then ER(zero,env) else if d=0 && b>0 then ER(a1,env) else ER((ASTE(CNIMP,one,a1)),env)
         | _ -> 
-            if a1=a1 then if d=0 && a=0 then ER(zero,env) else if d>1 && a>0 then ER(one,env) else if d=0 && a>0 then ER(a1,env) else ER((ASTE(CNIMP,one,a1)),env) else if d=0 && b=0 && a>0 && c>0 then ER(a2,env) else if d>0 && b>0 && a=0 && c=0 then ER((ASTE(CNIMP,one,a2)),env) else if d=0 && b=0 && c>0 && a>0 then ER(a1,env) else if d>0 && b>0 && c=0 && a=0 then ER((ASTE(CNIMP,one,a1)),env) else ER((ASTE(o,a1,a2)),env) 
+            if a1=a2 then if d=0 && a=0 then ER(zero,env) else if d>1 && a>0 then ER(one,env) else if d=0 && a>0 then ER(a1,env) else ER((ASTE(CNIMP,one,a1)),env) else if d=0 && b=0 && a>0 && c>0 then ER(a2,env) else if d>0 && b>0 && a=0 && c=0 then ER((ASTE(CNIMP,one,a2)),env) else if d=0 && b=0 && c>0 && a>0 then ER(a1,env) else if d>0 && b>0 && c=0 && a=0 then ER((ASTE(CNIMP,one,a1)),env) else ER((ASTE(o,a1,a2)),env) 
             end 
   in
   evalhelper ();;
@@ -442,8 +442,8 @@ let fromop o =
   |XOR -> "xor" 
   |RP -> "rp"
   |LP -> "lp"
-  |NIMP -> "-"
-  |CNIMP -> "cnimp"
+  |NIMP -> "nimp"
+  |CNIMP -> "-"
   |NAND -> "nand"
   |IMP -> "imp" 
   |CIMP -> "cimp"
