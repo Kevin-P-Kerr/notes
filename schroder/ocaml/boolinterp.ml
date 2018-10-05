@@ -355,6 +355,29 @@ let rec lookup s env =
       | FAIL -> lookup s e
       | _ -> r;;
 
+let evalop o a1 a2 env =
+  let t = getPrimTruthTable o in
+  let a = i land 1 in
+  let b = i land 2 in
+  let c = i land 4 in
+  let d = i land 8 in
+  let nonequaleval u =
+    match a1 with
+    | ASTC(c) ->
+        begin
+        match a2 with
+        ASTC(c2) ->
+          if c=CONE then
+            if c2=CONE then if a=0 then ER((ASTC CZERO),env) else ER((ASTC CONE),evn) else if b=0 then ER((ASTC CZERO),env) else ER((ASTC CONE),env)
+          else
+
+
+  if a1=a2 then
+    if a=0 && d=0 then ER((ASTC CZERO),env)
+    else if a>0 && d>0 then ER((ASTC CONE),env) else nonequaleval ()
+  else nonequaleval ();;
+
+
 let rec eval a env =
   match a with
   | ASTV(s) ->
@@ -364,16 +387,21 @@ let rec eval a env =
       | FAIL -> ER(a,env)
       | LRS(ast) -> ER(ast,env)
       end
-  | ASTAS(s,a) ->
+  | ASTAS(s,aa) ->
       begin
-      let mv = MV(s,a) in
+      let ea = eval aa env in 
+      let mv = MV(s,ea) in
       match env with
       | ENV(l) -> 
           ER(a,ENV(mv::l))
       | HIER(l,e) ->
           ER(a,HIER((mv::l),e))
       end
-  | _ -> ER(a,env);;
+  | ASTE (o,a1,a2) ->
+      let ea1 = eval a1 env in
+      let ea2 = eval a2 env in
+      evalop o ea1 ea2
+  | _ ->  ER(a,env);;
 
 (* to string method *)
 
