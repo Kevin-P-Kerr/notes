@@ -367,16 +367,16 @@ let evalop o a1 a2 env =
     match a1 with
     | ASTF(_,_) -> raise (EvaluationError "evalop")
     | ASTAS(_,_) -> raise (EvaluationError "evalop")
-    | ASTC(c) ->
+    | ASTC(c1) ->
         begin
         match a2 with
         | ASTAS(_,_) -> raise (EvaluationError "evalop")
         | ASTF(_,_) -> raise (EvaluationError "evalop")
         | ASTC(c2) ->
-          if c=CONE then
+          if c1=CONE then
             if c2=CONE then if a=0 then ER(zero,env) else ER(one,env) else if b=0 then ER(zero,env) else ER(one,env)
           else if c2=CONE then if c=0 then ER(zero,env) else ER(one,env) else if d=0 then ER(zero,env) else ER(one,env)
-        | _ -> if c=CONE then if a=0 && b=0 then ER(zero,env) else if a>0 && b>0 then ER(zero,env) else if a>0 && b=0 then ER(a2,env) else ER((ASTE(NIMP,one,a2))) else if d=0 && c=0 then ER(zero,env) else if d>0 && c>0 then ER(one,env) else if d=0 && c>0 then ER(a2,env) else ER((ASTE(NIMP,one,a2)),env)
+        | _ -> if c1=CONE then if a=0 && b=0 then ER(zero,env) else if a>0 && b>0 then ER(zero,env) else if a>0 && b=0 then ER(a2,env) else ER((ASTE(NIMP,one,a2))) else if d=0 && c=0 then ER(zero,env) else if d>0 && c>0 then ER(one,env) else if d=0 && c>0 then ER(a2,env) else ER((ASTE(NIMP,one,a2)),env)
         end
     | _ ->
         begin
