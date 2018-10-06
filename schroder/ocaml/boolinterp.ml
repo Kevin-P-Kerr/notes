@@ -480,7 +480,7 @@ let rec eval a env =
         match per with
         | ER(rs,en) -> ER(rs,env)
       end
-  | ASTF(a1,a1) ->
+  | ASTF(a1,a2) ->
       let e1 = getASTFromResult(eval a1 env) in
       let e2 = getASTFromResult(eval a2 env) in
       let r = ASTF(e1,e2) in
