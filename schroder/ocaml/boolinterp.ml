@@ -180,7 +180,7 @@ let getConstantList ts =
             | _ -> raise (ParseError "get constant list")
             end
         | _ -> l in
-    helper [];;
+    List.rev(helper []);;
 
 let rec parse ts =
   let t = ts PEEK in
