@@ -431,6 +431,7 @@ let makeMetaVarlist vl cl =
     let v = List.nth vl i in
     let c = List.nth cl i in
     let mv = MV(v,ASTC(c)) in
+    if c=CNONE then helper (i+1) l  else
     helper (i+1) (mv::l) in
   helper 0 [];;
 
@@ -469,7 +470,12 @@ let rec eval a env =
   | ASTEV(a1,l) ->
       let ea1 = getASTFromResult(eval a1 env) in
       let varlist = getVarlist ea1 in
-      partialeval ea1 varlist l env eval
+      let per = partialeval ea1 varlist l env eval
+      in
+      begin
+        match per with
+        | ER(rs,en) -> ER(rs,env)
+      end
   | _ ->  ER(a,env);;
 
 (* to string method *)
