@@ -1,7 +1,7 @@
 open Str;;
 open List;;
 
-type token = COLON | QUASI | ASTER | PLUS | MINUS | VAR | ONE | ZERO | WHITE | EQUAL | UNDER;;
+type token = COLON | QUASI | ASTER | PLUS | MINUS | VAR | ONE | ZERO | WHITE | EQUAL | UNDER | LPAREN | RPAREN;;
 (* noop is a special op that indicates the lack of an inverse *)
 type op = NOOP|AND|OR|XOR|RP|LP|NIMP|CNIMP|NAND|IMP|CIMP|EQV|RCOMPL|LCOMPL|NOR;;
 type metaop = SET|EVAL;;
@@ -15,7 +15,7 @@ type lexrule = LR of (Str.regexp * token);;
 type lextoken = LT of (token*string);;
 type tokenstack = TSLT of lextoken | TS of (lextoken list) | EMPTY;;
 type tokenstackcommand = PEEK|POP;;
-type ast = ASTF of (ast*ast) | ASTV of string | ASTC of constant | ASTE of (op*ast*ast) | ASTAS of (string*ast) | ASTEV of (ast*constant list);;
+type ast = ASTF of (ast*ast) | ASTV of string | ASTC of constant | ASTE of (op*ast*ast) | ASTAS of (string*ast) | ASTEV of (ast*ast list);;
 type metavar = MV of (string*ast);;
 type environment = ENV of metavar list | HIER of ((metavar list)*environment);;
 type evalresult = ER of (ast*environment);;
@@ -32,9 +32,11 @@ let oneMatch = LR(Str.regexp "^1",ONE);;
 let zeroMatch = LR(Str.regexp "^0",ZERO);;
 let equalMatch = LR(Str.regexp "^=",EQUAL);;
 let underMatch = LR(Str.regexp "^_",UNDER);; 
+let lparenMatch = LR(Str.regexp "^(",UNDER);; 
+let rparenMatch = LR(Str.regexp "^)",UNDER);; 
 let whiteRE = Str.regexp "^[ \n\r\t]+";;
 let whiteMatch = LR(whiteRE,WHITE);;
-let reglist = [minusMatch;whiteMatch;varMatch;asterMatch;plusMatch;zeroMatch;oneMatch;equalMatch;underMatch];;
+let reglist = [minusMatch;whiteMatch;varMatch;asterMatch;plusMatch;zeroMatch;oneMatch;equalMatch;underMatch;lparenMatch;rparenMatch];;
 
 let ismatch r s =
   Str.string_match r s 0;;
@@ -136,20 +138,15 @@ let getopt t =
 let isevalop s =
   s = "eval";;
 
-let getConstantList ts =
+let getExprList ts =
+    let leadtoken = ts PEEK in
     let rec helper l =
-        let t = ts PEEK in
-        match t with
-        | TSLT(LT(tk,s)) ->
-            begin
-            match tk with
-            | ONE -> let tt = ts POP in helper (CONE::l)
-            | ZERO -> let tt = ts POP in helper (CZERO::l)
-            | UNDER -> let tt = ts POP in helper(CNONE::l)
-            | _ -> l
-            end
-        | _ -> l in
-    List.rev(helper []);;
+      let t = ts PEEK in
+      if t=RPAREN then l else
+        let a  = parseExpr ts in
+        helper a::l 
+    in
+    if leadtoken != LPAREN then raise (ParseError "getExprList") else ts POP; List.rev(helper []);;
 
 let rec parseExpr ts =
   let ct = ts POP in
@@ -159,7 +156,7 @@ let rec parseExpr ts =
   | TSLT(LT(t,m)) ->
       if isevalop m then
         let at = parseExpr ts in
-        let l = getConstantList ts in
+        let l = getExprList ts in
         ASTEV(at,l) else
       if isop (LT(t,m)) then 
         let opType = getopt ct in
