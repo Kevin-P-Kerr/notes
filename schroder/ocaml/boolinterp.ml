@@ -143,10 +143,13 @@ let getExprList ts parseExpr =
     let rec helper l =
       let t = ts PEEK in
       if t=RPAREN then l else
-        let a  = parseExpr ts in
-        helper a::l 
+        let a = parseExpr ts in
+        helper (a::l) 
     in
-    if leadtoken != LPAREN then raise (ParseError "getExprList") else ts POP; List.rev(helper []);;
+    if leadtoken != LPAREN then 
+      raise (ParseError "getExprList") 
+      else ts POP; 
+      List.rev(helper []);;
 
 let rec parseExpr ts =
   let ct = ts POP in
