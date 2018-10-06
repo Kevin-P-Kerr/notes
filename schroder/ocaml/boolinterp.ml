@@ -206,7 +206,7 @@ let rec parse ts =
         begin
         ts POP;
         let at = parse ts in
-        let l = getConstantList ts in
+        let l = getExprList ts parse in
         ASTEV(at,l)
         end
       else begin match tk with
