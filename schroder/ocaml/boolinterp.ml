@@ -1,11 +1,12 @@
 open Str;;
 open List;;
 
-type token = COLON | QUASI | ASTER | PLUS | MINUS | VAR | ONE | ZERO | WHITE | EQUAL;;
+type token = COLON | QUASI | ASTER | PLUS | MINUS | VAR | ONE | ZERO | WHITE | EQUAL | UNDER;;
 (* noop is a special op that indicates the lack of an inverse *)
 type op = NOOP|AND|OR|XOR|RP|LP|NIMP|CNIMP|NAND|IMP|CIMP|EQV|RCOMPL|LCOMPL|NOR;;
 type metaop = SET|EVAL;;
-type constant = CONE|CZERO;;
+(* CNONE is not a real constant, but is used for partial evaluation *)
+type constant = CONE|CZERO|CNONE;;
 type direction = RIGHT|LEFT|BI;;
 type baseOpRule = BOR of (op*int);;
 type identinfo = IDI of (constant*direction) | IDIE of (constant*direction*constant*direction) | NONE;;
@@ -30,10 +31,10 @@ let varMatch = LR(Str.regexp "^[A-Za-z]+",VAR);;
 let oneMatch = LR(Str.regexp "^1",ONE);;
 let zeroMatch = LR(Str.regexp "^0",ZERO);;
 let equalMatch = LR(Str.regexp "^=",EQUAL);;
-let colonMatch = LR(Str.regexp "^:",EQUAL);; 
+let underMatch = LR(Str.regexp "^_",UNDER);; 
 let whiteRE = Str.regexp "^[ \n\r\t]+";;
 let whiteMatch = LR(whiteRE,WHITE);;
-let reglist = [minusMatch;whiteMatch;varMatch;asterMatch;plusMatch;zeroMatch;oneMatch;equalMatch];;
+let reglist = [minusMatch;whiteMatch;varMatch;asterMatch;plusMatch;zeroMatch;oneMatch;equalMatch;underMatch];;
 
 let ismatch r s =
   Str.string_match r s 0;;
@@ -123,7 +124,7 @@ let getstropt s =
 
 let getopt t = 
   match t with
-  | TS(l) -> raise (ParseError "parse error")
+  | TS(l) -> raise (ParseError "getopt")
   | TSLT(LT(t,n)) ->
       match t with 
       | ASTER -> AND
@@ -135,8 +136,8 @@ let getopt t =
 let rec parseExpr ts =
   let ct = ts POP in
   match ct with
-  | EMPTY -> raise (ParseError "parse error")
-  | TS(l) -> raise (ParseError "parse error")
+  | EMPTY -> raise (ParseError "parse expr")
+  | TS(l) -> raise (ParseError "parse expr")
   | TSLT(LT(t,m)) ->
       if isop (LT(t,m)) then 
         let opType = getopt ct in
@@ -148,8 +149,8 @@ let rec parseExpr ts =
 let parseFormula ts = 
   let ct = ts POP in
   match ct with
-  | TS(l) -> raise (ParseError "parse error")
-  | EMPTY -> raise (ParseError "parse error")
+  | TS(l) -> raise (ParseError "parse formula")
+  | EMPTY -> raise (ParseError "parse formula")
   | TSLT(LT(t,m)) ->
       let left = parseExpr ts in
       let right = parseExpr ts in
@@ -175,7 +176,8 @@ let getConstantList ts =
             match tk with
             | ONE -> helper (CONE::l)
             | ZERO -> helper (CZERO::l)
-            | _ -> raise (ParseError "parse error")
+            | UNDER -> helper(CNONE::l)
+            | _ -> raise (ParseError "get constant list")
             end
         | _ -> l in
     helper [];;
