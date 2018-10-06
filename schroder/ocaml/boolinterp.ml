@@ -138,7 +138,7 @@ let getopt t =
 let isevalop s =
   s = "eval";;
 
-let getExprList ts =
+let getExprList ts parseExpr =
     let leadtoken = ts PEEK in
     let rec helper l =
       let t = ts PEEK in
@@ -156,7 +156,7 @@ let rec parseExpr ts =
   | TSLT(LT(t,m)) ->
       if isevalop m then
         let at = parseExpr ts in
-        let l = getExprList ts in
+        let l = getExprList ts parseExpr in
         ASTEV(at,l) else
       if isop (LT(t,m)) then 
         let opType = getopt ct in
