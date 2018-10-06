@@ -133,12 +133,34 @@ let getopt t =
       | _ ->
           getstropt n;;
 
+let isevalop s =
+  s = "eval";;
+
+let getConstantList ts =
+    let rec helper l =
+        let t = ts PEEK in
+        match t with
+        | TSLT(LT(tk,s)) ->
+            begin
+            match tk with
+            | ONE -> let tt = ts POP in helper (CONE::l)
+            | ZERO -> let tt = ts POP in helper (CZERO::l)
+            | UNDER -> let tt = ts POP in helper(CNONE::l)
+            | _ -> l
+            end
+        | _ -> l in
+    List.rev(helper []);;
+
 let rec parseExpr ts =
   let ct = ts POP in
   match ct with
-  | EMPTY -> raise (ParseError "parse expr")
-  | TS(l) -> raise (ParseError "parse expr")
+  | EMPTY -> raise (ParseError "parse expr1")
+  | TS(l) -> raise (ParseError "parse expr2")
   | TSLT(LT(t,m)) ->
+      if isevalop m then
+        let at = parseExpr ts in
+        let l = getConstantList ts in
+        ASTEV(at,l) else
       if isop (LT(t,m)) then 
         let opType = getopt ct in
         let e1 = parseExpr ts in
@@ -163,24 +185,6 @@ let isequals t =
 
 let issetop s =
   s = "set";;
-
-let isevalop s =
-  s = "eval";;
-
-let getConstantList ts =
-    let rec helper l =
-        let t = ts POP in
-        match t with
-        | TSLT(LT(tk,s)) ->
-            begin
-            match tk with
-            | ONE -> helper (CONE::l)
-            | ZERO -> helper (CZERO::l)
-            | UNDER -> helper(CNONE::l)
-            | _ -> raise (ParseError "get constant list")
-            end
-        | _ -> l in
-    List.rev(helper []);;
 
 let rec parse ts =
   let t = ts PEEK in
