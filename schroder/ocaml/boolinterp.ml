@@ -577,7 +577,7 @@ let rec fromast ast =
       | CZERO -> "0"
       end
   | ASTE(o,a,aa) -> 
-      (fromast a)^" "^(fromop o)^" "^(fromast aa)
+      "("^(fromast a)^" "^(fromop o)^" "^(fromast aa)^")"
   | _ -> "bad";;
 
 let rec repl env = 
