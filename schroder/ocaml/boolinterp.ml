@@ -146,10 +146,11 @@ let getExprList ts parseExpr =
         let a = parseExpr ts in
         helper (a::l) 
     in
-    if leadtoken != LPAREN then 
-      raise (ParseError "getExprList") 
-      else ts POP; 
-      List.rev(helper []);;
+    match leadtoken with
+    | LPAREN -> 
+      ts POP; 
+      List.rev(helper [])
+    | _ -> raise (ParseError "getExprList");;
 
 let rec parseExpr ts =
   let ct = ts POP in
