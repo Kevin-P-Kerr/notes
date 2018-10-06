@@ -140,14 +140,16 @@ let isevalop s =
 
 let getExprList ts parseExpr =
     let leadtoken = ts PEEK in
+    let m = LT(LPAREN,"(") in
+    let mm = TSLT(m) in
     let rec helper l =
       let t = ts PEEK in
-      if t=RPAREN then l else
+      if t=mm then l else
         let a = parseExpr ts in
         helper (a::l) 
     in
     match leadtoken with
-    | LPAREN -> 
+    | TSLT(LT(LPAREN,_)) -> 
       ts POP; 
       List.rev(helper [])
     | _ -> raise (ParseError "getExprList");;
