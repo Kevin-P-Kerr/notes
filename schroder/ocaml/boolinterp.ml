@@ -431,19 +431,22 @@ let getVarlist a =
   in
   List.rev(helper a []);;
 
-let makeMetaVarlist vl cl =
+let makeMetaVarlist vl el =
   let limit = List.length cl in
   let rec helper i l = 
     if i = limit then l else
     let v = List.nth vl i in
-    let c = List.nth cl i in
-    let mv = MV(v,ASTC(c)) in
-    if c=CNONE then helper (i+1) l  else
-    helper (i+1) (mv::l) in
+    let e = List.nth cl i in
+    let mv = MV(v,e) in
+    match e with
+    | ASTC(c) ->
+    if c=CNONE then helper (i+1) l  else helper (i+1) (mv::l)
+    | ASTF(_,_)|ASTAS(_,_) -> raise (EvaluationError "makeMetaVarList")
+    | _ -> helper (i+1) (mv::l) in
   helper 0 [];;
 
-let partialeval a vl cl e eval = 
-  let ml = makeMetaVarlist vl cl in
+let partialeval a vl el e eval = 
+  let ml = makeMetaVarlist vl el in
   let e1 = HIER(ml,e) in
   eval a e1;;
 
