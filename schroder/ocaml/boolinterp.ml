@@ -432,11 +432,11 @@ let getVarlist a =
   List.rev(helper a []);;
 
 let makeMetaVarlist vl el =
-  let limit = List.length cl in
+  let limit = List.length el in
   let rec helper i l = 
     if i = limit then l else
     let v = List.nth vl i in
-    let e = List.nth cl i in
+    let e = List.nth el i in
     let mv = MV(v,e) in
     match e with
     | ASTC(c) ->
