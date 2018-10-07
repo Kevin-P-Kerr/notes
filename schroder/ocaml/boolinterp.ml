@@ -144,9 +144,16 @@ let getExprList ts parseExpr =
     let mm = TSLT(m) in
     let rec helper l =
       let t = ts PEEK in
-      if t=mm then l else
-        let a = parseExpr ts in
-        helper (a::l) 
+      match t with
+      | EMPTY -> l
+      | TS(_) -> raise (ParseError "parseExpr")
+      | TSLT(LT(tk,s)) ->
+          begin
+            match tk with
+            | RPAREN -> ts POP;  l
+            | LPAREN -> raise (ParseError "parseExpr 2")
+            | _ -> let ex = parseExpr ts in helper (ex::l)
+          end
     in
     match leadtoken with
     | TSLT(LT(LPAREN,_)) -> 
@@ -205,8 +212,8 @@ let rec parse ts =
       else if isevalop s then
         begin
         ts POP;
-        let at = parse ts in
-        let l = getExprList ts parse in
+        let at = parseExpr ts in
+        let l = getExprList ts parseExpr in
         ASTEV(at,l)
         end
       else begin match tk with
