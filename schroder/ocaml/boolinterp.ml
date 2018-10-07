@@ -371,7 +371,11 @@ let rec lookup s env =
       | FAIL -> lookup s e
       | _ -> r;;
 
-let evalop o a1 a2 env =
+let getASTFromResult r =
+  match r with
+  ER(a,e) -> a;;
+
+let rec evalop o a1 a2 env =
   let i = getPrimTruthTable o in
   let a = i land 1 in
   let b = i land 2 in
@@ -425,7 +429,22 @@ let evalop o a1 a2 env =
               else ER((ASTE(o,a1,a2)),env) 
             end 
   in
-  evalhelper ();;
+  match a1 with 
+  | ASTF(a3,a4) ->
+      let a5 = getASTFromResult(evalop o a3 a2 env) in
+      let a6 = getASTFromResult(evalop o a4 a2 env) in
+      let r = ASTF(a5,a6) in
+      ER(r,env)
+  | _ ->
+      begin
+        match a2 with
+        | ASTF(a3,a4) ->
+        let a5 = getASTFromResult(evalop o a1 a3 env) in
+        let a6 = getASTFromResult(evalop o a1 a4 env) in
+        let r = ASTF(a5,a6) in
+        ER(r,env)
+        | _ -> evalhelper ()
+      end;;
 
 let getVarlist a = 
   let rec helper aa l = 
@@ -459,10 +478,6 @@ let partialeval a vl el e eval =
   let e1 = HIER(ml,e) in
   eval a e1;;
 
-let getASTFromResult r =
-  match r with
-  ER(a,e) -> a;;
-
 let evalall l eval env = 
   let rec helper l r = 
     match l with
@@ -484,7 +499,16 @@ let rec eval a env =
       let b = lookup s env in
       match b with
       | FAIL -> ER(a,env)
-      | LRS(ast) -> ER(ast,env)
+      | LRS(ast) -> 
+          begin
+            match ast with
+            | ASTF(a1,a2) ->
+                let ea1 = getASTFromResult(eval a1 env) in
+                let ea2 = getASTFromResult(eval a2 env) in
+                let r = ASTF(ea1,ea2) in
+                ER(r,env)
+            | _  ->  ER(ast,env)
+          end
       end
   | ASTAS(s,aa) ->
       begin
