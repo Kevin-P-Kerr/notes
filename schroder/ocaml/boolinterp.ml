@@ -1,7 +1,7 @@
 open Str;;
 open List;;
 
-type token = COLON | QUASI | ASTER | PLUS | MINUS | VAR | ONE | ZERO | WHITE | EQUAL | UNDER | LPAREN | RPAREN;;
+type token = COLON | QUASI | ASTER | PLUS | MINUS | VAR | ONE | ZERO | WHITE | EQUAL | UNDER | LPAREN | RPAREN | SLASH;;
 (* noop is a special op that indicates the lack of an inverse *)
 type op = NOOP|AND|OR|XOR|RP|LP|NIMP|CNIMP|NAND|IMP|CIMP|EQV|RCOMPL|LCOMPL|NOR;;
 type metaop = SET|EVAL;;
@@ -34,9 +34,10 @@ let equalMatch = LR(Str.regexp "^=",EQUAL);;
 let underMatch = LR(Str.regexp "^_",UNDER);; 
 let lparenMatch = LR(Str.regexp "^(",LPAREN);; 
 let rparenMatch = LR(Str.regexp "^)",RPAREN);; 
+let slashMatch = LR(Str.regexp "^/",SLASH);; 
 let whiteRE = Str.regexp "^[ \n\r\t]+";;
 let whiteMatch = LR(whiteRE,WHITE);;
-let reglist = [minusMatch;whiteMatch;varMatch;asterMatch;plusMatch;zeroMatch;oneMatch;equalMatch;underMatch;lparenMatch;rparenMatch];;
+let reglist = [minusMatch;whiteMatch;varMatch;asterMatch;plusMatch;zeroMatch;oneMatch;equalMatch;underMatch;lparenMatch;rparenMatch;slashMatch];;
 
 let ismatch r s =
   Str.string_match r s 0;;
