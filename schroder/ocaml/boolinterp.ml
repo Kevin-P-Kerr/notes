@@ -615,8 +615,9 @@ let rec fromast ast =
       "("^(fromast a)^" "^(fromop o)^" "^(fromast aa)^")"
   | _ -> "bad";;
 
-let rec repl env = 
-  let s = read_line () in
+let rec repl env get_line = 
+  let s = get_line () in
+  if s="good bye\n" then print_string s else
   let ts = tokenize s in
   let l = TS(ts) in
   let ts = makeTokenStack l in
@@ -626,7 +627,25 @@ let rec repl env =
   |ER(ast,e) ->
   let ns = fromast ast in
   print_string (ns^"\n");
-  repl e;;
+  repl e get_line;;
+
+
+let startRepl u =
+  let s  = read_line () in
+  let env = ENV([]) in
+  if s = "file" then
+    let ns = read_line() in
+    let ic = open_in ns in
+    let gl u = 
+      try 
+      input_line ic
+      with
+      e -> close_in_noerr ic;
+      "good bye\n";
+    in
+    repl env gl
+  else
+    repl env read_line;;
 
 printOpRules ();;
-repl (ENV([]));;
+startRepl ();;
