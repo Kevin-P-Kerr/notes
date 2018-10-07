@@ -142,6 +142,7 @@ let getExprList ts parseExpr =
     let leadtoken = ts PEEK in
     let m = LT(LPAREN,"(") in
     let mm = TSLT(m) in
+    let none = ASTC(CNONE) in
     let rec helper l =
       let t = ts PEEK in
       match t with
@@ -152,6 +153,7 @@ let getExprList ts parseExpr =
             match tk with
             | RPAREN -> ts POP;  l
             | LPAREN -> raise (ParseError "parseExpr 2")
+            | UNDER -> ts POP; helper (none::l)
             | _ -> let ex = parseExpr ts in helper (ex::l)
           end
     in
