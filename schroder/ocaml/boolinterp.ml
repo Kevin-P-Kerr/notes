@@ -463,6 +463,20 @@ let getASTFromResult r =
   match r with
   ER(a,e) -> a;;
 
+let evalall l eval env = 
+  let rec helper l r = 
+    match l with
+    | [] -> List.rev r
+    | x::xs -> 
+        let er = eval x env in
+        begin
+        match er with
+        | ER(a,e) ->
+            helper xs (a::r)
+        end
+  in
+  helper l [];;
+
 let rec eval a env =
   match a with
   | ASTV(s) ->
@@ -489,7 +503,8 @@ let rec eval a env =
   | ASTEV(a1,l) ->
       let ea1 = getASTFromResult(eval a1 env) in
       let varlist = getVarlist ea1 in
-      let per = partialeval ea1 varlist l env eval
+      let el = evalall l eval env in
+      let per = partialeval ea1 varlist el env eval
       in
       begin
         match per with
