@@ -15,7 +15,7 @@ type lexrule = LR of (Str.regexp * token);;
 type lextoken = LT of (token*string);;
 type tokenstack = TSLT of lextoken | TS of (lextoken list) | EMPTY;;
 type tokenstackcommand = PEEK|POP;;
-type ast = ASTF of (ast*ast) | ASTV of string | ASTC of constant | ASTE of (op*ast*ast) | ASTAS of (string*ast) | ASTEV of (ast*ast list)| ASTD of (ast*string list) | ASTELIM of (ast*string);;
+type ast = ASTF of (ast*ast) | ASTV of string | ASTC of constant | ASTE of (op*ast*ast) | ASTAS of (string*ast) | ASTEV of (ast*ast list) |ASTDF of (ast*direction*string list) | ASTD of (ast*string list) | ASTELIM of (ast*string);;
 type metavar = MV of (string*ast);;
 type environment = ENV of metavar list | HIER of ((metavar list)*environment);;
 type evalresult = ER of (ast*environment);;
@@ -188,28 +188,7 @@ let getStrList ts parseExpr =
     in
     List.rev(helper l []);;
 
-let rec parseExpr ts =
-  let ct = ts POP in
-  match ct with
-  | EMPTY -> raise (ParseError "parse expr1")
-  | TS(l) -> raise (ParseError "parse expr2")
-  | TSLT(LT(t,m)) ->
-      if isevalop m then
-        let at = parseExpr ts in
-        let l = getExprList ts parseExpr in
-        ASTEV(at,l) else
-      if isdevelop m then
-        let at = parseExpr ts in
-        let l = getStrList ts parseExpr in
-        ASTD(at,l) else
-      if isop (LT(t,m)) then 
-        let opType = getopt ct in
-        let e1 = parseExpr ts in
-        let e2 = parseExpr ts in
-        ASTE(opType,e1,e2)
-      else if t = ONE then ASTC(CONE) else if t = ZERO then ASTC(CZERO) else ASTV (m);;
-
-let parseFormula ts = 
+let parseFormula ts parseExpr = 
   let ct = ts POP in
   match ct with
   | TS(l) -> raise (ParseError "parse formula")
@@ -218,6 +197,40 @@ let parseFormula ts =
       let left = parseExpr ts in
       let right = parseExpr ts in
       ASTF(left,right);;
+
+
+let rec parseExpr ts parse =
+  let ct = ts POP in
+  let cont = (fun tt -> parseExpr tt parse) in
+  match ct with
+  | EMPTY -> raise (ParseError "parse expr1")
+  | TS(l) -> raise (ParseError "parse expr2")
+  | TSLT(LT(t,m)) ->
+      if isevalop m then
+        let at = parseExpr ts parse in
+        let l = getExprList ts cont in
+        ASTEV(at,l) else
+      if isdevelop m then
+        let nct = ts PEEK in
+        match nct with
+        | EMPTY|TS(_) -> raise (ParseError "parse expr3")
+        | TSLT(LT(tt,mm)) ->
+        if mm = "left" || mm = "right" then
+            let d = if mm="left" then LEFT else RIGHT in
+            ts POP;
+            let f = parse ts in
+            let l = getStrList ts cont  in
+            ASTDF(f,d,l)
+        else
+            let at = parseExpr ts parse in
+            let l = getStrList ts cont in
+            ASTD(at,l) else
+      if isop (LT(t,m)) then 
+        let opType = getopt ct in
+        let e1 = parseExpr ts parse in
+        let e2 = parseExpr ts parse in
+        ASTE(opType,e1,e2)
+      else if t = ONE then ASTC(CONE) else if t = ZERO then ASTC(CZERO) else ASTV (m);;
 
 let isequals t = 
   match t with |
@@ -243,13 +256,13 @@ let rec parse ts =
       else if isevalop s then
         begin
         ts POP;
-        let at = parseExpr ts in
-        let l = getExprList ts parseExpr in
+        let at = parseExpr ts parse in
+        let l = getExprList ts (fun tt -> parseExpr tt parse)  in
         ASTEV(at,l)
         end
       else begin match tk with
-      | EQUAL -> parseFormula ts
-      | _ -> parseExpr ts
+      | EQUAL -> parseFormula ts (fun tt -> parseExpr tt parse)
+      | _ -> parseExpr ts parse
       end 
   | _ -> raise (ParseError "parse error");; 
 
