@@ -501,6 +501,20 @@ let partialeval a vl el e eval =
   let e1 = HIER(ml,e) in
   eval a e1;;
 
+let develop a sl eval env =
+    let all = getDevelopVars a sl in
+    let size = List.length all in
+    let limit = powotwo size in
+    let rec helper i r =
+        if i > limit then r else
+            let ir =  doDevelEval i all a eval env in
+            let iir = ASTE(PLUS,ir,a) in
+            helper (i+1) iir
+    in
+    let zero = ASTC(CZERO) in
+    let start = ASTE(PLUS,zero,zero) in
+    helper 0 start;;
+
 let evalall l eval env = 
   let rec helper l r = 
     match l with
@@ -562,6 +576,9 @@ let rec eval a env =
       let e2 = getASTFromResult(eval a2 env) in
       let r = ASTF(e1,e2) in
       ER(r,env)
+  | ASTD(a1,sl) ->
+      let ea1 = getASTFromResult(eval a1 env) in
+      develop ea1 sl eval env
   | _ ->  ER(a,env);;
 
 (* to string method *)
