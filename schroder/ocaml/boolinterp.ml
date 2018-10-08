@@ -501,6 +501,28 @@ let partialeval a vl el e eval =
   let e1 = HIER(ml,e) in
   eval a e1;;
 
+(* a is fully evaluated *)
+let doDevelEval i all a =
+    let one = ASTC(CONE) in
+    let zero = ASTC(CZERO) in
+    let rec helper all n at ml  =
+    match all with
+    | [] ->
+        let nenv = HIER(ml,env) in
+        let ea = eval a nenv in
+        ASTE(AND,ea,at)
+    | x::xs ->
+        let b = (n land i) > 0 in
+        let vx = ASTV(x) in
+        let vxe = if b then vx else ASTE(MINUS,one,vx) in
+        let nn = ASTE(AND,n,nn) in
+        let mv = if b then MV(x,one) else (x,zero) in
+        let mml = mv::ml in
+        helper xs (n+1) nn mml
+    in
+    helper all 0 one [];;
+
+(* a is fully evaluated *) 
 let develop a sl eval env =
     let all = getDevelopVars a sl in
     let size = List.length all in
@@ -513,7 +535,7 @@ let develop a sl eval env =
     in
     let zero = ASTC(CZERO) in
     let start = ASTE(PLUS,zero,zero) in
-    helper 0 start;;
+    eval(helper 0 start) env;;
 
 let evalall l eval env = 
   let rec helper l r = 
