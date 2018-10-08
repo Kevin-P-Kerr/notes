@@ -39,6 +39,12 @@ let whiteRE = Str.regexp "^[ \n\r\t]+";;
 let whiteMatch = LR(whiteRE,WHITE);;
 let reglist = [minusMatch;whiteMatch;varMatch;asterMatch;plusMatch;zeroMatch;oneMatch;equalMatch;underMatch;lparenMatch;rparenMatch;slashMatch];;
 
+let powotwo n =
+    let rec helper n r =
+        if n=0 then r else helper(n-1) (r*2)
+    in
+    helper n 1;;
+
 let ismatch r s =
   Str.string_match r s 0;;
 
