@@ -528,6 +528,20 @@ let doDevelEval i all a =
     in
     helper all 0 one [];;
 
+let getDevelopVars a sl = 
+    match sl with
+    | [] -> 
+        let l = getVarlist a in
+        let rec helper l r = 
+            begin
+            match l with 
+            | [] - > r
+            | x::xs -> helper xs (x::r)
+            end
+        in
+        helper l []
+    | x::xs -> sl;;
+
 (* a is fully evaluated *) 
 let develop a sl eval env =
     let all = getDevelopVars a sl in
