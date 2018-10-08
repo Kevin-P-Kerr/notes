@@ -15,7 +15,7 @@ type lexrule = LR of (Str.regexp * token);;
 type lextoken = LT of (token*string);;
 type tokenstack = TSLT of lextoken | TS of (lextoken list) | EMPTY;;
 type tokenstackcommand = PEEK|POP;;
-type ast = ASTF of (ast*ast) | ASTV of string | ASTC of constant | ASTE of (op*ast*ast) | ASTAS of (string*ast) | ASTEV of (ast*ast list);;
+type ast = ASTF of (ast*ast) | ASTV of string | ASTC of constant | ASTE of (op*ast*ast) | ASTAS of (string*ast) | ASTEV of (ast*ast list)| ASTD of (ast*string list) | ASTELIM of (ast*string);;
 type metavar = MV of (string*ast);;
 type environment = ENV of metavar list | HIER of ((metavar list)*environment);;
 type evalresult = ER of (ast*environment);;
@@ -139,6 +139,12 @@ let getopt t =
 let isevalop s =
   s = "eval";;
 
+let isdevelopop s = 
+    s = "devel";;
+
+let iselimop s = 
+    s = "elim";;
+
 let getExprList ts parseExpr =
     let leadtoken = ts PEEK in
     let m = LT(LPAREN,"(") in
@@ -164,6 +170,18 @@ let getExprList ts parseExpr =
       List.rev(helper [])
     | _ -> raise (ParseError "getExprList");;
 
+let getStrList ts parseExpr =
+    let l = getExprList ts parseExpr in
+    let rec helper l r = 
+    match l with
+    | [] -> r
+    | x::xs ->
+    match x with |
+    ASTV(s) -> helper xs s::r
+    | _ -> raise (ParseError "getStrList")
+    in
+    List.rev(helper l []);;
+
 let rec parseExpr ts =
   let ct = ts POP in
   match ct with
@@ -174,6 +192,10 @@ let rec parseExpr ts =
         let at = parseExpr ts in
         let l = getExprList ts parseExpr in
         ASTEV(at,l) else
+      if develop m then
+        let at = parseExpr ts in
+        let l = getStrList ts parseExpr in
+        ASTD(at,l) else
       if isop (LT(t,m)) then 
         let opType = getopt ct in
         let e1 = parseExpr ts in
