@@ -509,6 +509,9 @@ let partialeval a vl el e eval =
 
 (* a is fully evaluated *)
 let doDevelEval i all a eval env =
+    print_string "devel\n";
+    print_int i;
+    print_string "\n";
     let one = ASTC(CONE) in
     let zero = ASTC(CZERO) in
     let rec helper all n at ml  =
@@ -518,15 +521,16 @@ let doDevelEval i all a eval env =
         let ea = getASTFromResult(eval a nenv) in
         ASTE(AND,ea,at)
     | x::xs ->
+        print_string "made it\n";
         let b = (n land i) > 0 in
         let vx = ASTV(x) in
         let vxe = if b then vx else ASTE(CNIMP,one,vx) in
         let nn = ASTE(AND,at,vxe) in
         let mv = if b then MV(x,one) else MV(x,zero) in
         let mml = mv::ml in
-        helper xs (n+1) nn mml
+        helper xs (n*2) nn mml
     in
-    helper all 0 one [];;
+    helper all 1 one [];;
 
 let getDevelopVars a sl = 
     match sl with
@@ -539,14 +543,14 @@ let develop a sl eval env =
     let size = List.length all in
     let limit = powotwo size in
     let rec helper i r =
-        if i > limit then r else
+        if i = limit then r else
             let ir =  doDevelEval i all a eval env in
-            let iir = ASTE(OR,ir,a) in
+            let iir = ASTE(OR,ir,r) in
             helper (i+1) iir
     in
     let zero = ASTC(CZERO) in
     let one = ASTC(CONE) in
-    let start = ASTE(OR,zero,one) in
+    let start = ASTE(OR,zero,zero) in
     getASTFromResult(eval(helper 0 start) env);;
 
 let evalall l eval env = 
