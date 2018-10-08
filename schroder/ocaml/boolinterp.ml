@@ -139,7 +139,7 @@ let getopt t =
 let isevalop s =
   s = "eval";;
 
-let isdevelopop s = 
+let isdevelop s = 
     s = "devel";;
 
 let iselimop s = 
@@ -177,7 +177,7 @@ let getStrList ts parseExpr =
     | [] -> r
     | x::xs ->
     match x with |
-    ASTV(s) -> helper xs s::r
+    ASTV(s) -> helper xs (s::r)
     | _ -> raise (ParseError "getStrList")
     in
     List.rev(helper l []);;
@@ -192,7 +192,7 @@ let rec parseExpr ts =
         let at = parseExpr ts in
         let l = getExprList ts parseExpr in
         ASTEV(at,l) else
-      if develop m then
+      if isdevelop m then
         let at = parseExpr ts in
         let l = getStrList ts parseExpr in
         ASTD(at,l) else
