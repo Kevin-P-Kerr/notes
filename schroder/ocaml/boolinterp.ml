@@ -631,6 +631,17 @@ let rec eval a env =
       let ea1 = getASTFromResult(eval a1 env) in
       let r = develop ea1 sl eval env in
       ER(r,env)
+  | ASTDF(a1,d,sl) ->
+    let ea = getASTFromResult(eval a1 env) in
+    begin
+    match ea with
+    | ASTF(a2,a3) ->
+        let a4 = if d=LEFT then ASTD(a2,sl) else ASTD(a3,sl) in
+        let a5 = getASTFromResult(eval a4 env) in
+        let a6 = if d=LEFT then ASTF(a5,a3) else ASTF(a2,a5) in
+        ER(a6,env)
+    | _ -> raise (EvaluationError "eval error")
+    end
   | _ ->  ER(a,env);;
 
 (* to string method *)
