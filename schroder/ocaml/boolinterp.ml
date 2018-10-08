@@ -15,7 +15,7 @@ type lexrule = LR of (Str.regexp * token);;
 type lextoken = LT of (token*string);;
 type tokenstack = TSLT of lextoken | TS of (lextoken list) | EMPTY;;
 type tokenstackcommand = PEEK|POP;;
-type ast = ASTF of (ast*ast) | ASTV of string | ASTC of constant | ASTE of (op*ast*ast) | ASTAS of (string*ast) | ASTEV of (ast*ast list) | ASTFEV of (ast*direction*ast list) |ASTDF of (ast*direction*string list) | ASTD of (ast*string list) | ASTELIM of (ast*string);;
+type ast = ASTF of (ast*ast) | ASTV of string | ASTC of constant | ASTE of (op*ast*ast) | ASTAS of (string*ast) | ASTEV of (ast*ast list) |ASTDF of (ast*direction*string list) | ASTD of (ast*string list) | ASTELIM of (ast*string);;
 type metavar = MV of (string*ast);;
 type environment = ENV of metavar list | HIER of ((metavar list)*environment);;
 type evalresult = ER of (ast*environment);;
@@ -616,18 +616,12 @@ let rec eval a env =
       let ea1 = getASTFromResult(eval a1 env) in
       let varlist = getVarlist ea1 in
       let el = evalall l eval env in
-      let per = getASTFromResult(partialeval ea1 varlist el env eval) in ER(per,env)
-  | ASTFEV(a1,d,l) ->
-    let ea = getASTFromResult(eval a1 env) in
-    begin
-    match ea with
-    | ASTF(a2,a3) ->
-        let a4 = if d=LEFT then ASTEV(a2,l) else ASTEV(a3,l) in
-        let a5 = getASTFromResult(eval a4 env) in
-        let a6 = if d=LEFT then ASTF(a5,a3) else ASTF(a2,a5) in
-        ER(a6,env)
-    | _ -> raise (EvaluationError "ASTFEV error")
-    end
+      let per = partialeval ea1 varlist el env eval
+      in
+      begin
+        match per with
+        | ER(rs,en) -> ER(rs,env)
+      end
   | ASTF(a1,a2) ->
       let e1 = getASTFromResult(eval a1 env) in
       let e2 = getASTFromResult(eval a2 env) in
