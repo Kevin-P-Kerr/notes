@@ -508,7 +508,7 @@ let partialeval a vl el e eval =
   eval a e1;;
 
 (* a is fully evaluated *)
-let doDevelEval i all a =
+let doDevelEval i all a eval env =
     let one = ASTC(CONE) in
     let zero = ASTC(CZERO) in
     let rec helper all n at ml  =
@@ -520,9 +520,9 @@ let doDevelEval i all a =
     | x::xs ->
         let b = (n land i) > 0 in
         let vx = ASTV(x) in
-        let vxe = if b then vx else ASTE(MINUS,one,vx) in
-        let nn = ASTE(AND,n,nn) in
-        let mv = if b then MV(x,one) else (x,zero) in
+        let vxe = if b then vx else ASTE(CNIMP,one,vx) in
+        let nn = ASTE(AND,at,vxe) in
+        let mv = if b then MV(x,one) else MV(x,zero) in
         let mml = mv::ml in
         helper xs (n+1) nn mml
     in
@@ -530,16 +530,7 @@ let doDevelEval i all a =
 
 let getDevelopVars a sl = 
     match sl with
-    | [] -> 
-        let l = getVarlist a in
-        let rec helper l r = 
-            begin
-            match l with 
-            | [] - > r
-            | x::xs -> helper xs (x::r)
-            end
-        in
-        helper l []
+    | [] ->  getVarlist a
     | x::xs -> sl;;
 
 (* a is fully evaluated *) 
@@ -550,11 +541,12 @@ let develop a sl eval env =
     let rec helper i r =
         if i > limit then r else
             let ir =  doDevelEval i all a eval env in
-            let iir = ASTE(PLUS,ir,a) in
+            let iir = ASTE(OR,ir,a) in
             helper (i+1) iir
     in
     let zero = ASTC(CZERO) in
-    let start = ASTE(PLUS,zero,zero) in
+    let one = ASTC(CONE) in
+    let start = ASTE(OR,zero,one) in
     eval(helper 0 start) env;;
 
 let evalall l eval env = 
@@ -620,7 +612,8 @@ let rec eval a env =
       ER(r,env)
   | ASTD(a1,sl) ->
       let ea1 = getASTFromResult(eval a1 env) in
-      develop ea1 sl eval env
+      let r = develop ea1 sl eval env in
+      ER(r,env)
   | _ ->  ER(a,env);;
 
 (* to string method *)
