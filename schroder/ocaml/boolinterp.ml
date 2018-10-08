@@ -515,7 +515,7 @@ let doDevelEval i all a eval env =
     match all with
     | [] ->
         let nenv = HIER(ml,env) in
-        let ea = eval a nenv in
+        let ea = getASTFromResult(eval a nenv) in
         ASTE(AND,ea,at)
     | x::xs ->
         let b = (n land i) > 0 in
@@ -547,7 +547,7 @@ let develop a sl eval env =
     let zero = ASTC(CZERO) in
     let one = ASTC(CONE) in
     let start = ASTE(OR,zero,one) in
-    eval(helper 0 start) env;;
+    getASTFromResult(eval(helper 0 start) env);;
 
 let evalall l eval env = 
   let rec helper l r = 
