@@ -522,9 +522,6 @@ let partialeval a vl el e eval =
 
 (* a is fully evaluated *)
 let doDevelEval i all a eval env =
-    print_string "devel\n";
-    print_int i;
-    print_string "\n";
     let one = ASTC(CONE) in
     let zero = ASTC(CZERO) in
     let rec helper all n at ml  =
@@ -534,7 +531,6 @@ let doDevelEval i all a eval env =
         let ea = getASTFromResult(eval a nenv) in
         ASTE(AND,ea,at)
     | x::xs ->
-        print_string "made it\n";
         let b = (n land i) > 0 in
         let vx = ASTV(x) in
         let vxe = if b then vx else ASTE(CNIMP,one,vx) in
