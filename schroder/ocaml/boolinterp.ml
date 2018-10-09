@@ -236,7 +236,7 @@ let rec parseExpr ts parse =
         let e1 = parseExpr ts parse in
         let e2 = parseExpr ts parse in
         ASTE(opType,e1,e2)
-      else if t=SLASH then parseSlash ts; parse ts;
+      else if t=SLASH then let u = parseSlash ts in parse ts
       else if t = ONE then ASTC(CONE) else if t = ZERO then ASTC(CZERO) else ASTV (m);;
 
 let isequals t = 
