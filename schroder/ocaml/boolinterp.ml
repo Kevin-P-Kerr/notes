@@ -238,7 +238,7 @@ let rec parseExpr ts parse =
             let at = parseExpr ts parse in
             let l = getStrList ts cont in
             ASTD(at,l) else
-      if iselimop then
+      if iselimop m then
           let at = parseExpr ts parse in
           let s = getStr ts in
           ASTELIM(at,s) else
