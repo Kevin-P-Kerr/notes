@@ -602,15 +602,15 @@ let eliminate a s eval env =
     let vzero = MV(s,zero) in
     let envone = HIER([vone],env) in
     let envzero = HIER([vzero],env) in
-    let ea1 = eval a envone in
-    let ea2 = eval a envzero in
+    let ea1 = getASTFromResult(eval a envone) in
+    let ea2 = getASTFromResult(eval a envzero) in
     let r = ASTE(AND,ea1,ea2) in
     eval r env;;
 
 let rec eval a env =
   match a with
   | ASTELIM (a1,s) ->
-    let ea1 = eval a1 env in
+    let ea1 = getASTFromResult(eval a1 env) in
     eliminate ea1 s eval env 
   | ASTN -> ER(ASTV(""),env)
   | ASTV(s) ->
