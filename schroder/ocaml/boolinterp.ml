@@ -15,7 +15,7 @@ type lexrule = LR of (Str.regexp * token);;
 type lextoken = LT of (token*string);;
 type tokenstack = TSLT of lextoken | TS of (lextoken list) | EMPTY;;
 type tokenstackcommand = PEEK|POP;;
-type ast = ASTF of (ast*ast) | ASTV of string | ASTC of constant | ASTE of (op*ast*ast) | ASTAS of (string*ast) | ASTEV of (ast*ast list) |ASTDF of (ast*direction*string list) | ASTD of (ast*string list) | ASTELIM of (ast*string);;
+type ast = ASTN | ASTF of (ast*ast) | ASTV of string | ASTC of constant | ASTE of (op*ast*ast) | ASTAS of (string*ast) | ASTEV of (ast*ast list) |ASTDF of (ast*direction*string list) | ASTD of (ast*string list) | ASTELIM of (ast*string);;
 type metavar = MV of (string*ast);;
 type environment = ENV of metavar list | HIER of ((metavar list)*environment);;
 type evalresult = ER of (ast*environment);;
@@ -271,6 +271,7 @@ let rec parse ts =
       | EQUAL -> parseFormula ts (fun tt -> parseExpr tt parse)
       | _ -> parseExpr ts parse
       end 
+  | EMPTY -> ASTN
   | _ -> raise (ParseError "parse error");; 
 
 (* evaluation *)
@@ -585,6 +586,7 @@ let evalall l eval env =
 
 let rec eval a env =
   match a with
+  | ASTN -> ER(ASTV("\n"),env)
   | ASTV(s) ->
       begin
       let b = lookup s env in
