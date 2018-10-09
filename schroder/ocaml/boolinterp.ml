@@ -586,7 +586,7 @@ let evalall l eval env =
 
 let rec eval a env =
   match a with
-  | ASTN -> ER(ASTV("\n"),env)
+  | ASTN -> ER(ASTV(""),env)
   | ASTV(s) ->
       begin
       let b = lookup s env in
