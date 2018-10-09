@@ -14,7 +14,8 @@ eval g (+ e b c)
 set sat * + - 1 x - 1 y  * + - 1 x y * + x y + x - 1 y
 set e devel sat (y)
 eval e (0)
-set h + z * x y
+set h * z + z * x y
 elim h x
-elim h y
+set n elim h y
 elim h z
+devel n (z)
