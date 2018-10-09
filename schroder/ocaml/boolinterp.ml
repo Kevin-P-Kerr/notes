@@ -198,6 +198,12 @@ let parseFormula ts parseExpr =
       let right = parseExpr ts in
       ASTF(left,right);;
 
+let rec parseSlash ts = 
+    let t = ts POP in
+    match t with
+    | TSLT(LT(t,m)) ->
+        if t=SLASH then () else parseSlash ts
+    | _ -> raise (ParseError "parseSlash");;
 
 let rec parseExpr ts parse =
   let ct = ts POP in
@@ -230,6 +236,7 @@ let rec parseExpr ts parse =
         let e1 = parseExpr ts parse in
         let e2 = parseExpr ts parse in
         ASTE(opType,e1,e2)
+      else if t=SLASH then parseSlash ts; parse ts;
       else if t = ONE then ASTC(CONE) else if t = ZERO then ASTC(CZERO) else ASTV (m);;
 
 let isequals t = 
