@@ -205,6 +205,13 @@ let rec parseSlash ts =
         if t=SLASH then () else parseSlash ts
     | _ -> raise (ParseError "parseSlash");;
 
+
+let getStr ts = 
+    let t = ts POP in
+    match t with
+    |TSLT(LT(t,m)) -> m
+    | _ -> raise (ParseError "getStr");;
+
 let rec parseExpr ts parse =
   let ct = ts POP in
   let cont = (fun tt -> parseExpr tt parse) in
@@ -231,6 +238,10 @@ let rec parseExpr ts parse =
             let at = parseExpr ts parse in
             let l = getStrList ts cont in
             ASTD(at,l) else
+      if iselimop then
+          let at = parseExpr ts parse in
+          let s = getStr ts in
+          ASTELIM(at,s) else
       if isop (LT(t,m)) then 
         let opType = getopt ct in
         let e1 = parseExpr ts parse in
@@ -584,8 +595,23 @@ let evalall l eval env =
   in
   helper l [];;
 
+let eliminate a s eval env = 
+    let one = ASTC(CONE) in
+    let zero = ASTC(CZERO) in
+    let vone = MV(s,one) in
+    let vzero = MV(s,zero) in
+    let envone = HIER([vone],env) in
+    let envzero = HIER([vzero],env) in
+    let ea1 = eval a envone in
+    let ea2 = eval a envzero in
+    let r = ASTE(AND,ea1,ea2) in
+    eval r env;;
+
 let rec eval a env =
   match a with
+  | ASTELIM (a1,s) ->
+    let ea1 = eval a1 env in
+    eliminate ea1 s eval env 
   | ASTN -> ER(ASTV(""),env)
   | ASTV(s) ->
       begin
