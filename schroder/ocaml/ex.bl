@@ -1,0 +1,15 @@
+set a + + g b * + b eqv d c e
+devel a (b)
+/ this is a test comment  /
+/ here is another /
+set n = + b eqv c d + x y
+devel left n (c d)
+set n  - n + x y
+devel left n (x)
+set g - e f
+eval g (_ 0)
+devel g ()
+devel g (f)
+eval g (+ e b c)
+set sat * + - 1 x - 1 y  * + - 1 x y * + x y + x - 1 y
+devel sat (x y)
