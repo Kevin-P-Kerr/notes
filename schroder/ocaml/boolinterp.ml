@@ -15,7 +15,7 @@ type lexrule = LR of (Str.regexp * token);;
 type lextoken = LT of (token*string);;
 type tokenstack = TSLT of lextoken | TS of (lextoken list) | EMPTY;;
 type tokenstackcommand = PEEK|POP;;
-type ast = ASTN | ASTF of (ast*ast) | ASTV of string | ASTC of constant | ASTE of (op*ast*ast) | ASTAS of (string*ast) | ASTEV of (ast*ast list) | ASTELIMF(ast*direction*string) |ASTDF of (ast*direction*string list) | ASTD of (ast*string list) | ASTELIM of (ast*string);;
+type ast = ASTN | ASTF of (ast*ast) | ASTV of string | ASTC of constant | ASTE of (op*ast*ast) | ASTAS of (string*ast) | ASTEV of (ast*ast list) | ASTELIMF of (ast*direction*string) |ASTDF of (ast*direction*string list) | ASTD of (ast*string list) | ASTELIM of (ast*string);;
 type metavar = MV of (string*ast);;
 type environment = ENV of metavar list | HIER of ((metavar list)*environment);;
 type evalresult = ER of (ast*environment);;
@@ -238,10 +238,10 @@ let rec parseExpr ts parse =
             let l = getStrList ts cont  in
             ASTDF(f,d,l)
         else
+            let at = parseExpr ts parse in
             if iselimop m then 
                 let s = getStr ts in
                 ASTELIM(at,s) else
-            let at = parseExpr ts parse in
             let l = getStrList ts cont in
             ASTD(at,l) else
       if isop (LT(t,m)) then 
