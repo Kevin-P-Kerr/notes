@@ -19,3 +19,5 @@ elim h x
 set n elim h y
 elim h z
 devel n (z)
+set y = + nn - 1 z 0
+elim left y nn
