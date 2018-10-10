@@ -291,20 +291,20 @@ let rec parse ts =
 (* literal evaluation 
 00,01,10,11
  0001 AND
- 0010 CNIMP
- 0011 RP
- 0100 NIMP
- 0101 LP
+ 0010 NIMP
+ 0011 LP
+ 0100 CNIMP
+ 0101 RP
  0110 XOR
  0111 OR
  1000 NOR
  1001 EQV
- 1010 LCOMPL
- 1011 IMP
- 1100 RCOMPL
- 1101 CIMP
+ 1010 RCOMPL
+ 1011 CIMP
+ 1100 LCOMPL
+ 1101 IMP
  1110 NAND *)
-let primTruthTables = [AND;CNIMP;RP;NIMP;LP;XOR;OR;NOR;EQV;LCOMPL;IMP;RCOMPL;CIMP;NAND];;
+let primTruthTables = [AND;NIMP;LP;CNIMP;RP;XOR;OR;NOR;EQV;RCOMPL;CIMP;LCOMPL;IMP;NAND];;
 let getPrimTruthTable o = 
     let rec helper x i = 
     match x with

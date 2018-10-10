@@ -1,2 +1,2 @@
 make nc
-cp bin/interp /user/local/bin/bl
+cp bin/interp /usr/local/bin/bl
