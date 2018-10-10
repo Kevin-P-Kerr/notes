@@ -445,12 +445,6 @@ let rec evalop o a1 a2 env =
   let d = i land 8 in
   let one = ASTC(CONE) in
   let zero = ASTC(CZERO) in
-  print_int i;
-  print_int d;
-  print_int c;
-  print_int b;
-  print_int a;
-  print_string"\n";
   let evalhelper u =
     match a1 with
     | ASTEV(_,_) -> raise (EvaluationError "evalop")
