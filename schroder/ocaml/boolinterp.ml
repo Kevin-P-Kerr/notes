@@ -122,7 +122,6 @@ let getstropt s =
   if s = "xor" then XOR else
   if s = "rp" then RP else
   if s = "lp" then LP else
-  if s = "cnip" then CNIMP else
   if s = "nand" then NAND else
   if s = "imp" then IMP else
   if s = "cimp" then CIMP else
@@ -291,9 +290,9 @@ let rec parse ts =
 (* literal evaluation 
 00,01,10,11
  0001 AND
- 0010 NIMP
+ 0010 CNIMP
  0011 LP
- 0100 CNIMP
+ 0100 NIMP
  0101 RP
  0110 XOR
  0111 OR
@@ -304,7 +303,7 @@ let rec parse ts =
  1100 LCOMPL
  1101 IMP
  1110 NAND *)
-let primTruthTables = [AND;NIMP;LP;CNIMP;RP;XOR;OR;NOR;EQV;RCOMPL;CIMP;LCOMPL;IMP;NAND];;
+let primTruthTables = [AND;CNIMP;LP;NIMP;RP;XOR;OR;NOR;EQV;RCOMPL;CIMP;LCOMPL;IMP;NAND];;
 let getPrimTruthTable o = 
     let rec helper x i = 
     match x with
@@ -446,6 +445,12 @@ let rec evalop o a1 a2 env =
   let d = i land 8 in
   let one = ASTC(CONE) in
   let zero = ASTC(CZERO) in
+  print_int i;
+  print_int d;
+  print_int c;
+  print_int b;
+  print_int a;
+  print_string"\n";
   let evalhelper u =
     match a1 with
     | ASTEV(_,_) -> raise (EvaluationError "evalop")
