@@ -611,6 +611,17 @@ let eliminate a s eval env =
 
 let rec eval a env =
   match a with
+  | ASTELIMF(a1,d,s) ->
+    let ea1 = getASTFromResult(eval a1 env) in
+    begin
+    match ea1 with
+    | ASTF(a2,a3) ->
+        let a4 = if d=LEFT then  ASTELIM(a2,s) else ASTELIM(a3,s) in
+        let a5 = getASTFromResult(eval a4 env) in
+        let a6 = if d=LEFT then ASTF(a5,a3) else ASTF(a2,a5) in
+        ER(a6,env)
+    | _ -> raise (EvaluationError "eval astf elim")
+    end
   | ASTELIM (a1,s) ->
     let ea1 = getASTFromResult(eval a1 env) in
     eliminate ea1 s eval env 
