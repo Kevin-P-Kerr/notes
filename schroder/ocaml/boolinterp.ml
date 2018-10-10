@@ -15,7 +15,7 @@ type lexrule = LR of (Str.regexp * token);;
 type lextoken = LT of (token*string);;
 type tokenstack = TSLT of lextoken | TS of (lextoken list) | EMPTY;;
 type tokenstackcommand = PEEK|POP;;
-type ast = ASTN | ASTF of (ast*ast) | ASTV of string | ASTC of constant | ASTE of (op*ast*ast) | ASTAS of (string*ast) | ASTEV of (ast*ast list) |ASTDF of (ast*direction*string list) | ASTD of (ast*string list) | ASTELIM of (ast*string);;
+type ast = ASTN | ASTF of (ast*ast) | ASTV of string | ASTC of constant | ASTE of (op*ast*ast) | ASTAS of (string*ast) | ASTEV of (ast*ast list) | ASTELIMF(ast*direction*string) |ASTDF of (ast*direction*string list) | ASTD of (ast*string list) | ASTELIM of (ast*string);;
 type metavar = MV of (string*ast);;
 type environment = ENV of metavar list | HIER of ((metavar list)*environment);;
 type evalresult = ER of (ast*environment);;
@@ -223,7 +223,7 @@ let rec parseExpr ts parse =
         let at = parseExpr ts parse in
         let l = getExprList ts cont in
         ASTEV(at,l) else
-      if isdevelop m then
+      if isdevelop m || iselimop m then
         let nct = ts PEEK in
         match nct with
         | EMPTY|TS(_) -> raise (ParseError "parse expr3")
@@ -232,16 +232,18 @@ let rec parseExpr ts parse =
             let d = if mm="left" then LEFT else RIGHT in
             ts POP;
             let f = parse ts in
+            if iselimop m then 
+                let s = getStr ts in
+                ASTELIMF(f,d,s) else
             let l = getStrList ts cont  in
             ASTDF(f,d,l)
         else
+            if iselimop m then 
+                let s = getStr ts in
+                ASTELIM(at,s) else
             let at = parseExpr ts parse in
             let l = getStrList ts cont in
             ASTD(at,l) else
-      if iselimop m then
-          let at = parseExpr ts parse in
-          let s = getStr ts in
-          ASTELIM(at,s) else
       if isop (LT(t,m)) then 
         let opType = getopt ct in
         let e1 = parseExpr ts parse in
