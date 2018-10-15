@@ -11,7 +11,7 @@ type direction = RIGHT|LEFT|BI;;
 type baseOpRule = BOR of (op*int);;
 type identinfo = IDI of (constant*direction) | IDIE of (constant*direction*constant*direction) | NONE;;
 type opRule = OR of (baseOpRule) | ORIE of (baseOpRule*identinfo);;
-type lexrule = LR of (Str.regexp * token);;
+type lexrule = LR of (Str.regexp * token) | LRN;;
 type lextoken = LT of (token*string);;
 type tokenstack = TSLT of lextoken | TS of (lextoken list) | EMPTY;;
 type tokenstackcommand = PEEK|POP;;
@@ -57,7 +57,7 @@ let getnonempty l n =
 let itertoken s = 
   let rec helper a =
     match a with 
-    | [] -> raise (LexError "no token")
+    | [] -> LRN 
     | x::xs -> 
         match x with 
         | LR(r,t) ->
@@ -69,8 +69,9 @@ let tokenize s =
   let rec makeTokens x y = 
     if String.length x = 0 then y else 
       let lexstate = itertoken x in
-      match lexstate with |
-      LR(r,t) -> 
+      match lexstate with 
+      | LRN -> []
+      | LR(r,t) -> 
         let m = getmatch x in
         let ns = getnonempty (Str.split r x) "" in
         if t = WHITE then makeTokens ns y else
@@ -447,6 +448,7 @@ let rec evalop o a1 a2 env =
   let zero = ASTC(CZERO) in
   let evalhelper u =
     match a1 with
+    | ASTN -> ER(a1,env)
     | ASTEV(_,_) -> raise (EvaluationError "evalop")
     | ASTF(_,_) -> raise (EvaluationError "evalop")
     | ASTAS(_,_) -> raise (EvaluationError "evalop")
