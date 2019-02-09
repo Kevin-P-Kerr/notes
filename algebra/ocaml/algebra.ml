@@ -4,6 +4,7 @@ open List;;
 type tokentype = WHITE | LPAREN | RPAREN | LCURLY | RCURLY | LBRAK | RBRAK | DASH | QUOTE | PLUS | ASTER | SLASH | POUND | VAR | EQUAL;;
 type token = TOK of (tokentype*string);;
 type lexrule = LR of (Str.regexp * tokentype);;
+type tokenstackcommand = PEEK|POP;;
 
 let asterMatch = LR(Str.regexp "^\\*",ASTER);;
 let plusMatch = LR(Str.regexp "^\\+",PLUS);;
@@ -47,4 +48,27 @@ let tokenize s =
   let ts = makeTokens s []
   in List.rev ts;;
 
+(* parsing *)
+let makeTokenStack t  =
+  let tt = ref t in
+  let f u =
+    match !tt with
+    | EMPTY -> EMPTY
+    | TS([]) -> EMPTY
+    | TS(x::xs) ->
+        tt := TS(xs);
+        TSLT(x)
+  in
+  let g u =
+    match !tt with
+    | EMPTY -> EMPTY;
+    | TS([]) -> EMPTY;
+    | TS(x::xs) -> TSLT(x) 
+    in
+  let r c = 
+    match c with
+    |PEEK -> g ()
+    |POP -> f ()
+  in
+  r;;
 
