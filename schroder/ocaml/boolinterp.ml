@@ -11,11 +11,11 @@ type direction = RIGHT|LEFT|BI;;
 type baseOpRule = BOR of (op*int);;
 type identinfo = IDI of (constant*direction) | IDIE of (constant*direction*constant*direction) | NONE;;
 type opRule = OR of (baseOpRule) | ORIE of (baseOpRule*identinfo);;
-type lexrule = LR of (Str.regexp * token);;
+type lexrule = LR of (Str.regexp * token) | LRN;;
 type lextoken = LT of (token*string);;
 type tokenstack = TSLT of lextoken | TS of (lextoken list) | EMPTY;;
 type tokenstackcommand = PEEK|POP;;
-type ast = ASTF of (ast*ast) | ASTV of string | ASTC of constant | ASTE of (op*ast*ast) | ASTAS of (string*ast) | ASTEV of (ast*ast list);;
+type ast = ASTN | ASTF of (ast*ast) | ASTV of string | ASTC of constant | ASTE of (op*ast*ast) | ASTAS of (string*ast) | ASTEV of (ast*ast list) | ASTELIMF of (ast*direction*string) |ASTDF of (ast*direction*string list) | ASTD of (ast*string list) | ASTELIM of (ast*string);;
 type metavar = MV of (string*ast);;
 type environment = ENV of metavar list | HIER of ((metavar list)*environment);;
 type evalresult = ER of (ast*environment);;
@@ -39,6 +39,12 @@ let whiteRE = Str.regexp "^[ \n\r\t]+";;
 let whiteMatch = LR(whiteRE,WHITE);;
 let reglist = [minusMatch;whiteMatch;varMatch;asterMatch;plusMatch;zeroMatch;oneMatch;equalMatch;underMatch;lparenMatch;rparenMatch;slashMatch];;
 
+let powotwo n =
+    let rec helper n r =
+        if n=0 then r else helper(n-1) (r*2)
+    in
+    helper n 1;;
+
 let ismatch r s =
   Str.string_match r s 0;;
 
@@ -51,7 +57,7 @@ let getnonempty l n =
 let itertoken s = 
   let rec helper a =
     match a with 
-    | [] -> raise (LexError "no token")
+    | [] -> LRN 
     | x::xs -> 
         match x with 
         | LR(r,t) ->
@@ -63,8 +69,9 @@ let tokenize s =
   let rec makeTokens x y = 
     if String.length x = 0 then y else 
       let lexstate = itertoken x in
-      match lexstate with |
-      LR(r,t) -> 
+      match lexstate with 
+      | LRN -> []
+      | LR(r,t) -> 
         let m = getmatch x in
         let ns = getnonempty (Str.split r x) "" in
         if t = WHITE then makeTokens ns y else
@@ -116,7 +123,6 @@ let getstropt s =
   if s = "xor" then XOR else
   if s = "rp" then RP else
   if s = "lp" then LP else
-  if s = "cnip" then CNIMP else
   if s = "nand" then NAND else
   if s = "imp" then IMP else
   if s = "cimp" then CIMP else
@@ -138,6 +144,12 @@ let getopt t =
 
 let isevalop s =
   s = "eval";;
+
+let isdevelop s = 
+    s = "devel";;
+
+let iselimop s = 
+    s = "elim";;
 
 let getExprList ts parseExpr =
     let leadtoken = ts PEEK in
@@ -164,24 +176,19 @@ let getExprList ts parseExpr =
       List.rev(helper [])
     | _ -> raise (ParseError "getExprList");;
 
-let rec parseExpr ts =
-  let ct = ts POP in
-  match ct with
-  | EMPTY -> raise (ParseError "parse expr1")
-  | TS(l) -> raise (ParseError "parse expr2")
-  | TSLT(LT(t,m)) ->
-      if isevalop m then
-        let at = parseExpr ts in
-        let l = getExprList ts parseExpr in
-        ASTEV(at,l) else
-      if isop (LT(t,m)) then 
-        let opType = getopt ct in
-        let e1 = parseExpr ts in
-        let e2 = parseExpr ts in
-        ASTE(opType,e1,e2)
-      else if t = ONE then ASTC(CONE) else if t = ZERO then ASTC(CZERO) else ASTV (m);;
+let getStrList ts parseExpr =
+    let l = getExprList ts parseExpr in
+    let rec helper l r = 
+    match l with
+    | [] -> r
+    | x::xs ->
+    match x with |
+    ASTV(s) -> helper xs (s::r)
+    | _ -> raise (ParseError "getStrList")
+    in
+    List.rev(helper l []);;
 
-let parseFormula ts = 
+let parseFormula ts parseExpr = 
   let ct = ts POP in
   match ct with
   | TS(l) -> raise (ParseError "parse formula")
@@ -190,6 +197,60 @@ let parseFormula ts =
       let left = parseExpr ts in
       let right = parseExpr ts in
       ASTF(left,right);;
+
+let rec parseSlash ts = 
+    let t = ts POP in
+    match t with
+    | TSLT(LT(t,m)) ->
+        if t=SLASH then () else parseSlash ts
+    | _ -> raise (ParseError "parseSlash");;
+
+
+let getStr ts = 
+    let t = ts POP in
+    match t with
+    |TSLT(LT(t,m)) -> m
+    | _ -> raise (ParseError "getStr");;
+
+let rec parseExpr ts parse =
+  let ct = ts POP in
+  let cont = (fun tt -> parseExpr tt parse) in
+  match ct with
+  | EMPTY -> raise (ParseError "parse expr1")
+  | TS(l) -> raise (ParseError "parse expr2")
+  | TSLT(LT(t,m)) ->
+      if isevalop m then
+        let at = parseExpr ts parse in
+        let l = getExprList ts cont in
+        ASTEV(at,l) else
+      if isdevelop m || iselimop m then
+        let nct = ts PEEK in
+        match nct with
+        | EMPTY|TS(_) -> raise (ParseError "parse expr3")
+        | TSLT(LT(tt,mm)) ->
+        if mm = "left" || mm = "right" then
+            let d = if mm="left" then LEFT else RIGHT in
+            ts POP;
+            let f = parse ts in
+            if iselimop m then 
+                let s = getStr ts in
+                ASTELIMF(f,d,s) else
+            let l = getStrList ts cont  in
+            ASTDF(f,d,l)
+        else
+            let at = parseExpr ts parse in
+            if iselimop m then 
+                let s = getStr ts in
+                ASTELIM(at,s) else
+            let l = getStrList ts cont in
+            ASTD(at,l) else
+      if isop (LT(t,m)) then 
+        let opType = getopt ct in
+        let e1 = parseExpr ts parse in
+        let e2 = parseExpr ts parse in
+        ASTE(opType,e1,e2)
+      else if t=SLASH then let u = parseSlash ts in parse ts
+      else if t = ONE then ASTC(CONE) else if t = ZERO then ASTC(CZERO) else ASTV (m);;
 
 let isequals t = 
   match t with |
@@ -215,14 +276,15 @@ let rec parse ts =
       else if isevalop s then
         begin
         ts POP;
-        let at = parseExpr ts in
-        let l = getExprList ts parseExpr in
+        let at = parseExpr ts parse in
+        let l = getExprList ts (fun tt -> parseExpr tt parse)  in
         ASTEV(at,l)
         end
       else begin match tk with
-      | EQUAL -> parseFormula ts
-      | _ -> parseExpr ts
+      | EQUAL -> parseFormula ts (fun tt -> parseExpr tt parse)
+      | _ -> parseExpr ts parse
       end 
+  | EMPTY -> ASTN
   | _ -> raise (ParseError "parse error");; 
 
 (* evaluation *)
@@ -230,19 +292,19 @@ let rec parse ts =
 00,01,10,11
  0001 AND
  0010 CNIMP
- 0011 RP
+ 0011 LP
  0100 NIMP
- 0101 LP
+ 0101 RP
  0110 XOR
  0111 OR
  1000 NOR
  1001 EQV
- 1010 LCOMPL
- 1011 IMP
- 1100 RCOMPL
- 1101 CIMP
+ 1010 RCOMPL
+ 1011 CIMP
+ 1100 LCOMPL
+ 1101 IMP
  1110 NAND *)
-let primTruthTables = [AND;CNIMP;RP;NIMP;LP;XOR;OR;NOR;EQV;LCOMPL;IMP;RCOMPL;CIMP;NAND];;
+let primTruthTables = [AND;CNIMP;LP;NIMP;RP;XOR;OR;NOR;EQV;RCOMPL;CIMP;LCOMPL;IMP;NAND];;
 let getPrimTruthTable o = 
     let rec helper x i = 
     match x with
@@ -386,6 +448,7 @@ let rec evalop o a1 a2 env =
   let zero = ASTC(CZERO) in
   let evalhelper u =
     match a1 with
+    | ASTN -> ER(a1,env)
     | ASTEV(_,_) -> raise (EvaluationError "evalop")
     | ASTF(_,_) -> raise (EvaluationError "evalop")
     | ASTAS(_,_) -> raise (EvaluationError "evalop")
@@ -407,7 +470,7 @@ let rec evalop o a1 a2 env =
         | ASTF(_,_) -> raise (EvaluationError "evalop")
         | ASTEV(_,_) -> raise (EvaluationError "evalop")
         | ASTC(c2) ->
-            if c2=CONE then if a>0 && c>0 then ER(one,env) else if a=0 && c=0 then ER(zero,env) else if a>0 && c=0 then ER(a1,env) else ER((ASTE(CNIMP,one,a1),env)) else if d>0 && b>0 then ER(one,env) else if d=0 && c=0 then ER(zero,env) else if d=0 && b>0 then ER(a1,env) else ER((ASTE(CNIMP,one,a1)),env)
+            if c2=CONE then if a>0 && c>0 then ER(one,env) else if a=0 && c=0 then ER(zero,env) else if a>0 && c=0 then ER(a1,env) else ER((ASTE(CNIMP,one,a1),env)) else if d>0 && b>0 then ER(one,env) else if d=0 && b=0 then ER(zero,env) else if d=0 && b>0 then ER(a1,env) else ER((ASTE(CNIMP,one,a1)),env)
         | _ -> 
             if a1=a2 then 
               if d=0 && a=0 then 
@@ -479,6 +542,48 @@ let partialeval a vl el e eval =
   let e1 = HIER(ml,e) in
   eval a e1;;
 
+(* a is fully evaluated *)
+let doDevelEval i all a eval env =
+    let one = ASTC(CONE) in
+    let zero = ASTC(CZERO) in
+    let rec helper all n at ml  =
+    match all with
+    | [] ->
+        let nenv = HIER(ml,env) in
+        let ea = getASTFromResult(eval a nenv) in
+        ASTE(AND,ea,at)
+    | x::xs ->
+        let b = (n land i) > 0 in
+        let vx = ASTV(x) in
+        let vxe = if b then vx else ASTE(CNIMP,one,vx) in
+        let nn = ASTE(AND,at,vxe) in
+        let mv = if b then MV(x,one) else MV(x,zero) in
+        let mml = mv::ml in
+        helper xs (n*2) nn mml
+    in
+    helper all 1 one [];;
+
+let getDevelopVars a sl = 
+    match sl with
+    | [] ->  getVarlist a
+    | x::xs -> sl;;
+
+(* a is fully evaluated *) 
+let develop a sl eval env =
+    let all = getDevelopVars a sl in
+    let size = List.length all in
+    let limit = powotwo size in
+    let rec helper i r =
+        if i = limit then r else
+            let ir =  doDevelEval i all a eval env in
+            let iir = ASTE(OR,ir,r) in
+            helper (i+1) iir
+    in
+    let zero = ASTC(CZERO) in
+    let one = ASTC(CONE) in
+    let start = ASTE(OR,zero,zero) in
+    getASTFromResult(eval(helper 0 start) env);;
+
 let evalall l eval env = 
   let rec helper l r = 
     match l with
@@ -493,8 +598,35 @@ let evalall l eval env =
   in
   helper l [];;
 
+let eliminate a s eval env = 
+    let one = ASTC(CONE) in
+    let zero = ASTC(CZERO) in
+    let vone = MV(s,one) in
+    let vzero = MV(s,zero) in
+    let envone = HIER([vone],env) in
+    let envzero = HIER([vzero],env) in
+    let ea1 = getASTFromResult(eval a envone) in
+    let ea2 = getASTFromResult(eval a envzero) in
+    let r = ASTE(AND,ea1,ea2) in
+    eval r env;;
+
 let rec eval a env =
   match a with
+  | ASTELIMF(a1,d,s) ->
+    let ea1 = getASTFromResult(eval a1 env) in
+    begin
+    match ea1 with
+    | ASTF(a2,a3) ->
+        let a4 = if d=LEFT then  ASTELIM(a2,s) else ASTELIM(a3,s) in
+        let a5 = getASTFromResult(eval a4 env) in
+        let a6 = if d=LEFT then ASTF(a5,a3) else ASTF(a2,a5) in
+        ER(a6,env)
+    | _ -> raise (EvaluationError "eval astf elim")
+    end
+  | ASTELIM (a1,s) ->
+    let ea1 = getASTFromResult(eval a1 env) in
+    eliminate ea1 s eval env 
+  | ASTN -> ER(ASTV(""),env)
   | ASTV(s) ->
       begin
       let b = lookup s env in
@@ -540,6 +672,21 @@ let rec eval a env =
       let e2 = getASTFromResult(eval a2 env) in
       let r = ASTF(e1,e2) in
       ER(r,env)
+  | ASTD(a1,sl) ->
+      let ea1 = getASTFromResult(eval a1 env) in
+      let r = develop ea1 sl eval env in
+      ER(r,env)
+  | ASTDF(a1,d,sl) ->
+    let ea = getASTFromResult(eval a1 env) in
+    begin
+    match ea with
+    | ASTF(a2,a3) ->
+        let a4 = if d=LEFT then ASTD(a2,sl) else ASTD(a3,sl) in
+        let a5 = getASTFromResult(eval a4 env) in
+        let a6 = if d=LEFT then ASTF(a5,a3) else ASTF(a2,a5) in
+        ER(a6,env)
+    | _ -> raise (EvaluationError "eval error")
+    end
   | _ ->  ER(a,env);;
 
 (* to string method *)
