@@ -21,8 +21,30 @@ let poundMatch  = LR(Str.regexp "^#",POUND);;
 let quoteMatch  = LR(Str.regexp "^\"",QUOTE);; 
 let whiteRE = Str.regexp "^[ \n\r\t]+";;
 let whiteMatch = LR(whiteRE,WHITE);;
-let lex s = 
-  let rec helper s a = 
-    if String.length s = 0 then a else
+let itertoken s = 
+  let rec helper a =
+    match a with 
+    | [] -> LRN 
+    | x::xs -> 
+        match x with 
+        | LR(r,t) ->
+            if ismatch r s then x else helper xs
+  in
+  helper reglist;;
+
+let tokenize s =
+  let rec makeTokens x y = 
+    if String.length x = 0 then y else 
+      let lexstate = itertoken x in
+      match lexstate with 
+      | LRN -> []
+      | LR(r,t) -> 
+        let m = getmatch x in
+        let ns = getnonempty (Str.split r x) "" in
+        if t = WHITE then makeTokens ns y else
+          makeTokens ns (LT(t,m)::y)
+  in
+  let ts = makeTokens s []
+  in List.rev ts;;
 
 
