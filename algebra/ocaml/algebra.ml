@@ -48,27 +48,3 @@ let tokenize s =
   let ts = makeTokens s []
   in List.rev ts;;
 
-(* parsing *)
-let makeTokenStack t  =
-  let tt = ref t in
-  let f u =
-    match !tt with
-    | EMPTY -> EMPTY
-    | TS([]) -> EMPTY
-    | TS(x::xs) ->
-        tt := TS(xs);
-        TSLT(x)
-  in
-  let g u =
-    match !tt with
-    | EMPTY -> EMPTY;
-    | TS([]) -> EMPTY;
-    | TS(x::xs) -> TSLT(x) 
-    in
-  let r c = 
-    match c with
-    |PEEK -> g ()
-    |POP -> f ()
-  in
-  r;;
-
