@@ -1,6 +1,6 @@
 OCAMLMAKEFILE = ./OCamlMakeFile
-SOURCES = algebra.ml
+SOURCES = ebnf.ml
 LIBS = str
-RESULT = bin/algebra
+RESULT = bin/ebnf
 OCAML_LIB_INSTALL = lib
 -include OCamlMakeFile
