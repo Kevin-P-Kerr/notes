@@ -5,6 +5,7 @@ type tokentype = WHITE | LPAREN | RPAREN | LCURLY | RCURLY | LBRAK | RBRAK | DAS
 type token = TOK of (tokentype*string);;
 type lexrule = LR of (Str.regexp * tokentype) | LRN;;
 type tokenstackcommand = PEEK|POP;;
+type lextoken = LT of (token*string);;
 
 let asterMatch = LR(Str.regexp "^\\*",ASTER);;
 let plusMatch = LR(Str.regexp "^\\+",PLUS);;
@@ -22,6 +23,7 @@ let poundMatch  = LR(Str.regexp "^#",POUND);;
 let quoteMatch  = LR(Str.regexp "^\"",QUOTE);; 
 let whiteRE = Str.regexp "^[ \n\r\t]+";;
 let whiteMatch = LR(whiteRE,WHITE);;
+let reglist = [minusMatch;whiteMatch;varMatch;asterMatch;plusMatch;equalMatch;lparenMatch;rparenMatch;];;
 let powotwo n =
     let rec helper n r =
         if n=0 then r else helper(n-1) (r*2)
