@@ -5,7 +5,6 @@ type tokentype = WHITE | LPAREN | RPAREN | LCURLY | RCURLY | LBRAK | RBRAK | DAS
 type token = TOK of (tokentype*string);;
 type lexrule = LR of (Str.regexp * tokentype) | LRN;;
 type tokenstackcommand = PEEK|POP;;
-type lextoken = LT of (token*string);;
 
 let asterMatch = LR(Str.regexp "^\\*",ASTER);;
 let plusMatch = LR(Str.regexp "^\\+",PLUS);;
@@ -59,7 +58,7 @@ let tokenize s =
         let m = getmatch x in
         let ns = getnonempty (Str.split r x) "" in
         if t = WHITE then makeTokens ns y else
-          makeTokens ns (LT(t,m)::y)
+          makeTokens ns (TOK(t,m)::y)
   in
   let ts = makeTokens s []
   in List.rev ts;;
