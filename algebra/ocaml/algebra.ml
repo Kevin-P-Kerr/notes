@@ -3,7 +3,7 @@ open List;;
 
 type tokentype = WHITE | LPAREN | RPAREN | LCURLY | RCURLY | LBRAK | RBRAK | DASH | QUOTE | PLUS | ASTER | SLASH | POUND | VAR | EQUAL;;
 type token = TOK of (tokentype*string);;
-type lexrule = LR of (Str.regexp * tokentype);;
+type lexrule = LR of (Str.regexp * tokentype) | LRN;;
 type tokenstackcommand = PEEK|POP;;
 
 let asterMatch = LR(Str.regexp "^\\*",ASTER);;
@@ -22,6 +22,20 @@ let poundMatch  = LR(Str.regexp "^#",POUND);;
 let quoteMatch  = LR(Str.regexp "^\"",QUOTE);; 
 let whiteRE = Str.regexp "^[ \n\r\t]+";;
 let whiteMatch = LR(whiteRE,WHITE);;
+let powotwo n =
+    let rec helper n r =
+        if n=0 then r else helper(n-1) (r*2)
+    in
+    helper n 1;;
+
+let ismatch r s =
+  Str.string_match r s 0;;
+
+let getmatch y =
+  Str.matched_string y;;
+
+let getnonempty l n = 
+  if List.length l = 0 then n else List.hd l;;
 let itertoken s = 
   let rec helper a =
     match a with 
