@@ -73,7 +73,17 @@ let tokenize s =
 
 let parseProduction t c =
 
-let parseEBNF t =
+let parseEBNF t c =
+    match t with
+    | [] -> empty ast
+    | x::xs ->
+        let cont t r =
+            match t with
+            |[] -> error
+            | x::xs ->
+                if x does not equal equsl then else
+                parse
+        parseProduction t cont
 
 let parse s = 
   let t = tokenize s in
