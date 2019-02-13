@@ -9,6 +9,8 @@ type construct = EBNF | PRODUCTION | VARNAME | RULE | MANDATORY_SEQUENCE | OPTIO
 type astnode = ASTN of (construct*string) | ASTNE of (construct)
 type ast = AST of (astnode*ast list)
 
+exception parseError of string
+
 let asterMatch = LR(Str.regexp "^\\*",ASTER);;
 let plusMatch = LR(Str.regexp "^\\+",PLUS);;
 let minusMatch = LR(Str.regexp "^-",DASH);;
@@ -69,8 +71,21 @@ let tokenize s =
 
 (* parsing routines *)
 
+let parseProduction t c =
+  let node = ASTNE(PRODUCTION) in
+  match t with 
+  | [] -> 
+
 let parseEBNF t =
-  1;;
+  let rec cont = 
+    parseProduction t cont in
+  let node = ASTNE(EBNF) in
+  match t with
+  | [] -> AST(node)
+  | x::xs -> 
+      let frag = parseProduction t cont in
+      AST(node,frag);;
+
 let parse s = 
   let t = tokenize s in
   parseEBNF t;;
