@@ -72,19 +72,8 @@ let tokenize s =
 (* parsing routines *)
 
 let parseProduction t c =
-  let node = ASTNE(PRODUCTION) in
-  match t with 
-  | [] -> 
 
 let parseEBNF t =
-  let rec cont = 
-    parseProduction t cont in
-  let node = ASTNE(EBNF) in
-  match t with
-  | [] -> AST(node)
-  | x::xs -> 
-      let frag = parseProduction t cont in
-      AST(node,frag);;
 
 let parse s = 
   let t = tokenize s in
