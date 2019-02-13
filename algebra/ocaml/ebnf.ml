@@ -1,10 +1,13 @@
 open Str;;
 open List;;
 
-type tokentype = WHITE | LPAREN | RPAREN | LCURLY | RCURLY | LBRAK | RBRAK | DASH | QUOTE | PLUS | ASTER | SLASH | POUND | VAR | EQUAL;;
+type tokentype = WHITE | LPAREN | RPAREN | LCURLY | RCURLY | LBRAK | RBRAK | DASH | QUOTE | PLUS | ASTER | SLASH | POUND | VAR | EQUAL | BAR;;
 type token = TOK of (tokentype*string);;
 type lexrule = LR of (Str.regexp * tokentype) | LRN;;
 type tokenstackcommand = PEEK|POP;;
+type construct = EBNF | PRODUCTION | VARNAME | RULE | MANDATORY_SEQUENCE | OPTIONAL_SEQUENCE | SEQUENCE | CHARCLASS | STRING 
+type astnode = ASTN of (construct*string) | ASTNE of (construct)
+type ast = AST of (astnode*ast list)
 
 let asterMatch = LR(Str.regexp "^\\*",ASTER);;
 let plusMatch = LR(Str.regexp "^\\+",PLUS);;
@@ -20,6 +23,7 @@ let lbrakMatch = LR(Str.regexp "^[",LBRAK);;
 let rbrakMatch = LR(Str.regexp "^]",RBRAK);; 
 let poundMatch  = LR(Str.regexp "^#",POUND);; 
 let quoteMatch  = LR(Str.regexp "^\"",QUOTE);; 
+let barMatch  = LR(Str.regexp "^|",BAR);; 
 let whiteRE = Str.regexp "^[ \n\r\t]+";;
 let whiteMatch = LR(whiteRE,WHITE);;
 let reglist = [minusMatch;whiteMatch;varMatch;asterMatch;plusMatch;equalMatch;lparenMatch;rparenMatch;];;
@@ -65,4 +69,8 @@ let tokenize s =
 
 (* parsing routines *)
 
-
+let parseEBNF t =
+  1;;
+let parse s = 
+  let t = tokenize s in
+  parseEBNF t;;
