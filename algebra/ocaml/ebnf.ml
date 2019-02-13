@@ -7,7 +7,7 @@ type lexrule = LR of (Str.regexp * tokentype) | LRN;;
 type tokenstackcommand = PEEK|POP;;
 type construct = EBNF | PRODUCTION | VARNAME | RULE | MANDATORY_SEQUENCE | OPTIONAL_SEQUENCE | SEQUENCE | CHARCLASS | STRING 
 type astnode = ASTN of (construct*string) | ASTNE of (construct)
-type ast = AST of (astnode*ast list)
+type ast = AST of (astnode*ast list) | EAST of (astnode)
 
 exception parseError of string
 
@@ -71,20 +71,16 @@ let tokenize s =
 
 (* parsing routines *)
 
-let parseProduction t c =
-  let node = ASTNE(PRODUCTION) in
-  match t with 
-  | [] -> 
-
-let parseEBNF t =
-  let rec cont = 
-    parseProduction t cont in
+let empty t c =
   let node = ASTNE(EBNF) in
+  let a = EAST(node)
+  a;;
+
+let parseProduction t c =
+let parseEBNF t c =
   match t with
-  | [] -> AST(node)
-  | x::xs -> 
-      let frag = parseProduction t cont in
-      AST(node,frag);;
+  |[] -> c t empty
+
 
 let parse s = 
   let t = tokenize s in
