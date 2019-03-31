@@ -37,6 +37,10 @@ struct fi *getFile(const char *fn) {
   return info;
 }
 
+int isWhite(char c) {
+  return (c == '\t' || c == '\n' || c == ' '); 
+}
+
 size_t scanLit(char *source, size_t i, size_t ii, struct token *tok) {
   tok->type = VAR;
   tok->start =i;
@@ -51,14 +55,11 @@ size_t scanLit(char *source, size_t i, size_t ii, struct token *tok) {
   return i;
 }
 
-int isWhite(char c) {
-  return (c == '\t' || c == '\n' || c == ' '); 
-}
 
 size_t killWhite(char *source, size_t i, size_t ii) {
   for (;i<ii;i++) {
     char c = source[i];
-    if isWhite(c)  {
+    if (isWhite(c))  {
       continue;
     }
     break;
@@ -91,7 +92,7 @@ struct token *tokenize(struct fi info) {
       tok.end = i+1;
     }
     else if (c == '{') {
-      tok.type = LCRULY;
+      tok.type = LCURLY;
       tok.start = i;
       tok.end = i+1;
     }
@@ -111,7 +112,7 @@ struct token *tokenize(struct fi info) {
       tok.end = i+1;
     }
     else {
-      i = scanLit(source,i,ii,&r);
+      i = scanLit(source,i,ii,&tok);
     }
   }
   return r;
