@@ -19,6 +19,11 @@ struct token {
   int end;
 };
 
+struct tokenList {
+  struct token *tokens;
+  size_t size;
+};
+
 size_t getFileSize(const char *fn) {
   struct stat st;
   stat(fn, &st);
@@ -67,19 +72,19 @@ size_t killWhite(char *source, size_t i, size_t ii) {
   return i;
 }
 
-struct token *tokenize(struct fi info) {
+struct tokenList tokenize(struct fi info) {
+  struct tokenList tl;
   size_t i = 0;
   struct token *r = malloc(sizeof(struct token));
   int n = 0;
   size_t ii = info.s;
   char c;
-  char *source;
+  char *source = (char *) info.m;
   struct token tok;
   for (;i<ii;i++) {
     i = killWhite(source,i,ii);
     if (i >= ii) { break; }
-    r = realloc(r,n+1*(sizeof(struct token)));
-    tok = r[n];
+    r = realloc(r,(n+1)*(sizeof(struct token)));
     c = source[i];
     if (c == '=') { 
       tok.type = EQUALS;
@@ -114,15 +119,57 @@ struct token *tokenize(struct fi info) {
     else {
       i = scanLit(source,i,ii,&tok);
     }
+    r[n] = tok;
+    n++;
   }
-  return r;
+  tl.tokens = r;
+  tl.size = n;
+  return tl;
 }
+
+void printToken(struct tokenList l, char *source) {
+  size_t i  = 0;
+  size_t ii = l.size;
+  struct token t;
+  for (;i<ii;i++) {
+    t = l.tokens[i];
+    if (t.type == EQUALS) {
+      fprintf(stdout,"token: EQUALS ");
+    }
+    if (t.type == VAR) {
+      fprintf(stdout,"token: VAR ");
+    }
+    if (t.type == RCURLY)  {
+      fprintf(stdout,"token: RCURLY ");
+    }
+    if (t.type == LCURLY) {
+      fprintf(stdout,"token: LCURLY ");
+    }
+    if (t.type == BAR) {
+      fprintf(stdout,"token: BAR ");
+    }
+    if (t.type == QUOTE) {
+      fprintf(stdout,"token: QUOTE ");
+    }
+    if (t.type == LEFTSLASH) {
+      fprintf(stdout,"token: LEFTSLASH ");
+    }
+    char *c = malloc(sizeof(t.end-t.start));
+    int n = 0;
+    for (;n<t.end;n++) {
+      c[n]= source[n];
+    }
+    fprintf(stdout, "lit: %s\n",c);
+  }
+}
+
 
 int parse(struct fi * info) {
   if (info->m == (void *)-1) {
     return -1;
   }
-  struct token *tokens = tokenize(*info);
+  struct tokenList tokens = tokenize(*info);
+  printToken(tokens,(char *)info->m);
   return 1;
 }
 
