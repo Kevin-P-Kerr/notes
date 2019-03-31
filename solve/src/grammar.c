@@ -170,6 +170,7 @@ void printTokens(struct tokenList l, char *source) {
 size_t parseLeftHand(struct tokenList *tl, size_t i) {
   struct token t = tl->tokens[i];
   if (t.type != VAR) {
+    fprintf(stderr,"could not parse left hand\n");
     return -1;
   }
   return i+1;
