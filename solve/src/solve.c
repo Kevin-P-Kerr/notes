@@ -30,7 +30,7 @@ struct fi *getFile(const char *fn) {
 }
 
 int parse(struct fi * info) {
-  if (info->m < 0) {
+  if (info->m == (void *)-1) {
     return -1;
   }
   return 1;
