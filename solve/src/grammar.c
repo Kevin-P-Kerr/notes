@@ -37,29 +37,92 @@ struct fi *getFile(const char *fn) {
   return info;
 }
 
+size_t scanLit(char *source, size_t i, size_t ii, struct token *tok) {
+  tok->type = VAR;
+  tok->start =i;
+  char c;
+  for (;i<ii;i++) {
+    c = source[i];
+    if (c == '=' || c == '}' || c == '{' || c == '|' || c== '"' || isWhite(c)) {
+      break;
+    }
+  }
+  tok->end=i;
+  return i;
+}
+
+int isWhite(char c) {
+  return (c == '\t' || c == '\n' || c == ' '); 
+}
+
+size_t killWhite(char *source, size_t i, size_t ii) {
+  for (;i<ii;i++) {
+    char c = source[i];
+    if isWhite(c)  {
+      continue;
+    }
+    break;
+  }
+  return i;
+}
+
 struct token *tokenize(struct fi info) {
   size_t i = 0;
   struct token *r = malloc(sizeof(struct token));
   int n = 0;
   size_t ii = info.s;
   char c;
-  char *source = (char *) info.m;
+  char *source;
   struct token tok;
   for (;i<ii;i++) {
+    i = killWhite(source,i,ii);
+    if (i >= ii) { break; }
+    r = realloc(r,n+1*(sizeof(struct token)));
     tok = r[n];
     c = source[i];
-    if (c == '*') { 
+    if (c == '=') { 
+      tok.type = EQUALS;
+      tok.start = i;
+      tok.end = i+1;
     }
-
+    else if (c == '}') {
+      tok.type = RCURLY;
+      tok.start = i;
+      tok.end = i+1;
+    }
+    else if (c == '{') {
+      tok.type = LCRULY;
+      tok.start = i;
+      tok.end = i+1;
+    }
+    else if (c == '|') {
+      tok.type = BAR;
+      tok.start = i;
+      tok.end = i+1;
+    }
+    else if (c == '"') {
+      tok.type = QUOTE;
+      tok.start = i;
+      tok.end = i+1;
+    }
+    else if (c == '\\') {
+      tok.type = LEFTSLASH;
+      tok.start = i;
+      tok.end = i+1;
+    }
+    else {
+      i = scanLit(source,i,ii,&r);
+    }
   }
-
+  return r;
 }
 
 int parse(struct fi * info) {
   if (info->m == (void *)-1) {
     return -1;
   }
-  struct token *tokens = tokenize(&info);
+  struct token *tokens = tokenize(*info);
+  return 1;
 }
 
 
