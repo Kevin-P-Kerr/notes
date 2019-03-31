@@ -11,7 +11,7 @@ struct fi {
   const char *fn;
 };
 
-enum tokenType { PAREN, VAR, PLUST, ASTER, COLON };
+enum tokenType { EQUALS, VAR, RCURLY, LCURLY, BAR, QUOTE, LEFTSLASH  };
 
 struct token {
   enum tokenType type;
