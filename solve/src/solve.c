@@ -11,6 +11,14 @@ struct fi {
   const char *fn;
 };
 
+enum tokenType { PAREN, VAR, PLUST, ASTER, COLON };
+
+struct token {
+  enum tokenType type;
+  int start;
+  int end;
+};
+
 size_t getFileSize(const char *fn) {
   struct stat st;
   stat(fn, &st);
@@ -29,11 +37,29 @@ struct fi *getFile(const char *fn) {
   return info;
 }
 
+struct token *tokenize(struct fi info) {
+  size_t i = 0;
+  struct token *r = malloc(sizeof(struct token));
+  int n = 0;
+  size_t ii = info.s;
+  char c;
+  char *source = (char *) info.m;
+  struct token tok;
+  for (;i<ii;i++) {
+    tok = r[n];
+    c = source[i];
+    if (c == '*') { 
+    }
+
+  }
+
+}
+
 int parse(struct fi * info) {
   if (info->m == (void *)-1) {
     return -1;
   }
-  return 1;
+  struct token *tokens = tokenize(&info);
 }
 
 
