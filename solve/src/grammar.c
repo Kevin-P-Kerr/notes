@@ -128,7 +128,7 @@ struct tokenList tokenize(struct fi info) {
   return tl;
 }
 
-void printToken(struct tokenList l, char *source) {
+void printTokens(struct tokenList l, char *source) {
   size_t i  = 0;
   size_t ii = l.size;
   struct token t;
@@ -167,14 +167,45 @@ void printToken(struct tokenList l, char *source) {
   }
 }
 
+size_t parseLeftHand(struct tokenList *tl, size_t i) {
+  struct token t = tl->tokens[i];
+  if (t.type != VAR) {
+    return -1;
+  }
+  return i+1;
+}
 
-int parse(struct fi * info) {
+size_t parseProductionRule(struct tokenList *tl, size_t i) {
+  return i+1;
+}
+
+int parse (struct tokenList *tl) {
+  size_t i =0;
+  while (i >=0 && i < tl->size) {
+    i = parseLeftHand(tl,i);
+    if (i < 0 ) {
+      return -1;
+    }
+    struct token t = tl->tokens[i];
+    if (t.type != EQUALS) {
+      return -1;
+    }
+    i++;
+    i = parseProductionRule(tl,i);
+    if (i < 0) {
+      return -1;
+    }
+  }
+  return 1;
+}
+
+
+int doParse(struct fi * info) {
   if (info->m == (void *)-1) {
     return -1;
   }
   struct tokenList tokens = tokenize(*info);
-  printToken(tokens,(char *)info->m);
-  return 1;
+  return parse(&tokens);
 }
 
 
@@ -183,5 +214,5 @@ int main(int argc, char** argv) {
     fprintf(stderr,"usage solve [fn]\n");
     return -1;
   }
-  return parse(getFile(argv[1]));
+  return doParse(getFile(argv[1]));
 }
