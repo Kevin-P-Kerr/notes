@@ -118,6 +118,7 @@ struct tokenList tokenize(struct fi info) {
     }
     else {
       i = scanLit(source,i,ii,&tok);
+      i--;
     }
     r[n] = tok;
     n++;
@@ -154,12 +155,15 @@ void printToken(struct tokenList l, char *source) {
     if (t.type == LEFTSLASH) {
       fprintf(stdout,"token: LEFTSLASH ");
     }
-    char *c = malloc(sizeof(t.end-t.start));
-    int n = 0;
+    char *c = malloc(sizeof(char)*(t.end-t.start));
+    int n = t.start;
+    int nn = 0;
     for (;n<t.end;n++) {
-      c[n]= source[n];
+      c[nn]= source[n];
+      nn++;
     }
     fprintf(stdout, "lit: %s\n",c);
+    free(c);
   }
 }
 
