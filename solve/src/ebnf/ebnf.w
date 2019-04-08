@@ -1,4 +1,4 @@
-@*
+@* 
 \def\title{Programming an EBNF Parser}
 The aim of the program
 
@@ -32,10 +32,10 @@ $$identifier=letter\lbrace digit\vert letter \rbrace.$$
 $$string="""\lbrace character \rbrace"""$$
 $$letter="A".\vert.."Z"$$
 $$digit="0".\vert.."9"$$
-In this grammer, {\it \lbrace expression \rbrace} 
-indicates that {\it this expression is repeated 0 
+In this grammer {\it $\lbrace expression \rbrace$} 
+indicates that {\it this expression is repeated $0$ 
 or more times}.
-This is a useful grammer, except that character classs
+This is a useful grammer, except that character classes
 are not available to us, and we would like to include
 strings and character literals that are not simply
 alphanumeric.  There, we can produce the following
@@ -48,10 +48,10 @@ $$factor=identifier\vert string \vert "(" expression ")"
 \vert "\lbrack" expression "\rbrack" \vert 
 "\lbrace" expression "\rbrace".$$
 $$identifier=alpha\lbrace character\rbrace.$$
-$$character=\lbrack !-~\rbrack.$$
+$$character=\lbrack !-\textasciitilde\rbrack.$$
 $$alpha=\lbrack A-z\rbrack.$$
 $$string="""character\lbrace character\rbrace.$$
-Here, {\it \lbrack !-~ \rbrack} indicates 
+Here, {\it $\lbrack !-\textasciitilde\rbrack$} indicates 
 {\it any character from 
 ascii code 21 to ascii code 126, inclusive}.
 
