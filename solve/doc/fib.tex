@@ -1,0 +1,50 @@
+\input cwebmac
+
+\N{1}{1}
+\def\title{Fib}
+This is a sample literate programming file.
+We
+will simply compute the first $20$ fibonacci numbers.
+
+\Y\B\8\#\&{include} \.{<stdio.h>}\6
+\X2:calculate a fibonacci number\X\X3:main\X\par
+\fi
+
+\M{2}\B\X2:calculate a fibonacci number\X${}\E{}$\6
+\&{size\_t} \\{fib}(\&{size\_t} \|i)\1\1\2\2\6
+${}\{{}$\1\6
+\&{size\_t} \|n${}\K\T{0};{}$\6
+\&{size\_t} \\{nn}${}\K\T{1};{}$\6
+\&{size\_t} \\{ii}${}\K\|i;{}$\7
+${}\|i\K\T{0};{}$\6
+\&{for} ( ; ${}\|i<\\{ii};{}$ ${}\|i\PP){}$\5
+${}\{{}$\1\6
+\&{size\_t} \|m${}\K\|n;{}$\7
+${}\|n\K\\{nn};{}$\6
+${}\\{nn}\K\\{nn}+\|m;{}$\6
+\4${}\}{}$\2\6
+\&{return} \|n;\6
+\4${}\}{}$\2\par
+\U1.\fi
+
+\M{3}\B\X3:main\X${}\E{}$\6
+\&{int} \\{main}(\&{void})\1\1\2\2\6
+${}\{{}$\1\6
+\&{size\_t} \|i${}\K\T{0};{}$\6
+\&{size\_t} \\{ii}${}\K\T{20};{}$\7
+\&{for} ( ; ${}\|i<\\{ii};{}$ ${}\|i\PP){}$\5
+${}\{{}$\1\6
+\&{size\_t} \|r${}\K\\{fib}(\|i);{}$\7
+${}\\{fprintf}(\\{stdout},\39\.{"\%d:\%d\\n"},\39{}$(\&{int}) \|i${},\39{}$(%
+\&{int}) \|r);\6
+\4${}\}{}$\2\6
+\&{return} \T{1};\6
+\4${}\}{}$\2\par
+\U1.\fi
+
+\N{1}{4}Index.
+\fi
+
+\inx
+\fin
+\con
