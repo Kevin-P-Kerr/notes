@@ -1,6 +1,6 @@
 @* 
 \def\title{Programming an EBNF Parser}
-The aim of the program
+The aim of the program.
 
 We wish to write a program that takes a description 
 of a language and outputs a
@@ -48,10 +48,10 @@ $$factor=identifier\vert string \vert "(" expression ")"
 \vert "\lbrack" expression "\rbrack" \vert 
 "\lbrace" expression "\rbrace".$$
 $$identifier=alpha\lbrace character\rbrace.$$
-$$character=\lbrack !-\textasciitilde\rbrack.$$
+$$character=\lbrack !-\tilde\rbrack.$$
 $$alpha=\lbrack A-z\rbrack.$$
 $$string="""character\lbrace character\rbrace.$$
-Here, {\it $\lbrack !-\textasciitilde\rbrack$} indicates 
+Here, {\it $\lbrack !-\tilde\rbrack$} indicates 
 {\it any character from 
 ascii code 21 to ascii code 126, inclusive}.
 
