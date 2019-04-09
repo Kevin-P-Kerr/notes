@@ -68,7 +68,10 @@ and we will do away here with this layer of abstraction.
 
 @
 @p
-@<set up headers@>
+@<set up headers@>@;
+@<set up structs@>@;
+@<parsing routines@>@;
+@<file io routines@>@;
 @<main@>
 
 @ @<set up headers@>=
@@ -92,6 +95,35 @@ int main(int argc, char** argv) {
     return -1;
   }
   return doParse(getFile(argv[1]));
+}
+@
+Our first order of business is file i/o. To do this we will need to define a struct.
+
+@ @<set up structs@>=
+struct fi {
+  void * m;
+  size_t s;
+  const char *fn;
+};
+@
+Now we can write our file i/o routines.
+@ @<file io routines@>=
+size_t getFileSize(const char *fn) {
+  struct stat st;
+  stat(fn, &st);
+  size_t r = st.st_size;
+  return r;
+}
+
+struct fi *getFile(const char *fn) {
+  size_t s = getFileSize(fn);
+  int fd = open(fn,O_RDONLY);
+  void * m = mmap(NULL,s,PROT_READ,MAP_PRIVATE,fd,0);
+  struct fi *info = malloc(sizeof(struct fi));
+  info->m = m;
+  info->s = s;
+  info->fn = fn;
+  return info;
 }
 @
 
