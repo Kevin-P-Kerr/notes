@@ -194,6 +194,22 @@ int parseProduction(char *in, int *i, int ii) {
   return 1;
 }
 @
+This example seems almost mechanical, 
+and provides a template of sorts for future routines.
+
+@<pseudo parse routine>=
+int parse(input, production) {
+  @<do bounds checking@>@;
+  @<do parsebody@>@;
+}
+@ @<do bounds checking@>=
+if (!is braced expression) {
+  if (current index is >= input length) {
+    return -1;
+  }
+}
+@ @<do parsebody@>@;
+if 
 
 
 
