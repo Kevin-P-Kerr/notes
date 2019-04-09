@@ -4,7 +4,7 @@ The aim of the program.
 
 We wish to write a program that takes a description 
 of a language and outputs a
-function $$f(x) \rightarrow \lbrace 0 \vert 1 \rbrace $$, where 
+function $$f(x) \rightarrow \lbrace 0 \vert 1 \rbrace $$ where 
 x is a string of finite length, 
 and 0 and 1 are the usual boolean values 
 indicating if the string conforms to our grammar.
@@ -16,7 +16,7 @@ Our first order of business is to describe, as precisely as possible,
 the format in which we shall 
 describe the grammars we wish to parse.  
 Indeed, specifying such a format within that format 
-itself is a good litmus test of it's generality and power.
+itself is a good litmus test of its generality and power.
 
 The notation we shall adopt is called EBNF--that is, 
 Extended Backus-Nauer Form. This is given in N. Wirth's
@@ -50,10 +50,16 @@ $$factor=identifier\vert string \vert "(" expression ")"
 $$identifier=alpha\lbrace character\rbrace.$$
 $$character=\lbrack !-\tilde\rbrack.$$
 $$alpha=\lbrack A-z\rbrack.$$
-$$string="""character\lbrace character\rbrace.$$
+$$string="""character\lbrace character\rbrace""".$$
 Here, {\it $\lbrack !-\tilde\rbrack$} indicates 
 {\it any character from 
 ascii code 21 to ascii code 126, inclusive}.
+
+Having this specification in hand, we can begin to construct our parser generator.  
+
+The usual way to construct such a parser is through indirection.  The parser itself does not operate upon an input stream of characters, but upon a stream of {\it tokens} which represent higher level syntatic constructs.  
+
+However, this is not strictly necessary, and we will do away here with this layer of abstraction.
 
 
 @* Index.
