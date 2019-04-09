@@ -165,9 +165,6 @@ set up the state of the parser, and then
 
 @ @<v1 production rouine@>=
 int parseProduction(char *in, int *i, int ii) {
-  if (*i >= ii) {
-    return -1;
-  }
   int status;
   status = parseIdentifier(in,i,ii);
   if (status < 0) {
@@ -185,23 +182,17 @@ int parseProduction(char *in, int *i, int ii) {
   if (status < 0) {
     return status;
   }
-  if (*i >= ii) {
-    return -1;
-  }
-  *i = *i+1;
   c = in[*i];
   if (c != '.') {
     return -1;
   }
+  *i = *i+1;
   return 1;
 }
 @
 
 @ @<v1 expression routine@>=
 int parseExpression(char *in, int *i, int ii) {
-  if (*i >= ii) {
-    return -1;
-  }
   int status = parseTerm(in,i,ii);
   if (status < 0) {
     return -1;
@@ -215,9 +206,6 @@ int parseExpression(char *in, int *i, int ii) {
 
 @ @<v1 term routine@>=
 int parseTerm(char *in, int *i, int ii) {
-  if (*i >= ii) {
-    return -1;
-  }
   int status = parseFactor(in,i,ii);
   if (status < 0) {
     return status;
@@ -237,11 +225,7 @@ int parseTerm(char *in, int *i, int ii) {
 
 @ @<v1 factor routine@>=
 int parseFactor(char *in, int *i, int ii) {
-  if (*i >= ii) {
-    return -1;
-  }
-  int status;
-  status = parseIdentifier(in,i,ii);
+  int status = parseIdentifier(in,i,ii);
   if (status >= 0) {
     return 1;
   }
@@ -283,11 +267,66 @@ int parseIdentifier(char *in, int *i, int ii) {
   if (status < 0) {
     return status;
   }
-  *i = *i+1;
   while (status > 0) {
     status = parseCharacter(in,i,ii);
   }
   return 1;
 }
 @
+
+@ @<v1 character routine@>=
+int parseCharacter(in,i,ii) {
+  if (*i >= ii) {
+    return -1;
+  }
+  char c = in[*i];
+  if (c = '"') {
+    return -1;
+  }
+  if (c < '!' || c > '~') {
+    return -1;
+  }
+  *i = *i+1;
+  return 1;
+}
+
+int parseAlpha(in,i,ii) {
+  if (*i >= ii) {
+    return -1;
+  }
+  char c = in[*i];
+  if (c < 'A' || c > 'z') {
+    return -1;
+  }
+  *i = *i+1;
+  return 1;
+}
+@
+
+@ @<v1 string routine@>=
+int parseString(in,i,ii) {
+  if (*i >= ii) {
+    return -1;
+  }
+  char c = in[*i];
+  if (c != '"') {
+    return -1;
+  }
+  *i = *i+1;
+  int status = parseCharacter(in,i,ii);
+  if (status < 0) {
+    return status;
+  }
+  while (status >= 0) {
+    status = parseCharacter(in,i,ii);
+  }
+  c = in[*i];
+  if (c != '"') {
+    return -1;
+  }
+  *i += i;
+  return 1;
+}
+@
+
 @* Index.
