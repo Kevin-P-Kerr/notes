@@ -271,11 +271,13 @@ int parseFactor(char *in, int *i, int ii) {
 @ @<v1 identifier routine@>=
 int parseIdentifier(char *in, int *i, int ii) {
   int status = parseAlpha(in,i,ii);
+  fprintf(stderr,"%d\n",*i);
   if (status < 0) {
     return status;
   }
   while (status > 0) {
     status = parseCharacter(in,i,ii);
+    fprintf(stderr,"%d\n",*i);
   }
   return 1;
 }
@@ -287,7 +289,7 @@ int parseCharacter(char *in,int *i,int ii) {
     return -1;
   }
   char c = in[*i];
-  if (c = '"') {
+  if (c == '"') {
     return -1;
   }
   if (c < '!' || c > '~') {
