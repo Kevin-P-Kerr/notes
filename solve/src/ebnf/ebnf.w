@@ -219,10 +219,10 @@ int parseProduction(char *in, int *i, int ii) {
 int parseExpression(char *in, int *i, int ii) {
   int status = parseTerm(in,i,ii);
   if (status < 0) {
-    return -1;
+    return status;
   }
   while (status >= 0) {
-    parseTerm(in,i,ii);
+    status = parseTerm(in,i,ii);
   }
   return 1;
 }
@@ -270,6 +270,7 @@ int parseFactor(char *in, int *i, int ii) {
     killWhite(in,i,ii);
     c = in[*i];
     if (c != ')') {
+      fprintf(stderr,"parseFactor: expected ')', got %c\n", c);
       return -1;
     }
     *i = *i+1;
@@ -283,6 +284,7 @@ int parseFactor(char *in, int *i, int ii) {
     killWhite(in,i,ii);
     c = in[*i];
     if (c != ']') {
+      fprintf(stderr,"parseFactor: expected ']', got %c\n",c);
       return -1;
     }
     *i = *i+1;
@@ -293,13 +295,11 @@ int parseFactor(char *in, int *i, int ii) {
 @ @<v1 identifier routine@>=
 int parseIdentifier(char *in, int *i, int ii) {
   int status = parseAlpha(in,i,ii);
-  fprintf(stderr,"%d\n",*i);
   if (status < 0) {
     return status;
   }
   while (status > 0) {
     status = parseCharacter(in,i,ii);
-    fprintf(stderr,"%d\n",*i);
   }
   return 1;
 }
@@ -308,14 +308,17 @@ int parseIdentifier(char *in, int *i, int ii) {
 @ @<v1 character routine@>=
 int parseCharacter(char *in,int *i,int ii) {
   if (*i >= ii) {
+    fprintf(stderr,"parseCharacter: index out of bounds\n");
     return -1;
   }
   killWhite(in,i,ii);
   char c = in[*i];
   if (c == '"') {
+    fprintf(stderr,"parseCharacter: unexpected quote\n");
     return -1;
   }
   if (c < '!' || c > '~') {
+    fprintf(stderr,"parseCharacter: expected character in class !-~, got %c\n",c);
     return -1;
   }
   *i = *i+1;
@@ -324,11 +327,13 @@ int parseCharacter(char *in,int *i,int ii) {
 
 int parseAlpha(char *in, int * i,int ii) {
   if (*i >= ii) {
+    fprintf(stderr,"parseAlpha: index out of bound");
     return -1;
   }
   killWhite(in,i,ii);
   char c = in[*i];
   if (c < 'A' || c > 'z') {
+    fprintf(stderr,"parseAlpha: expected character in class A-z, got %c\n",c);
     return -1;
   }
   *i = *i+1;
@@ -338,12 +343,14 @@ int parseAlpha(char *in, int * i,int ii) {
 
 @ @<v1 string routine@>=
 int parseString(char *in,int *i, int ii) {
+  killWhite(in,i,ii);
   if (*i >= ii) {
+    fprintf(stderr,"parseString: index out of bound\n");
     return -1;
   }
-  killWhite(in,i,ii);
   char c = in[*i];
   if (c != '"') {
+    fprintf(stderr,"parseString: expected '\"', got %c\n",c);
     return -1;
   }
   *i = *i+1;
@@ -357,6 +364,7 @@ int parseString(char *in,int *i, int ii) {
   killWhite(in,i,ii);
   c = in[*i];
   if (c != '"') {
+    fprintf(stderr,"parseString: no closing quote\n");
     return -1;
   }
   *i = *i+1;
