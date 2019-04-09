@@ -324,7 +324,7 @@ int parseString(char *in,int *i, int ii) {
   if (c != '"') {
     return -1;
   }
-  *i += i;
+  *i = *i+1;
   return 1;
 }
 @
