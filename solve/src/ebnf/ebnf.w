@@ -146,16 +146,18 @@ consideration into subsequent routines.
 
 @ @<entry routine@>=
 void killWhite(char *in, int *i, int ii) {
+  fprintf(stderr,"enter\n");
   if (*i >= ii) {
     return;
   }
-  for (;*i<ii;*i=*i+1) {
-    char c = in[*i];
-    if (c = ' ' || c == '\n' || c == '\t') {
-      continue;
+  int n = *i;
+  for (;n<ii;n++) {
+    char c = in[n];
+    if (!(c == ' ' || c == '\n' || c == '\t')) {
+      return;
     }
-    return;
   }
+  *i = n;
   return;
 }
 int doParse(struct fi *info) {
