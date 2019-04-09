@@ -57,9 +57,43 @@ ascii code 21 to ascii code 126, inclusive}.
 
 Having this specification in hand, we can begin to construct our parser generator.  
 
-The usual way to construct such a parser is through indirection.  The parser itself does not operate upon an input stream of characters, but upon a stream of {\it tokens} which represent higher level syntatic constructs.  
+The usual way to construct such a parser is through indirection.  
+The parser itself does not operate upon an input 
+stream of characters, but upon a stream of {\it tokens} 
+which represent higher level 
+syntatic constructs.  
 
-However, this is not strictly necessary, and we will do away here with this layer of abstraction.
+However, this is not strictly necessary, 
+and we will do away here with this layer of abstraction.
+
+@
+@p
+@<set up headers@>
+@<main@>
+
+@ @<set up headers@>=
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/mman.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <fctnl.h>
+@ Of these headers, {\it stdio} allows us to write 
+input/and output for debugging and other purposes,
+{\it stdlib} gives us access to {\it malloc} and 
+{\it free}, and {\it stat, types} and {\it fctnl}
+provide file i/o facilities through {\it mmap}
+and friends.
+
+@ @<main@>=
+int main(int argc, char** argv) {
+  if (argc < 2) {
+    fprintf(stderr, "usage: nauer [fn]\n");
+    return -1;
+  }
+  return doParse(getFile(argv[1]));
+}
+@
 
 
 @* Index.
