@@ -159,7 +159,9 @@ int doParse(struct fi *info) {
   return 1;
 }
 
-@ the idea of the entry routine is too set up the state of the parser, and then {\it enter} into subsequent routines.
+@ the idea of the entry routine is to
+set up the state of the parser, and then 
+{\it enter} into subsequent routines.
 
 @ @<v1 production rouine@>=
 int parseProduction(char *in, int *i, int ii) {
@@ -220,9 +222,16 @@ int parseTerm(char *in, int *i, int ii) {
   if (status < 0) {
     return status;
   }
-  while (status >= 0) {
-    parseFactor(in,i,ii);
+  char c = in[*i];
+  *i = *i+1;
+  if (c == '|') {
+    while (status >= 0 && c == '|') {
+      status = parseFactor(in,i,ii);
+      c = in[*i];
+      *i = *i+1;
+    }
   }
+  return 1;
 }
 @
 
@@ -254,8 +263,31 @@ int parseFactor(char *in, int *i, int ii) {
     *i = *i+1;
     return 1;
   }
-  if (c == ']') {
+  if (c == '[') {
+    status = parseExpression(in,i,ii);
+    if (status < 0) {
+      return status;
+    }
+    c = in[*i];
+    if (c != ']') {
+      return -1;
+    }
+    *i = *i+1;
+    return 1;
   }
+}
+@
+@ @<v1 identifier routine@>=
+int parseIdentifier(char *in, int *i, int ii) {
+  int status = parseAlpha(in,i,ii);
+  if (status < 0) {
+    return status;
+  }
+  *i = *i+1;
+  while (status > 0) {
+    status = parseCharacter(in,i,ii);
+  }
+  return 1;
 }
 @
 @* Index.
