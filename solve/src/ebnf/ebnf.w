@@ -171,10 +171,12 @@ int parseProduction(char *in, int *i, int ii) {
     return status;
   }
   if (*i >= ii) {
+    fprintf(stderr,"parseProduction: out of bounds\n");
     return -1;
   }
   char c = in[*i];
   if (c != '=') {
+    fprintf(stderr,"parseProduction: expected '=', got '%c'\n",c);
     return -1;
   }
   *i = *i+1;
@@ -182,8 +184,13 @@ int parseProduction(char *in, int *i, int ii) {
   if (status < 0) {
     return status;
   }
+  if (*i > ii) {
+    fprintf(stderr,"parseProduction: out of bounds\n");
+    return -1;
+  }
   c = in[*i];
   if (c != '.') {
+    fprintf(stderr, "parseProduction : expected '.', got '%c'\n'",c);
     return -1;
   }
   *i = *i+1;
