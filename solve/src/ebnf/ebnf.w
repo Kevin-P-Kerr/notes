@@ -194,25 +194,69 @@ int parseProduction(char *in, int *i, int ii) {
   return 1;
 }
 @
-This example seems almost mechanical, 
-and provides a template of sorts for future routines.
 
-@<pseudo parse routine>=
-int parse(input, production) {
-  @<do bounds checking@>@;
-  @<do parsebody@>@;
-}
-@ @<do bounds checking@>=
-if (!is braced expression) {
-  if (current index is >= input length) {
+@ @<v1 expression routine@>=
+int parseExpression(char *in, int *i, int ii) {
+  if (*i >= ii) {
     return -1;
   }
+  int status = parseTerm(in,i,ii);
+  if (status < 0) {
+    return -1;
+  }
+  while (status >= 0) {
+    parseTerm(in,i,ii);
+  }
+  return 1;
 }
-@ @<do parsebody@>@;
-if 
+@
 
+@ @<v1 term routine@>=
+int parseTerm(char *in, int *i, int ii) {
+  if (*i >= ii) {
+    return -1;
+  }
+  int status = parseFactor(in,i,ii);
+  if (status < 0) {
+    return status;
+  }
+  while (status >= 0) {
+    parseFactor(in,i,ii);
+  }
+}
+@
 
+@ @<v1 factor routine@>=
+int parseFactor(char *in, int *i, int ii) {
+  if (*i >= ii) {
+    return -1;
+  }
+  int status;
+  status = parseIdentifier(in,i,ii);
+  if (status >= 0) {
+    return 1;
+  }
+  status = parseString(in,i,ii);
+  if (status >= 0) {
+    return 1;
+  }
+  char c = in[*i];
+  if (c == '(') {
+    *i = *i+1;
+    status = parseString(in,i,ii);
+    if (status < 0) {
+      return status;
+    }
+    c = in[*i];
+    if (c != ')') {
+      return -1;
+    }
+    *i = *i+1;
+    return 1;
+  }
+  if (c == '
 
-
+}
+}
 
 @* Index.
