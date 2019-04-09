@@ -102,7 +102,7 @@ Our first order of business is file i/o. To do this we will need to define a str
 @ @<set up structs@>=
 struct fi {
   void * m;
-  size_t s;
+  size_t size;
   const char *fn;
 };
 @
@@ -126,6 +126,40 @@ struct fi *getFile(const char *fn) {
   return info;
 }
 @
+Now we can begin the parsing the routines. 
+The idea is to pass a reference to the index of 
+the current character under 
+consideration into subsequent routines.
+
+@<parsing routines v1@>=
+@<entry routine@>@;
+@<production routine v1@>@;
+@<expression routine v1@>@;
+@<term routine v1@>@;
+@<factor routine v1@>@;
+@<identifier routne v1@>@;
+@<character routine v1@>@;
+@<string routine v1@>@;
+
+@
+
+@<entry routine@>=
+int doParse(struct fi *info) {
+  if (info->sz <= 0) {
+    return -1;
+  }
+  char *in = info->m;
+  size_t i = 0;
+  size_t ii = info->sz;
+  while(i<ii) {
+    int status = parseProduction(in,&i,ii);
+    if (status < 0) {
+      return status;
+    }
+  }
+  return 1;
+}
+
 
 
 @* Index.
