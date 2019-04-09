@@ -24,7 +24,7 @@ Extended Backus-Nauer Form. This is given in N. Wirth's
 $$syntax=\lbrace production \rbrace.$$
 $$production=identifier "=" expression"."$$
 $$expression=term\lbrace term \rbrace.$$
-$$term=factor\lbrace factor \rbrace.$$
+$$term=factor\lbrace "\vert" factor \rbrace.$$
 $$factor=identifier\vert string \vert "(" expression ")"
 \vert "\lbrack" expression "\rbrack" \vert 
 "\lbrace" expression "\rbrace".$$
@@ -43,7 +43,7 @@ modifications.
 $$syntax=\lbrace production \rbrace.$$
 $$production=identifier "=" expression"."$$
 $$expression=term\lbrace term \rbrace.$$
-$$term=factor\lbrace factor \rbrace.$$
+$$term=factor\lbrace "\vert" factor \rbrace.$$
 $$factor=identifier\vert string \vert "(" expression ")"
 \vert "\lbrack" expression "\rbrack" \vert 
 "\lbrace" expression "\rbrace".$$
@@ -254,9 +254,8 @@ int parseFactor(char *in, int *i, int ii) {
     *i = *i+1;
     return 1;
   }
-  if (c == '
-
+  if (c == ']') {
+  }
 }
-}
-
+@
 @* Index.
