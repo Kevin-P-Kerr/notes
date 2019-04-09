@@ -38,7 +38,9 @@ or more times}.
 This is a useful grammer, except that character classes
 are not available to us, and we would like to include
 strings and character literals that are not simply
-alphanumeric.  There, we can produce the following
+alphanumeric. We also want to deal with whitespac
+is an easy way.
+Thus, we can produce the following
 modifications.
 $$syntax=\lbrace production \rbrace.$$
 $$production=identifier "=" expression"."$$
@@ -143,6 +145,19 @@ consideration into subsequent routines.
 
 
 @ @<entry routine@>=
+void killWhite(char *in, int *i, int ii) {
+  if (*i >= ii) {
+    return;
+  }
+  for (;*i<ii;*i=*i+1) {
+    char c = in[*i];
+    if (c = ' ' || c == '\n' || c == '\t') {
+      continue;
+    }
+    return;
+  }
+  return;
+}
 int doParse(struct fi *info) {
   if (info->size <= 0) {
     return -1;
@@ -174,6 +189,7 @@ int parseProduction(char *in, int *i, int ii) {
     fprintf(stderr,"parseProduction: out of bounds\n");
     return -1;
   }
+  killWhite(in,i,ii);
   char c = in[*i];
   if (c != '=') {
     fprintf(stderr,"parseProduction: expected '=', got '%c'\n",c);
@@ -188,6 +204,7 @@ int parseProduction(char *in, int *i, int ii) {
     fprintf(stderr,"parseProduction: out of bounds\n");
     return -1;
   }
+  killWhite(in,i,ii);
   c = in[*i];
   if (c != '.') {
     fprintf(stderr, "parseProduction : expected '.', got '%c'\n'",c);
@@ -217,11 +234,13 @@ int parseTerm(char *in, int *i, int ii) {
   if (status < 0) {
     return status;
   }
+  killWhite(in,i,ii);
   char c = in[*i];
   *i = *i+1;
   if (c == '|') {
     while (status >= 0 && c == '|') {
       status = parseFactor(in,i,ii);
+      killWhite(in,i,ii);
       c = in[*i];
       *i = *i+1;
     }
@@ -240,6 +259,7 @@ int parseFactor(char *in, int *i, int ii) {
   if (status >= 0) {
     return 1;
   }
+  killWhite(in,i,ii);
   char c = in[*i];
   if (c == '(') {
     *i = *i+1;
@@ -247,6 +267,7 @@ int parseFactor(char *in, int *i, int ii) {
     if (status < 0) {
       return status;
     }
+    killWhite(in,i,ii);
     c = in[*i];
     if (c != ')') {
       return -1;
@@ -259,6 +280,7 @@ int parseFactor(char *in, int *i, int ii) {
     if (status < 0) {
       return status;
     }
+    killWhite(in,i,ii);
     c = in[*i];
     if (c != ']') {
       return -1;
@@ -288,6 +310,7 @@ int parseCharacter(char *in,int *i,int ii) {
   if (*i >= ii) {
     return -1;
   }
+  killWhite(in,i,ii);
   char c = in[*i];
   if (c == '"') {
     return -1;
@@ -303,6 +326,7 @@ int parseAlpha(char *in, int * i,int ii) {
   if (*i >= ii) {
     return -1;
   }
+  killWhite(in,i,ii);
   char c = in[*i];
   if (c < 'A' || c > 'z') {
     return -1;
@@ -317,6 +341,7 @@ int parseString(char *in,int *i, int ii) {
   if (*i >= ii) {
     return -1;
   }
+  killWhite(in,i,ii);
   char c = in[*i];
   if (c != '"') {
     return -1;
@@ -329,6 +354,7 @@ int parseString(char *in,int *i, int ii) {
   while (status >= 0) {
     status = parseCharacter(in,i,ii);
   }
+  killWhite(in,i,ii);
   c = in[*i];
   if (c != '"') {
     return -1;
