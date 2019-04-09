@@ -131,19 +131,18 @@ The idea is to pass a reference to the index of
 the current character under 
 consideration into subsequent routines.
 
-@<parsing routines v1@>=
+@<v1 parsing routines@>=
 @<entry routine@>@;
-@<production routine v1@>@;
-@<expression routine v1@>@;
-@<term routine v1@>@;
-@<factor routine v1@>@;
-@<identifier routne v1@>@;
-@<character routine v1@>@;
-@<string routine v1@>@;
+@<v1 production routine@>@;
+@<v1 expression routine@>@;
+@<v1 term routine@>@;
+@<v1 factor routine@>@;
+@<v1 identifier routne@>@;
+@<v1 character routine@>@;
+@<v1 string routine@>@;
 
-@
 
-@<entry routine@>=
+@ @<entry routine@>=
 int doParse(struct fi *info) {
   if (info->sz <= 0) {
     return -1;
@@ -159,6 +158,44 @@ int doParse(struct fi *info) {
   }
   return 1;
 }
+
+@ the idea of the entry routine is too set up the state of the parser, and then {\it enter} into subsequent routines.
+
+@ @<v1 production rouine@>=
+int parseProduction(char *in, int *i, int ii) {
+  if (*i >= ii) {
+    return -1;
+  }
+  int status;
+  status = parseIdentifier(in,i,ii);
+  if (status < 0) {
+    return status;
+  }
+  if (*i >= ii) {
+    return -1;
+  }
+  char c = in[*i];
+  if (c != '=') {
+    return -1;
+  }
+  *i = *i+1;
+  status = parseExpression(in,i,ii);
+  if (status < 0) {
+    return status;
+  }
+  if (*i >= ii) {
+    return -1;
+  }
+  *i = *i+1;
+  c = in[*i];
+  if (c != '.') {
+    return -1;
+  }
+  return 1;
+}
+@
+
+
 
 
 
