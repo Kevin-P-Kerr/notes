@@ -70,7 +70,7 @@ and we will do away here with this layer of abstraction.
 @p
 @<set up headers@>@;
 @<set up structs@>@;
-@<parsing routines@>@;
+@<v1 parsing routines@>@;
 @<file io routines@>@;
 @<main@>
 
@@ -80,7 +80,7 @@ and we will do away here with this layer of abstraction.
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <fctnl.h>
+#include <fcntl.h>
 @ Of these headers, {\it stdio} allows us to write 
 input/and output for debugging and other purposes,
 {\it stdlib} gives us access to {\it malloc} and 
@@ -121,7 +121,7 @@ struct fi *getFile(const char *fn) {
   void * m = mmap(NULL,s,PROT_READ,MAP_PRIVATE,fd,0);
   struct fi *info = malloc(sizeof(struct fi));
   info->m = m;
-  info->s = s;
+  info->size = s;
   info->fn = fn;
   return info;
 }
@@ -137,19 +137,19 @@ consideration into subsequent routines.
 @<v1 expression routine@>@;
 @<v1 term routine@>@;
 @<v1 factor routine@>@;
-@<v1 identifier routne@>@;
+@<v1 identifier routine@>@;
 @<v1 character routine@>@;
 @<v1 string routine@>@;
 
 
 @ @<entry routine@>=
 int doParse(struct fi *info) {
-  if (info->sz <= 0) {
+  if (info->size <= 0) {
     return -1;
   }
   char *in = info->m;
   size_t i = 0;
-  size_t ii = info->sz;
+  size_t ii = info->size;
   while(i<ii) {
     int status = parseProduction(in,&i,ii);
     if (status < 0) {
@@ -163,7 +163,7 @@ int doParse(struct fi *info) {
 set up the state of the parser, and then 
 {\it enter} into subsequent routines.
 
-@ @<v1 production rouine@>=
+@ @<v1 production routine@>=
 int parseProduction(char *in, int *i, int ii) {
   int status;
   status = parseIdentifier(in,i,ii);
@@ -275,7 +275,7 @@ int parseIdentifier(char *in, int *i, int ii) {
 @
 
 @ @<v1 character routine@>=
-int parseCharacter(in,i,ii) {
+int parseCharacter(char *in,int *i,int ii) {
   if (*i >= ii) {
     return -1;
   }
@@ -290,7 +290,7 @@ int parseCharacter(in,i,ii) {
   return 1;
 }
 
-int parseAlpha(in,i,ii) {
+int parseAlpha(char *in, int * i,int ii) {
   if (*i >= ii) {
     return -1;
   }
@@ -304,7 +304,7 @@ int parseAlpha(in,i,ii) {
 @
 
 @ @<v1 string routine@>=
-int parseString(in,i,ii) {
+int parseString(char *in,int *i, int ii) {
   if (*i >= ii) {
     return -1;
   }
