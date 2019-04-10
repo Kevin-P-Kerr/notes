@@ -145,7 +145,29 @@ enum nodeType {
 struct parseNode {
   enum nodeType type;
   struct parseNode *children;
+  size_t start; // inclusive
+  size_t end; //exlusive;
+  size_t numChildren;
 };
+
+struct parseNode initNode(enum nodeType type, 
+size_t start, size_t end) {
+  struct parseNode pn;
+  pn.nodeType = type;
+  pn.start = start;
+  pn.end = end;
+  pn.numChildren = 0;
+  return pn;
+}
+
+void addChild(struct parseNode *parent, 
+struct parseNode *child) {
+  size_t n = parent->numChildren+1;
+  struct parseNode *children = parent->children;
+  children = realloc(children,sizeof(struct parseNode)*n);
+  &children[n-1] = child;
+  parent->numChildren = n;
+}
 
 @
 Now we can write our file i/o routines.
