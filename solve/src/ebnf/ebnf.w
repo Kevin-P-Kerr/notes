@@ -265,48 +265,58 @@ struct parseNode *parseProduction(char *in, int *i, int ii) {
   struct parseNode *ast = initNode(Production,*i);
   status = addChild(ast,parseIdentifier(in,i,ii));
   if (status < 0) {
+    freeNode(ast);
     return Error;
   }
   if (*i >= ii) {
     fprintf(stderr,"parseProduction: out of bounds\n");
+    freeNode(ast);
     return Error;
   }
   killWhite(in,i,ii);
   char c = in[*i];
   if (c != '=') {
     fprintf(stderr,"parseProduction: expected '=', got '%c'\n",c);
+    freeNode(ast);
     return ERROR;
   }
   *i = *i+1;
   status = addChild(ast,parseExpression(in,i,ii));
   if (status < 0) {
+    freeNode(ast);
     return ERROR;
   }
   if (*i >= ii) {
     fprintf(stderr,"parseProduction2: out of bounds\n");
+    freeNode(ast);
     return ERROR;
   }
   killWhite(in,i,ii);
   c = in[*i];
   if (c != '.') {
     fprintf(stderr, "parseProduction : expected '.', got '%c'\n'",c);
+    freeNode(ast);
     return ERROR;
   }
   *i = *i+1;
+  ast->end = *i;
   return ast;
 }
 @
 
 @ @<v1 expression routine@>=
-int parseExpression(char *in, int *i, int ii) {
-  int status = parseTerm(in,i,ii);
+struct parseNode *parseExpression(char *in, int *i, int ii) {
+  struct parseNode *ast = initNode(Expression,*i);
+  int status = addChild(ast,parseTerm(in,i,ii));
   if (status < 0) {
-    return status;
+    freeNode(ast);
+    return ERROR;
   }
   while (status >= 0) {
-    status = parseTerm(in,i,ii);
+    status = addChild(ast,parseTerm(in,i,ii));
   }
-  return 1;
+  ast->end = *i;
+  return ast;
 }
 @
 
