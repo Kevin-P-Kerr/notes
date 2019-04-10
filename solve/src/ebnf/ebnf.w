@@ -150,23 +150,25 @@ struct parseNode {
   size_t numChildren;
 };
 
-struct parseNode initNode(enum nodeType type, 
-size_t start, size_t end) {
+struct parseNode initNode(enum nodeType type, size_t start) {
   struct parseNode pn;
-  pn.nodeType = type;
+  pn.type = type;
   pn.start = start;
-  pn.end = end;
   pn.numChildren = 0;
   return pn;
 }
 
-void addChild(struct parseNode *parent, 
+int addChild(struct parseNode *parent, 
 struct parseNode *child) {
+  if (child < 0) {
+    return -1;
+  }
   size_t n = parent->numChildren+1;
   struct parseNode *children = parent->children;
   children = realloc(children,sizeof(struct parseNode)*n);
-  &children[n-1] = child;
+  children[n-1] = *child;
   parent->numChildren = n;
+  return 1;
 }
 
 @
@@ -222,21 +224,22 @@ void killWhite(char *in, int *i, int ii) {
   return;
 }
 
-int doParse(struct fi *info) {
+struct parseNode *doParse(struct fi *info) {
   if (info->size <= 0) {
     return -1;
   }
   char *in = info->m;
   size_t i = 0;
   size_t ii = info->size;
+  struct parseNode ast = initNode(Production,0);
   while(i<ii) {
-    int status = parseProduction(in,&i,ii);
+    int status = addChild(ast,parseProduction(in,&i,ii));
     killWhite(in,&i,ii);
     if (i >= ii || status < 0) {
       return status;
     }
   }
-  return 1;
+  return &ast;
 }
 
 @ the idea of the entry routine is to
