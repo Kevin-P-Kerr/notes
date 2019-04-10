@@ -92,30 +92,30 @@ and friends.
 
 @ @<main@>=
 void printError(char *in, int i,int ii) {
-  char s[11];
-  s[10] = 'NULL';
-  int n =0;
-  int nn = i-5;
-  for (;n<5;n++) {
-    if (nn >= 0) {
-      s[n] = in[nn];
-    }
-    nn++;
+  int j;
+  int n=i-5;
+  int nn = i+5;
+  if (n < 0) {
+    n=0;
   }
-  n=0;
-  nn=i+5;
-  if (nn >= ii) {
+  if (nn > ii) {
     nn = ii;
   }
-  for (;n<5 && nn<ii;n++) {
-    s[n+5] = in[nn];
-    nn++;
+  j = n;
+  for (;j<nn;j++) {
+    fprintf(stderr,"%c",in[j]);
   }
-  fprintf(stderr,"%s\n",s);
-  for(;n<i;n++) {
-    fprintf(stderr," ");
+  fprintf(stderr,"\n");
+  j = n;
+  for (;j<nn;j++) {
+    if (j == i) {
+      fprintf(stderr,"^");
+    }
+    else {
+      fprintf(stderr," ");
+    }
   }
-  fprintf(stderr,"%c\n",'^');
+  fprintf(stderr,"\n");
 }
 
 int main(int argc, char** argv) {
@@ -228,8 +228,8 @@ int parseProduction(char *in, int *i, int ii) {
   if (status < 0) {
     return status;
   }
-  if (*i > ii) {
-    fprintf(stderr,"parseProduction: out of bounds\n");
+  if (*i >= ii) {
+    fprintf(stderr,"parseProduction2: out of bounds\n");
     return -1;
   }
   killWhite(in,i,ii);
@@ -264,13 +264,13 @@ int parseTerm(char *in, int *i, int ii) {
   }
   killWhite(in,i,ii);
   char c = in[*i];
-  *i = *i+1;
   if (c == '|') {
     while (status >= 0 && c == '|') {
+      fprintf(stderr,"%d\n",*i);
+      *i = *i+1;
       status = parseFactor(in,i,ii);
       killWhite(in,i,ii);
       c = in[*i];
-      *i = *i+1;
     }
   }
   return 1;
@@ -288,6 +288,10 @@ int parseFactor(char *in, int *i, int ii) {
     return 1;
   }
   killWhite(in,i,ii);
+  if (*i >= ii) {
+    fprintf(stderr,"parseFactor: out of bounds\n");
+    return -1;
+  }
   char c = in[*i];
   if (c == '(') {
     *i = *i+1;
@@ -344,7 +348,8 @@ int parseCharacter(char *in,int *i,int ii) {
   // check for reserved characters
   if (c == '=' || c == '.' || c == '{' 
     || c == '}' || c == ')'  || c == '"'
-    || c == '(' || c == ']' || c == '[' || c == '|') {
+    || c == '(' || c == ']' 
+    || c == '[' || c == '|' || c == '.') {
     return -1;
   }
   if (c < '!' || c > '~') {
@@ -364,6 +369,7 @@ int parseAlpha(char *in, int * i,int ii) {
   char c = in[*i];
   if (c < 'A' || c > 'z') {
     fprintf(stderr,"parseAlpha: expected character in class A-z, got %c\n",c);
+    printError(in,*i,ii);
     return -1;
   }
   *i = *i+1;
