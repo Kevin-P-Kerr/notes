@@ -282,8 +282,6 @@ int parseTerm(char *in, int *i, int ii) {
       c = in[*i];
     }
   }
-  if (c == '{') {
-  }
   return 1;
 }
 @
@@ -332,6 +330,22 @@ int parseFactor(char *in, int *i, int ii) {
     }
     *i = *i+1;
     return 1;
+  }
+  if (c == '{') {
+    *i = *i+1;
+    status = parseExpression(in,i,ii);
+    if (status < 0) {
+      return -1;
+    }
+    killWhite(in,i,ii);
+    *i = *i+1;
+    if (i >= ii) {
+      return -1;
+    }
+    c = in[*i];
+    if (c != '}') {
+      return -1;
+    }
   }
   return -1;
 }
