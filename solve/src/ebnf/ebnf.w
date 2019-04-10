@@ -164,7 +164,7 @@ struct parseNode *child) {
     return -1;
   }
   size_t n = parent->numChildren+1;
-  struct parseNode *children = parent->children;
+  struct parseNode **children = parent->children;
   children = realloc(children,sizeof(struct parseNode)*n);
   children[n-1] = child;
   parent->numChildren = n;
