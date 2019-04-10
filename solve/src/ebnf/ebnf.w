@@ -91,6 +91,33 @@ provide file i/o facilities through {\it mmap}
 and friends.
 
 @ @<main@>=
+void printError(char *in, int i,int ii) {
+  char s[11];
+  s[10] = 'NULL';
+  int n =0;
+  int nn = i-5;
+  for (;n<5;n++) {
+    if (nn >= 0) {
+      s[n] = in[nn];
+    }
+    nn++;
+  }
+  n=0;
+  nn=i+5;
+  if (nn >= ii) {
+    nn = ii;
+  }
+  for (;n<5 && nn<ii;n++) {
+    s[n+5] = in[nn];
+    nn++;
+  }
+  fprintf(stderr,"%s\n",s);
+  for(;n<i;n++) {
+    fprintf(stderr," ");
+  }
+  fprintf(stderr,"%c\n",'^');
+}
+
 int main(int argc, char** argv) {
   if (argc < 2) {
     fprintf(stderr, "usage: nauer [fn]\n");
@@ -146,7 +173,6 @@ consideration into subsequent routines.
 
 @ @<entry routine@>=
 void killWhite(char *in, int *i, int ii) {
-  fprintf(stderr,"enter\n");
   if (*i >= ii) {
     return;
   }
@@ -154,7 +180,7 @@ void killWhite(char *in, int *i, int ii) {
   for (;n<ii;n++) {
     char c = in[n];
     if (!(c == ' ' || c == '\n' || c == '\t')) {
-      return;
+      break;
     }
   }
   *i = n;
@@ -315,12 +341,14 @@ int parseCharacter(char *in,int *i,int ii) {
   }
   killWhite(in,i,ii);
   char c = in[*i];
-  if (c == '"') {
-    fprintf(stderr,"parseCharacter: unexpected quote\n");
+  // check for reserved characters
+  if (c == '=' || c == '.' || c == '{' 
+    || c == '}' || c == ')'  || c == '"'
+    || c == '(' || c == ']' || c == '[' || c == '|') {
     return -1;
   }
   if (c < '!' || c > '~') {
-    fprintf(stderr,"parseCharacter: expected character in class !-~, got %c\n",c);
+    fprintf(stderr,"parseCharacter: expected character in class !-~, got %d\n",c);
     return -1;
   }
   *i = *i+1;
@@ -329,7 +357,7 @@ int parseCharacter(char *in,int *i,int ii) {
 
 int parseAlpha(char *in, int * i,int ii) {
   if (*i >= ii) {
-    fprintf(stderr,"parseAlpha: index out of bound");
+    fprintf(stderr,"parseAlpha: index out of bound\n");
     return -1;
   }
   killWhite(in,i,ii);
