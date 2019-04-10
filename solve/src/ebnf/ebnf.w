@@ -144,17 +144,17 @@ enum nodeType {
   String,Character,Alpha};
 struct parseNode {
   enum nodeType type;
-  struct parseNode *children;
+  struct parseNode **children;
   size_t start; // inclusive
   size_t end; //exlusive;
   size_t numChildren;
 };
 
-struct parseNode initNode(enum nodeType type, size_t start) {
-  struct parseNode pn;
-  pn.type = type;
-  pn.start = start;
-  pn.numChildren = 0;
+struct parseNode *initNode(enum nodeType type, size_t start) {
+  struct parseNode *pn = malloc(sizeof(struct parseNode));
+  pn->type = type;
+  pn->start = start;
+  pn->numChildren = 0;
   return pn;
 }
 
@@ -166,9 +166,19 @@ struct parseNode *child) {
   size_t n = parent->numChildren+1;
   struct parseNode *children = parent->children;
   children = realloc(children,sizeof(struct parseNode)*n);
-  children[n-1] = *child;
+  children[n-1] = child;
   parent->numChildren = n;
   return 1;
+}
+
+void freeNode(struct parseNode *p) {
+  size_t i = 0;
+  size_t ii = p->numChildren;
+  for(;i<ii;i++) {
+    struct parseNode *c = p->children[i];
+    freeNode(c);
+  }
+  free(p);
 }
 
 @
