@@ -139,6 +139,14 @@ struct fi {
   size_t size;
   const char *fn;
 };
+enum nodeType {
+  Syntax,Production,Expression,Term,Factor,Identifier,
+  String,Character,Alpha};
+struct parseNode {
+  enum nodeType type;
+  struct parseNode *children;
+};
+
 @
 Now we can write our file i/o routines.
 @ @<file io routines@>=
@@ -435,6 +443,5 @@ int parseString(char *in,int *i, int ii) {
   return 1;
 }
 @
-@ The foregoing code is sufficent to determine, in a
 
 @* Index.
