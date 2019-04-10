@@ -186,6 +186,7 @@ void killWhite(char *in, int *i, int ii) {
   *i = n;
   return;
 }
+
 int doParse(struct fi *info) {
   if (info->size <= 0) {
     return -1;
@@ -196,10 +197,7 @@ int doParse(struct fi *info) {
   while(i<ii) {
     int status = parseProduction(in,&i,ii);
     killWhite(in,&i,ii);
-    if (i >= ii) {
-      return 1;
-    }
-    if (status < 0) {
+    if (i >= ii || status < 0) {
       return status;
     }
   }
@@ -416,5 +414,6 @@ int parseString(char *in,int *i, int ii) {
   return 1;
 }
 @
+@ The foregoing code is sufficent to determine, in a
 
 @* Index.
