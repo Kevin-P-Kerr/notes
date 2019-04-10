@@ -241,15 +241,15 @@ struct parseNode *doParse(struct fi *info) {
   char *in = info->m;
   size_t i = 0;
   size_t ii = info->size;
-  struct parseNode ast = initNode(Production,0);
+  struct parseNode *ast = initNode(Production,0);
   while(i<ii) {
     int status = addChild(ast,parseProduction(in,&i,ii));
     killWhite(in,&i,ii);
     if (i >= ii || status < 0) {
-      return status;
+      return (struct parseNode *)status;
     }
   }
-  return &ast;
+  return ast;
 }
 
 @ the idea of the entry routine is to
