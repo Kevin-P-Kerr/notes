@@ -158,6 +158,8 @@ struct parseNode *initNode(enum nodeType type, size_t start) {
   return pn;
 }
 
+struct parseNode *ERROR = -1;
+
 int addChild(struct parseNode *parent, 
 struct parseNode *child) {
   if (child < 0) {
@@ -246,7 +248,7 @@ struct parseNode *doParse(struct fi *info) {
     int status = addChild(ast,parseProduction(in,&i,ii));
     killWhite(in,&i,ii);
     if (i >= ii || status < 0) {
-      return (struct parseNode *)status;
+      return ERROR; 
     }
   }
   ast->end = i;
@@ -261,37 +263,37 @@ set up the state of the parser, and then
 struct parseNode *parseProduction(char *in, int *i, int ii) {
   int status;
   struct parseNode *ast = initNode(Production,*i);
-  status = parseIdentifier(in,i,ii);
+  status = addChild(ast,parseIdentifier(in,i,ii));
   if (status < 0) {
-    return status;
+    return Error;
   }
   if (*i >= ii) {
     fprintf(stderr,"parseProduction: out of bounds\n");
-    return -1;
+    return Error;
   }
   killWhite(in,i,ii);
   char c = in[*i];
   if (c != '=') {
     fprintf(stderr,"parseProduction: expected '=', got '%c'\n",c);
-    return -1;
+    return ERROR;
   }
   *i = *i+1;
-  status = parseExpression(in,i,ii);
+  status = addChild(ast,parseExpression(in,i,ii));
   if (status < 0) {
-    return status;
+    return ERROR;
   }
   if (*i >= ii) {
     fprintf(stderr,"parseProduction2: out of bounds\n");
-    return -1;
+    return ERROR;
   }
   killWhite(in,i,ii);
   c = in[*i];
   if (c != '.') {
     fprintf(stderr, "parseProduction : expected '.', got '%c'\n'",c);
-    return -1;
+    return ERROR;
   }
   *i = *i+1;
-  return 1;
+  return ast;
 }
 @
 
