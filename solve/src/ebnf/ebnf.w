@@ -241,7 +241,7 @@ struct parseNode *doParse(struct fi *info) {
   char *in = info->m;
   size_t i = 0;
   size_t ii = info->size;
-  struct parseNode *ast = initNode(Production,0);
+  struct parseNode *ast = initNode(Syntax,0);
   while(i<ii) {
     int status = addChild(ast,parseProduction(in,&i,ii));
     killWhite(in,&i,ii);
@@ -249,6 +249,7 @@ struct parseNode *doParse(struct fi *info) {
       return (struct parseNode *)status;
     }
   }
+  ast->end = i;
   return ast;
 }
 
@@ -257,8 +258,9 @@ set up the state of the parser, and then
 {\it enter} into subsequent routines.
 
 @ @<v1 production routine@>=
-int parseProduction(char *in, int *i, int ii) {
+struct parseNode *parseProduction(char *in, int *i, int ii) {
   int status;
+  struct parseNode *ast = initNode(Production,*i);
   status = parseIdentifier(in,i,ii);
   if (status < 0) {
     return status;
