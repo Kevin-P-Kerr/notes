@@ -145,7 +145,7 @@ size_t getFileSize(const char *fn) {
 }
 
 struct fi *getFile(const char *fn) {
-  size_t s = getFileSize(fn);
+  size_t s = getFileSize(fn)/(sizeof(char));
   int fd = open(fn,O_RDONLY);
   void * m = mmap(NULL,s,PROT_READ,MAP_PRIVATE,fd,0);
   struct fi *info = malloc(sizeof(struct fi));
@@ -195,6 +195,10 @@ int doParse(struct fi *info) {
   size_t ii = info->size;
   while(i<ii) {
     int status = parseProduction(in,&i,ii);
+    killWhite(in,&i,ii);
+    if (i >= ii) {
+      return 1;
+    }
     if (status < 0) {
       return status;
     }
@@ -263,10 +267,12 @@ int parseTerm(char *in, int *i, int ii) {
     return status;
   }
   killWhite(in,i,ii);
+  if (*i >= ii) {
+    return -1;
+  }
   char c = in[*i];
   if (c == '|') {
-    while (status >= 0 && c == '|') {
-      fprintf(stderr,"%d\n",*i);
+    while (status >= 0 && c == '|' && *i < ii) {
       *i = *i+1;
       status = parseFactor(in,i,ii);
       killWhite(in,i,ii);
@@ -322,7 +328,10 @@ int parseFactor(char *in, int *i, int ii) {
     *i = *i+1;
     return 1;
   }
+  return -1;
 }
+
+
 @
 @ @<v1 identifier routine@>=
 int parseIdentifier(char *in, int *i, int ii) {
