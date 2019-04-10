@@ -103,7 +103,12 @@ void printError(char *in, int i,int ii) {
   }
   j = n;
   for (;j<nn;j++) {
-    fprintf(stderr,"%c",in[j]);
+    if (in[j] == '\n') {
+      fprintf(stderr,"\\n");
+    }
+    else {
+      fprintf(stderr,"%c",in[j]);
+    }
   }
   fprintf(stderr,"\n");
   j = n;
@@ -266,7 +271,7 @@ int parseTerm(char *in, int *i, int ii) {
   }
   killWhite(in,i,ii);
   if (*i >= ii) {
-    return -1;
+    return status;
   }
   char c = in[*i];
   if (c == '|') {
