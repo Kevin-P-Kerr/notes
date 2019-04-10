@@ -282,6 +282,8 @@ int parseTerm(char *in, int *i, int ii) {
       c = in[*i];
     }
   }
+  if (c == '{') {
+  }
   return 1;
 }
 @
