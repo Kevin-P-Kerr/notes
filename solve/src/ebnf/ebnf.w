@@ -130,7 +130,7 @@ int main(int argc, char** argv) {
     return -1;
   }
   struct parseNode *status = doParse(getFile(argv[1]));
-  if ((int)status > 0) {
+  if (status > 0) {
     return 1;
   }
   return -1;
@@ -540,4 +540,5 @@ struct parseNode *parseIdentifier(char *in, size_t *i, size_t ii);
 struct parseNode *parseCharacter(char *in, size_t *i, size_t ii);
 struct parseNode *parseAlpha(char *in, size_t *i, size_t ii);
 struct parseNode *parseString(char *in, size_t *i, size_t ii);
+void printError(char *in, size_t i, size_t ii);
 @* Index.
