@@ -492,28 +492,32 @@ int parseString(char *in,int *i, int ii) {
   killWhite(in,i,ii);
   if (*i >= ii) {
     fprintf(stderr,"parseString: index out of bound\n");
-    return -1;
+    return ERROR;
   }
   char c = in[*i];
   if (c != '"') {
     fprintf(stderr,"parseString: expected '\"', got %c\n",c);
-    return -1;
+    return ERROR;
   }
   *i = *i+1;
-  int status = parseCharacter(in,i,ii);
+  struct parseNode *ast = initNode(String,*i);
+  int status = addChild(ast,parseCharacter(in,i,ii));
   if (status < 0) {
-    return status;
+    freeNode(ast);
+    return ERROR;
   }
   while (status >= 0) {
-    status = parseCharacter(in,i,ii);
+    status = addChild(ast,parseCharacter(in,i,ii));
   }
   killWhite(in,i,ii);
   c = in[*i];
   if (c != '"') {
     fprintf(stderr,"parseString: no closing quote\n");
-    return -1;
+    freeNode(ast);
+    return ERROR;
   }
   *i = *i+1;
+  ast->end = *i;
   return 1;
 }
 @
