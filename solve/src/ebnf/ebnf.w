@@ -92,7 +92,7 @@ provide file i/o facilities through {\it mmap}
 and friends.
 
 @ @<main@>=
-void printError(char *in, int i,int ii) {
+void printError(char *in, size_t i, size_t ii) {
   int j;
   int n=i-5;
   int nn = i+5;
@@ -129,7 +129,11 @@ int main(int argc, char** argv) {
     fprintf(stderr, "usage: nauer [fn]\n");
     return -1;
   }
-  return doParse(getFile(argv[1]));
+  struct parseNode *status = doParse(getFile(argv[1]));
+  if ((int)status > 0) {
+    return 1;
+  }
+  return -1;
 }
 @
 Our first order of business is file i/o. To do this we will need to define a struct.
@@ -159,7 +163,7 @@ struct parseNode *initNode(enum nodeType type, size_t start) {
   return pn;
 }
 
-struct parseNode *ERROR = -1;
+struct parseNode *ERROR = (void *) -1;
 
 int addChild(struct parseNode *parent, 
 struct parseNode *child) {
@@ -349,7 +353,7 @@ struct parseNode *parseTerm(char *in, size_t *i, size_t ii) {
 @
 
 @ @<v1 factor routine@>=
-int parseFactor(char *in, size_t *i, size_t ii) {
+struct parseNode *parseFactor(char *in, size_t *i, size_t ii) {
   struct parseNode *ast = initNode(Factor,*i);
   int status = addChild(ast,parseIdentifier(in,i,ii));
   if (status >= 0) {
@@ -401,7 +405,7 @@ int parseFactor(char *in, size_t *i, size_t ii) {
     }
     *i = *i+1;
     ast->end = *i;
-    return 1;
+    return ast;
   }
   if (c == '{') {
     *i = *i+1;
@@ -412,7 +416,7 @@ int parseFactor(char *in, size_t *i, size_t ii) {
     }
     killWhite(in,i,ii);
     *i = *i+1;
-    if (i >= ii) {
+    if (*i >= ii) {
       freeNode(ast);
       return ERROR;
     }
@@ -425,7 +429,7 @@ int parseFactor(char *in, size_t *i, size_t ii) {
     ast->end = *i;
     return ast;
   }
-  return -1;
+  return ERROR;
 }
 
 @
@@ -491,7 +495,7 @@ size_t ii) {
 @
 
 @ @<v1 string routine@>=
-int parseString(char *in, size_t *i, size_t ii) {
+struct parseNode *parseString(char *in, size_t *i, size_t ii) {
   killWhite(in,i,ii);
   if (*i >= ii) {
     fprintf(stderr,"parseString: index out of bound\n");
@@ -521,7 +525,7 @@ int parseString(char *in, size_t *i, size_t ii) {
   }
   *i = *i+1;
   ast->end = *i;
-  return 1;
+  return ast;
 }
 @
 
