@@ -72,6 +72,7 @@ and we will do away here with this layer of abstraction.
 @p
 @<set up headers@>@;
 @<set up structs@>@;
+@<declare function prototypes@>@;
 @<v1 parsing routines@>@;
 @<file io routines@>@;
 @<main@>
@@ -522,4 +523,15 @@ int parseString(char *in,int *i, int ii) {
 }
 @
 
+@ @<declare function...@>=
+void killWhite(char *in, int *i, int ii);
+struct parseNode *doParse(struct fi *info);
+struct parseNode *parseProduction(char *in, int *i, int ii);
+struct parseNode *parseExpression(char *in, int *i, int ii);
+struct parseNode *parseTerm(char *in, int *i, int ii);
+struct parseNode *parseFactor(char *in, int *i, int ii);
+struct parseNode *parseIdentifier(char *in, int *i, int ii);
+struct parseNode *parseCharacter(char *in, int *i, int ii);
+struct parseNode *parseAlpha(char *in, int *i, int ii);
+struct parseNode *parseString(char *in, int *i, int ii);
 @* Index.
