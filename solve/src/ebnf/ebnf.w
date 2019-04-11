@@ -444,10 +444,10 @@ struct parseNode *parseIdentifier(char *in, int *i, int ii) {
 @
 
 @ @<v1 character routine@>=
-int parseCharacter(char *in,int *i,int ii) {
+struct parseNode *parseCharacter(char *in,int *i,int ii) {
   if (*i >= ii) {
     fprintf(stderr,"parseCharacter: index out of bounds\n");
-    return -1;
+    return ERROR;
   }
   killWhite(in,i,ii);
   char c = in[*i];
@@ -456,14 +456,16 @@ int parseCharacter(char *in,int *i,int ii) {
     || c == '}' || c == ')'  || c == '"'
     || c == '(' || c == ']' 
     || c == '[' || c == '|' || c == '.') {
-    return -1;
+    return ERROR;
   }
   if (c < '!' || c > '~') {
     fprintf(stderr,"parseCharacter: expected character in class !-~, got %d\n",c);
-    return -1;
+    return ERROR;
   }
+  struct parseNode *ast = initNode(Character,*i);
   *i = *i+1;
-  return 1;
+  ast->end = *i;
+  return ast;
 }
 
 int parseAlpha(char *in, int * i,int ii) {
