@@ -238,7 +238,7 @@ void killWhite(char *in, int *i, int ii) {
 
 struct parseNode *doParse(struct fi *info) {
   if (info->size <= 0) {
-    return -1;
+    return ERROR;
   }
   char *in = info->m;
   size_t i = 0;
