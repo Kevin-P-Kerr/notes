@@ -468,20 +468,22 @@ struct parseNode *parseCharacter(char *in,int *i,int ii) {
   return ast;
 }
 
-int parseAlpha(char *in, int * i,int ii) {
+struct parseNode *parseAlpha(char *in, int * i,int ii) {
   if (*i >= ii) {
     fprintf(stderr,"parseAlpha: index out of bound\n");
-    return -1;
+    return ERROR;
   }
   killWhite(in,i,ii);
   char c = in[*i];
   if (c < 'A' || c > 'z') {
     fprintf(stderr,"parseAlpha: expected character in class A-z, got %c\n",c);
     printError(in,*i,ii);
-    return -1;
+    return ERROR;
   }
+  struct parseNode *ast = initNode(Alpha,*i);
   *i = *i+1;
-  return 1;
+  ast->end = *i;
+  return ast;
 }
 @
 
