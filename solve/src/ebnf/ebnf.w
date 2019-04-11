@@ -429,15 +429,17 @@ int parseFactor(char *in, int *i, int ii) {
 
 @
 @ @<v1 identifier routine@>=
-int parseIdentifier(char *in, int *i, int ii) {
-  int status = parseAlpha(in,i,ii);
+struct parseNode *parseIdentifier(char *in, int *i, int ii) {
+  struct parseNode *ast = initNode(Identifier,*i);
+  int status = addChild(ast,parseAlpha(in,i,ii));
   if (status < 0) {
-    return status;
+    freeNode(ast);
+    return ERROR;
   }
   while (status > 0) {
-    status = parseCharacter(in,i,ii);
+    status = addChild(ast,parseCharacter(in,i,ii));
   }
-  return 1;
+  return ast;
 }
 @
 
