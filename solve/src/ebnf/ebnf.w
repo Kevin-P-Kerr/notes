@@ -130,7 +130,7 @@ int main(int argc, char** argv) {
     return -1;
   }
   struct parseNode *status = doParse(getFile(argv[1]));
-  if (status > 0) {
+  if ((int)status > 0) {
     return 1;
   }
   return -1;
@@ -167,13 +167,14 @@ struct parseNode *ERROR = (void *) -1;
 
 int addChild(struct parseNode *parent, 
 struct parseNode *child) {
-  if (child < 0) {
+  if ((int) child < 0) {
     return -1;
   }
   size_t n = parent->numChildren+1;
   struct parseNode **children = parent->children;
   children = realloc(children,sizeof(struct parseNode)*n);
   children[n-1] = child;
+  parent->children = children;
   parent->numChildren = n;
   return 1;
 }
