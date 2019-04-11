@@ -253,7 +253,7 @@ struct parseNode *doParse(struct fi *info) {
   while(i<ii) {
     int status = addChild(ast,parseProduction(in,&i,ii));
     killWhite(in,&i,ii);
-    if (i >= ii || status < 0) {
+    if (status < 0) {
       return ERROR; 
     }
   }
