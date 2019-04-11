@@ -325,10 +325,12 @@ struct parseNode *parseTerm(char *in, int *i, int ii) {
   struct parseNode *ast = initNode(Term,*i);
   int status = addChild(ast,parseFactor(in,i,ii));
   if (status < 0) {
+    freeNode(ast);
     return ERROR;
   }
   killWhite(in,i,ii);
   if (*i >= ii) {
+    freeNode(ast);
     return ERROR;
   }
   char c = in[*i];
@@ -347,65 +349,80 @@ struct parseNode *parseTerm(char *in, int *i, int ii) {
 
 @ @<v1 factor routine@>=
 int parseFactor(char *in, int *i, int ii) {
-  int status = parseIdentifier(in,i,ii);
+  struct parseNode *ast = initNode(Factor,*i);
+  int status = addChild(ast,parseIdentifier(in,i,ii));
   if (status >= 0) {
-    return 1;
+    ast->end = *i;
+    return ast;
   }
-  status = parseString(in,i,ii);
+  status = addChild(ast,parseString(in,i,ii));
   if (status >= 0) {
-    return 1;
+    ast->end = *i;
+    return ast;
   }
   killWhite(in,i,ii);
   if (*i >= ii) {
     fprintf(stderr,"parseFactor: out of bounds\n");
-    return -1;
+    freeNode(ast);
+    return ERROR;
   }
   char c = in[*i];
   if (c == '(') {
     *i = *i+1;
-    status = parseString(in,i,ii);
+    status = addChild(ast,parseString(in,i,ii));
     if (status < 0) {
-      return status;
+      freeNode(ast);
+      return ERROR;
     }
     killWhite(in,i,ii);
     c = in[*i];
     if (c != ')') {
       fprintf(stderr,"parseFactor: expected ')', got %c\n", c);
-      return -1;
+      freeNode(ast);
+      return ERROR;
     }
     *i = *i+1;
-    return 1;
+    ast->end=*i;
+    return ast;
   }
   if (c == '[') {
-    status = parseExpression(in,i,ii);
+    status = addChild(ast,parseExpression(in,i,ii));
     if (status < 0) {
-      return status;
+      freeNode(ast);
+      return ERROR;
     }
     killWhite(in,i,ii);
     c = in[*i];
     if (c != ']') {
       fprintf(stderr,"parseFactor: expected ']', got %c\n",c);
-      return -1;
+      freeNode(ast);
+      return ERROR;
     }
     *i = *i+1;
+    ast->end = *i;
     return 1;
   }
   if (c == '{') {
     *i = *i+1;
-    status = parseExpression(in,i,ii);
+    status = addChild(ast,parseExpression(in,i,ii));
     if (status < 0) {
-      return -1;
+      freeNode(ast);
+      return ERROR;
     }
     killWhite(in,i,ii);
     *i = *i+1;
     if (i >= ii) {
-      return -1;
+      freeNode(ast);
+      return ERROR;
     }
     c = in[*i];
     if (c != '}') {
-      return -1;
+      freeNode(ast);
+      return ERROR;
     }
     *i = *i+1;
+    ast->end = *i;
+    return ast;
   }
   return -1;
 }
