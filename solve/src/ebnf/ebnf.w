@@ -222,7 +222,7 @@ consideration into subsequent routines.
 
 
 @ @<entry routine@>=
-void killWhite(char *in, int *i, int ii) {
+void killWhite(char *in, size_t *i, size_t ii) {
   if (*i >= ii) {
     return;
   }
@@ -261,18 +261,18 @@ set up the state of the parser, and then
 {\it enter} into subsequent routines.
 
 @ @<v1 production routine@>=
-struct parseNode *parseProduction(char *in, int *i, int ii) {
+struct parseNode *parseProduction(char *in, size_t *i, size_t ii) {
   int status;
   struct parseNode *ast = initNode(Production,*i);
   status = addChild(ast,parseIdentifier(in,i,ii));
   if (status < 0) {
     freeNode(ast);
-    return Error;
+    return ERROR;
   }
   if (*i >= ii) {
     fprintf(stderr,"parseProduction: out of bounds\n");
     freeNode(ast);
-    return Error;
+    return ERROR;
   }
   killWhite(in,i,ii);
   char c = in[*i];
@@ -306,7 +306,7 @@ struct parseNode *parseProduction(char *in, int *i, int ii) {
 @
 
 @ @<v1 expression routine@>=
-struct parseNode *parseExpression(char *in, int *i, int ii) {
+struct parseNode *parseExpression(char *in, size_t *i, size_t ii) {
   struct parseNode *ast = initNode(Expression,*i);
   int status = addChild(ast,parseTerm(in,i,ii));
   if (status < 0) {
@@ -322,7 +322,7 @@ struct parseNode *parseExpression(char *in, int *i, int ii) {
 @
 
 @ @<v1 term routine@>=
-struct parseNode *parseTerm(char *in, int *i, int ii) {
+struct parseNode *parseTerm(char *in, size_t *i, size_t ii) {
   struct parseNode *ast = initNode(Term,*i);
   int status = addChild(ast,parseFactor(in,i,ii));
   if (status < 0) {
@@ -349,7 +349,7 @@ struct parseNode *parseTerm(char *in, int *i, int ii) {
 @
 
 @ @<v1 factor routine@>=
-int parseFactor(char *in, int *i, int ii) {
+int parseFactor(char *in, size_t *i, size_t ii) {
   struct parseNode *ast = initNode(Factor,*i);
   int status = addChild(ast,parseIdentifier(in,i,ii));
   if (status >= 0) {
@@ -430,7 +430,7 @@ int parseFactor(char *in, int *i, int ii) {
 
 @
 @ @<v1 identifier routine@>=
-struct parseNode *parseIdentifier(char *in, int *i, int ii) {
+struct parseNode *parseIdentifier(char *in, size_t *i, size_t ii) {
   struct parseNode *ast = initNode(Identifier,*i);
   int status = addChild(ast,parseAlpha(in,i,ii));
   if (status < 0) {
@@ -445,7 +445,8 @@ struct parseNode *parseIdentifier(char *in, int *i, int ii) {
 @
 
 @ @<v1 character routine@>=
-struct parseNode *parseCharacter(char *in,int *i,int ii) {
+struct parseNode *parseCharacter(char *in, size_t *i, 
+size_t ii) {
   if (*i >= ii) {
     fprintf(stderr,"parseCharacter: index out of bounds\n");
     return ERROR;
@@ -469,7 +470,8 @@ struct parseNode *parseCharacter(char *in,int *i,int ii) {
   return ast;
 }
 
-struct parseNode *parseAlpha(char *in, int * i,int ii) {
+struct parseNode *parseAlpha(char *in, size_t * i,
+size_t ii) {
   if (*i >= ii) {
     fprintf(stderr,"parseAlpha: index out of bound\n");
     return ERROR;
@@ -489,7 +491,7 @@ struct parseNode *parseAlpha(char *in, int * i,int ii) {
 @
 
 @ @<v1 string routine@>=
-int parseString(char *in,int *i, int ii) {
+int parseString(char *in, size_t *i, size_t ii) {
   killWhite(in,i,ii);
   if (*i >= ii) {
     fprintf(stderr,"parseString: index out of bound\n");
