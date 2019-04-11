@@ -321,25 +321,27 @@ struct parseNode *parseExpression(char *in, int *i, int ii) {
 @
 
 @ @<v1 term routine@>=
-int parseTerm(char *in, int *i, int ii) {
-  int status = parseFactor(in,i,ii);
+struct parseNode *parseTerm(char *in, int *i, int ii) {
+  struct parseNode *ast = initNode(Term,*i);
+  int status = addChild(ast,parseFactor(in,i,ii));
   if (status < 0) {
-    return status;
+    return ERROR;
   }
   killWhite(in,i,ii);
   if (*i >= ii) {
-    return status;
+    return ERROR;
   }
   char c = in[*i];
   if (c == '|') {
     while (status >= 0 && c == '|' && *i < ii) {
       *i = *i+1;
-      status = parseFactor(in,i,ii);
+      status = addChild(ast,parseFactor(in,i,ii));
       killWhite(in,i,ii);
       c = in[*i];
     }
   }
-  return 1;
+  ast->end = *i;
+  return ast;
 }
 @
 
