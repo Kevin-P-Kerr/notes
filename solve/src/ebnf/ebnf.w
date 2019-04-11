@@ -524,14 +524,14 @@ int parseString(char *in,int *i, int ii) {
 @
 
 @ @<declare function...@>=
-void killWhite(char *in, int *i, int ii);
+void killWhite(char *in, size_t *i, size_t ii);
 struct parseNode *doParse(struct fi *info);
-struct parseNode *parseProduction(char *in, int *i, int ii);
-struct parseNode *parseExpression(char *in, int *i, int ii);
-struct parseNode *parseTerm(char *in, int *i, int ii);
-struct parseNode *parseFactor(char *in, int *i, int ii);
-struct parseNode *parseIdentifier(char *in, int *i, int ii);
-struct parseNode *parseCharacter(char *in, int *i, int ii);
-struct parseNode *parseAlpha(char *in, int *i, int ii);
-struct parseNode *parseString(char *in, int *i, int ii);
+struct parseNode *parseProduction(char *in, size_t *i, size_t ii);
+struct parseNode *parseExpression(char *in, size_t *i, size_t ii);
+struct parseNode *parseTerm(char *in, size_t *i, size_t ii);
+struct parseNode *parseFactor(char *in, size_t *i, size_t ii);
+struct parseNode *parseIdentifier(char *in, size_t *i, size_t ii);
+struct parseNode *parseCharacter(char *in, size_t *i, size_t ii);
+struct parseNode *parseAlpha(char *in, size_t *i, size_t ii);
+struct parseNode *parseString(char *in, size_t *i, size_t ii);
 @* Index.
