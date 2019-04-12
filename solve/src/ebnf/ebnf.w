@@ -38,7 +38,8 @@ or more times}.
 This is a useful grammer, except that character classes
 are not available to us, and we would like to include
 strings and character literals that are not simply
-alphanumeric. We also want to deal with whitespac
+alphanumeric. Moreover, we want to add 
+the concept of negation.  We also want to deal with whitespace
 is an easy way.
 Thus, we can produce the following
 modifications.
@@ -46,7 +47,8 @@ $$syntax=\lbrace production \rbrace.$$
 $$production=identifier "=" expression"."$$
 $$expression=term\lbrace term \rbrace.$$
 $$term=factor\lbrace "\vert" factor \rbrace.$$
-$$factor=identifier\vert string \vert "(" expression ")"
+$$factor=identifer\vert"\tilde"identifier\vert 
+identifier\vert string \vert "(" expression ")"
 \vert "\lbrack" expression "\rbrack" \vert 
 "\lbrace" expression "\rbrace".$$
 $$identifier=alpha\lbrace character\rbrace.$$
@@ -460,9 +462,9 @@ size_t ii) {
   char c = in[*i];
   // check for reserved characters
   if (c == '=' || c == '.' || c == '{' 
-    || c == '}' || c == ')'  || c == '"'
-    || c == '(' || c == ']' 
-    || c == '[' || c == '|' || c == '.') {
+    || c == '}' || c == '('  || c == '"'
+    || c == ')' || c == ']' 
+    || c == '[' || c == '|' || c == '.' || c == '~') {
     return ERROR;
   }
   if (c < '!' || c > '~') {
