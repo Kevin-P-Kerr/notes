@@ -47,8 +47,8 @@ $$syntax=\lbrace production \rbrace.$$
 $$production=identifier "=" expression"."$$
 $$expression=term\lbrace term \rbrace.$$
 $$term=factor\lbrace "\vert" factor \rbrace.$$
-$$factor=identifer\vert"\tilde"identifier\vert 
-identifier\vert string \vert "(" expression ")"
+$$factor=identifer\vert"\tilde"expression
+\vert string \vert "(" expression ")"
 \vert "\lbrack" expression "\rbrack" \vert 
 "\lbrace" expression "\rbrace".$$
 $$identifier=alpha\lbrace character\rbrace.$$
@@ -431,6 +431,15 @@ struct parseNode *parseFactor(char *in, size_t *i, size_t ii) {
     *i = *i+1;
     ast->end = *i;
     return ast;
+  }
+  if (c == '~') {
+    *i = *i+1;
+    status = addChild(ast,parseExpression(in,i,ii));
+    if (status < 0) {
+      freeNode(ast);
+      return ERROR;
+    }
+    ast->end = *i;
   }
   return ERROR;
 }
