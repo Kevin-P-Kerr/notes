@@ -1,4 +1,4 @@
-var ip = [[0,9],[3,4],[4,2],[5,9],[9,3],[0,0]];
+var ip = [[0,9],[3,4],[4,2],[2,7]];
 var n = ip[0][1];
 var Record  = function () {
     this.suc = undefined;
@@ -9,7 +9,7 @@ var t = function() {
     var COUNT = [];
     var TOP = [];
     var N;
-    var rp = 1; // not in algo.
+    var rp = 0; // not in algo.
     var relation; // implicit
     var j,k; // implicit
     var P;
@@ -20,12 +20,14 @@ var t = function() {
         var i = 1;
         for (;i<n;i++) {
             COUNT[i] = 0;
+            QLINK[i] = 0;
             TOP[i] = null;
         }
         N = n;
         return t2();
     };
     var t2 = function () {
+        rp++;
         if (rp >= ip.length) {
             return t4();
         }
@@ -37,8 +39,8 @@ var t = function() {
     var t3 = function () {
         COUNT[k] = COUNT[k]+1;
         P = new Record();
-        p.suc = k;
-        p.next = TOP[j];
+        P.suc = k;
+        P.next = TOP[j];
         TOP[j] = P;
         return t2();
     };
@@ -57,6 +59,9 @@ var t = function() {
         return t5();
     };
     var t5 = function () {
+        if (F == undefined) {
+            throw new Error();
+        }
         console.log(F);
         if (F == 0) {
             return t8();
@@ -69,12 +74,12 @@ var t = function() {
         if (P == null) {
             return t7();
         }
-        COUNT[p.suc] = COUNT[p.suc]-1;
-        if (COUNT[p.suc] == 0) {
-            QLINK[R] = p.suc;
-            R = p.suc;
+        COUNT[P.suc] = COUNT[P.suc]-1;
+        if (COUNT[P.suc] == 0) {
+            QLINK[R] = P.suc;
+            R = P.suc;
         }
-        p = p.ext;
+        P = P.next;
         return t6();
     };
     var t7 = function () {
