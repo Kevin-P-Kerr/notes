@@ -18,7 +18,7 @@ var t = function() {
     var F;
     var t1 = function () {
         var i = 1;
-        for (;i<n;i++) {
+        for (;i<=n;i++) {
             COUNT[i] = 0;
             QLINK[i] = 0;
             TOP[i] = null;
@@ -59,9 +59,6 @@ var t = function() {
         return t5();
     };
     var t5 = function () {
-        if (F == undefined) {
-            throw new Error();
-        }
         N = N-1;
         console.log(F);
         if (F == 0) {
@@ -95,5 +92,4 @@ var t = function() {
 }
 
 
-debugger;
 t();
