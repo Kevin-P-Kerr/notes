@@ -62,11 +62,11 @@ var t = function() {
         if (F == undefined) {
             throw new Error();
         }
+        N = N-1;
         console.log(F);
         if (F == 0) {
             return t8();
         }
-        N = N-1;
         P = TOP[F];
         return t6();
     };
@@ -97,11 +97,3 @@ var t = function() {
 
 debugger;
 t();
-
-
-
-
-
-
-        
-
