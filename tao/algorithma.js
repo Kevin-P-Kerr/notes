@@ -24,6 +24,7 @@ var makePoly = function (a) {
 };
 
 var toNum = function (a) {
+  if (!isNaN(a)) { return a; }
   return a[0]*100 + a[1]*10 + a[2];
 };
 
@@ -94,21 +95,111 @@ var algo = function (P,Q) {
   return a1();
 }
 
+var sumABC = function (a,b) {
+  return [a[0]+b[0],a[1]+b[1],a[2]+b[2]];
+};
+
+var algom = function (P,Q,M) {
+  var P;
+  var LINK;
+  var Q1;
+  var Q2;
+  var m1 = function () {
+    M = M.LINK;
+    if (M.SIGN == -1) {
+      return;
+    }
+    return a1();
+  };
+  var m2 = function () {
+    a1();
+    return m1();
+  };
+  var a1 = function () {
+    P = P.LINK;
+    Q1 = Q;
+    Q = Q.LINK;
+    return a2();
+  }
+  var a2 = function () {
+    var j;
+    if (P.SIGN == -1) {
+      return;
+    }
+    else {
+      var s = toNum(P.ABC) + toNum(M.ABC);
+      j = comp(s,Q.ABC);
+    }
+    if (j == -1) {
+      Q1 = Q;
+      Q = Q.LINK;
+      return a2();
+    }
+    if (j == 0) {
+      return a3();
+    }
+    return a5();
+  }
+  var a3 = function () {
+    if (P.SIGN == -1) {
+      return;
+    }
+    Q.COEF = Q.COEF + (P.COEF*M.COEF);
+    if (Q.COEF == 0) {
+      return a4();
+    }
+    P = P.LINK;
+    Q1 = Q;
+    Q = Q.LINK;
+    return a2();
+  }
+  var a4 = function () {
+    Q2 = Q;
+    Q1.LINK = Q = Q.LINK;
+    P = P.LINK;
+    return a2();
+  }
+  var a5 = function () {
+    Q2 = {};
+    Q2.COEF = P.COEF*M.COEF;
+    Q2.ABC = sumABC(P.ABC,M.ABC);
+    Q2.LINK = Q;
+    Q1.LINK = Q2;
+    Q1 = Q2;
+    P = P.LINK;
+    return a2();
+  }
+  return m1();
+};
+
 var print = function (q) {
   q = q.LINK;
+  var str ="";
   while (q.SIGN != -1) {
-    console.log(q.COEF,q.ABC);
+    str += q.COEF;
+    str += JSON.stringify(q.ABC);
     q = q.LINK;
+    str += " + ";
   }
+  str += "0";
+  console.log(str);
 }
 
 var p = makePoly([[2,3,2,0],[4,1,2,1]]);
-var q = makePoly([[4,3,2,0],[6,2,2,2],[1,0,1,0]]);
+var m = makePoly([[1,1,0,0]]);
+var q = makePoly([]);
 print(p);
 console.log('****');
 print(q);
 console.log('-----');
 algo(p,q);
+print(q);
+console.log('mult');
+q = makePoly([]);
+print(p);
+print(m);
+console.log('-----');
+algom(p,q,m);
 print(q);
 
 
