@@ -186,7 +186,7 @@ var print = function (q) {
 }
 
 var p = makePoly([[1,2,0,0],[1,1,0,0]]);
-var m = makePoly([[1,2,0,0],[1,1,0,0],[1,0,0,0]]);
+var m = makePoly([[1,2,0,0],[1,1,0,0],[1,0,0,0],[1,0,1,0]]);
 var q = makePoly([]);
 print(p);
 console.log('****');
