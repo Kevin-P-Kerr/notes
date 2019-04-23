@@ -34,9 +34,9 @@ var comp = function (a,b) {
     return -1;
   }
   if (aa == bb) {
-    return 1;
+    return 0;
   }
-  return 0;
+  return 1;
 }
 
 var algo = function (P,Q) {
@@ -94,11 +94,22 @@ var algo = function (P,Q) {
   return a1();
 }
 
+var print = function (q) {
+  q = q.LINK;
+  while (q.SIGN != -1) {
+    console.log(q.COEF,q.ABC);
+    q = q.LINK;
+  }
+}
+
 var p = makePoly([[2,3,2,0],[4,1,2,1]]);
 var q = makePoly([[4,3,2,0],[6,2,2,2],[1,0,1,0]]);
-
+print(p);
+console.log('****');
+print(q);
+console.log('-----');
 algo(p,q);
-console.log(q);
+print(q);
 
 
 
