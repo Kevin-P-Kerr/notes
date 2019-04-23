@@ -22,24 +22,20 @@ var makePoly = function (a) {
   return r;
 };
 
-var subComp = function (a,b) {
-  if (a > b) {
-    return 1;
-  }
-  if (b > a) {
-    return -1;
-  }
-  return 0;
+var toNum = function (a) {
+  return a[0]*100 + a[1]*10 + a[2];
 };
 
 var comp = function (a,b) {
-  var r = subComp(a[0],b[0]);
-  if (r != 0) { return r; };
-  var r = subComp(a[1],b[1]);
-  if (r != 0) { return r; };
-  var r = subComp(a[1],b[1]);
-  if (r != 0) { return r; };
-  return 1;
+  var aa = toNum(a);
+  var bb = toNum(b);
+  if (aa < bb) {
+    return -1;
+  }
+  if (aa == bb) {
+    return 1;
+  }
+  return 0;
 }
 
 var algo = function (P,Q) {
@@ -65,6 +61,38 @@ var algo = function (P,Q) {
     }
     return a5();
   }
+  var a3 = function () {
+    if (ABC.SIGN == -1) {
+      return;
+    }
+    Q.COEF = Q.COEF + P.COEF;
+    if (Q.COEF == 0) {
+      return a4();
+    }
+    P = P.LINK;
+    Q1 = Q;
+    Q = Q.LINK;
+    return a2();
   }
+  var a4 = function () {
+    Q2 = Q;
+    Q1.LINK = Q = Q.LINK;
+    P = P.LINK;
+    return a2();
+  }
+  var a5 = function () {
+    Q2 = {};
+    Q2.COEF = P.COEF;
+    Q2.ABC = P.ABC;
+    Q2.LINK = Q;
+    Q1.LINK = Q2;
+    Q1 = Q2;
+    P = P.LINK;
+    return a2();
+  }
+  return a1();
+}
+
+
 
 

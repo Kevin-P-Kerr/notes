@@ -1,4 +1,4 @@
-var ip = [[0,9],[3,4],[4,2],[2,7]];
+var ip = [[0,9],[1,4],[4,2],[4,9],[7,9]];
 var n = ip[0][1];
 var Record  = function () {
     this.suc = undefined;
@@ -59,11 +59,11 @@ var t = function() {
         return t5();
     };
     var t5 = function () {
-        N = N-1;
         console.log(F);
         if (F == 0) {
             return t8();
         }
+        N = N-1;
         P = TOP[F];
         return t6();
     };
