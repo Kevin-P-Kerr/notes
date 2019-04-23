@@ -1,4 +1,4 @@
-var ip = [[0,12],[2,3],[7,2]];
+var ip = [[0,12],[2,3],[7,2],[11,1]];
 var n = ip[0][1];
 var Record  = function () {
     this.suc = undefined;

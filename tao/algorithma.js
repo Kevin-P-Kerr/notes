@@ -109,7 +109,7 @@ var algom = function (P,Q,M) {
     if (M.SIGN == -1) {
       return;
     }
-    return a1();
+    return m2();
   };
   var m2 = function () {
     a1();
@@ -185,8 +185,8 @@ var print = function (q) {
   console.log(str);
 }
 
-var p = makePoly([[2,3,2,0],[4,1,2,1]]);
-var m = makePoly([[1,1,0,0]]);
+var p = makePoly([[1,2,0,0],[1,1,0,0]]);
+var m = makePoly([[1,2,0,0],[1,1,0,0],[1,0,0,0]]);
 var q = makePoly([]);
 print(p);
 console.log('****');
