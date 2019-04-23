@@ -1,7 +1,7 @@
 // Algorithm A: addition of polynomials
 
 var makePoly = function (a) {
-  var last = {COEF:0,SIGN:-1};
+  var last = {COEF:0,SIGN:-1,ABC:[0,0,0]};
   var ptr = last;
   var r = ptr;
   a.forEach(function (c) {
@@ -18,7 +18,8 @@ var makePoly = function (a) {
     n.ABC = [x,y,z];
     ptr.LINK = n;
     ptr = n;
-  }
+  });
+  ptr.LINK = r;
   return r;
 };
 
@@ -62,7 +63,7 @@ var algo = function (P,Q) {
     return a5();
   }
   var a3 = function () {
-    if (ABC.SIGN == -1) {
+    if (P.SIGN == -1) {
       return;
     }
     Q.COEF = Q.COEF + P.COEF;
@@ -92,6 +93,12 @@ var algo = function (P,Q) {
   }
   return a1();
 }
+
+var p = makePoly([[2,3,2,0],[4,1,2,1]]);
+var q = makePoly([[4,3,2,0],[6,2,2,2],[1,0,1,0]]);
+
+algo(p,q);
+console.log(q);
 
 
 
