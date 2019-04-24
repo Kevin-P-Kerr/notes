@@ -1,4 +1,5 @@
 var findMaxForm = function (n,a) {
+    // assumes for a[i] : a[i] > a[i+1]
     var i = 0;
     var ii = a.length;
     var v;
@@ -110,8 +111,16 @@ var maxDenomForms = (function () {
     return r;
 })();
 
+var makeNegative = function (b) {
+    var tail = {TAIL:true};
+    var r = {COEF:-1,BASE:b,LINK:tail};
+    tail.LINK = r;
+    return tail;
+};
+
 var findCombos = function (m) {
-    var r = [];
+    var r = [m];
+    var tail = m;
     m = m.LINK;
     var current = m;
     while (!m.TAIL) {
@@ -119,7 +128,8 @@ var findCombos = function (m) {
         var b = m.BASE;
         while (c > 0) {
             c--;
-            var n = sum(current,maxDenomForms[b]);
+            var dummy = makeNegative(b);
+            var n = sum(sum(dummy,tail),maxDenomForms[b]);
             r.push(n);
             current = n;
         }
@@ -133,7 +143,7 @@ var makeChangeCombos = function (n) {
     return findCombos(maxForm);
 };
 
-var z = makeChangeCombos(26);
+var z = makeChangeCombos(30);
 z.forEach(function (l) { print(l); });
 
 
