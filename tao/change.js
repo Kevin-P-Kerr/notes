@@ -2,16 +2,7 @@
 var makeChangeA = (function (denom) {
   var c = {0:0} // make the cache, plus a sanity check
   var last = denom.length-1;
-  var find = function (n,alreadyComputed) {
-    if (!alreadyComputed) {
-        alreadyComputed = {};
-    }
-    if (alreadyComputed[n]) {
-        throw new Error();
-    }
-    else {
-        alreadyComputed[n] = true;
-    }
+  var find = function (n) {
     if (!isNaN(c[n])) {
       return c[n];
     }
@@ -30,7 +21,7 @@ var makeChangeA = (function (denom) {
       if (subn < 0) {
         continue;
       }
-      r += find(subn,alreadyComputed);
+      r +=  find(subn);
     }
     c[n] = r;
     return r;
