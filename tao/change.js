@@ -21,6 +21,10 @@ var makeChangeA = (function (denom) {
       if (subn < 0) {
         continue;
       }
+      if (subn == 0) {
+          r+=1;
+          continue;
+      }
       r +=  find(subn);
     }
     c[n] = r;
@@ -31,6 +35,9 @@ var makeChangeA = (function (denom) {
 
 var i = 0, ii =101;
 for (;i<ii;i++) {
+  if (i == 25) {
+      debugger;
+  }
   console.log(i,makeChangeA(i));
 }
 

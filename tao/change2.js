@@ -44,7 +44,23 @@ var print = function (p) {
 };
 
 var a = [25,10,5,1];
-var f = findMaxForm(33,a);
-print(f);
+// stash a copy of these as we will need them alot
+var maxDenomForms = (function () {
+    var r = [];
+    var i = 0;
+    var ii = a.length;
+    var denom;
+    for (;i<ii;i++) {
+        r.push(findMaxForm(a[i], i == a.length-1? [1] : a.slice(i+1)));
+    }    
+    return r;
+})();
+
+maxDenomForms.forEach(function (l) { print(l); });
+
+
+var makeChangeCombos = function (n) {
+    var maxForm = findMaxForm(n,a);
+};
 
 
