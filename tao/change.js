@@ -2,9 +2,9 @@
 var makeChangeA = (function (denom) {
   var c = {0:0} // make the cache, plus a sanity check
   var last = denom.length-1;
-  var find = function (n) {
+  var find = function (n,suppressed) {
     if (!isNaN(c[n])) {
-      return c[n];
+      //return c[n];
     }
     var r = 0;
     var i = 0;
@@ -12,6 +12,9 @@ var makeChangeA = (function (denom) {
     var currentCoin;
     var subn;
     for (;i<ii;i++) {
+      if (i == denom.indexOf(suppressed)) {
+        continue;
+      }
       if (i == last) {
         r += 1;
         break;
@@ -25,7 +28,7 @@ var makeChangeA = (function (denom) {
           r+=1;
           continue;
       }
-      r +=  find(subn);
+      r +=  find(subn,currentCoin);
     }
     c[n] = r;
     return r;

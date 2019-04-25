@@ -1,31 +1,3 @@
-
-var findMinForm = function (n,a) {
-    var tail = {TAIL:true};
-    var node = {};
-    var b = a[a.length-1]; // assume a[n+1] < a[n]
-    if (b != 1 && (b > n || b%n != 0)) {
-      throw new Error();
-    }
-    node.COEF = n/b;
-    node.BASE = b;
-    node.RIGHT = tail;
-    tail.LEFT = node;
-    var i = 0;
-    var ii = a.length-1;
-    var head = tail;
-    for (;i<ii;i++) {
-      node = {};
-      node.BASE = a[i];
-      node.COEF = 0;
-      node.LEFT = head;
-      head.RIGHT = node;
-      head = node;
-    }
-    head.RIGHT = tail.LEFT;
-    tail.LEFT.LEFT = head;
-    return tail;
-};
-
 var findMaxForm = function (n,a) {
   var tail = {TAIL:true};
   var node;
@@ -119,9 +91,6 @@ var propagate = function (m) {
     r.RIGHT.LEFT = m;
     z.LEFT = r;
     r.RIGHT = z;
-    
-    print(r);
-    console.log('**');
     return r;
   }
   return false;
@@ -140,12 +109,19 @@ var findCombos = function (mf) {
 };
 
 var makeChangeCombos = function (n,a) {
+  if (n == 0 || a.length == 0) {
+    return [];
+  }
   var maxForm = findMaxForm(n,a);
   return findCombos(maxForm);
 };
 
-var z = makeChangeCombos(100,a);
-console.log(z.length);
-z.forEach(function (l) { print(l); });
+var i= 1;
+var ii = 100;
+for (;i<=ii;i++) {
+var z = makeChangeCombos(i,a);
+//z.forEach(function (l) { print(l); });
+console.log(i,z.length);
+}
 
 
