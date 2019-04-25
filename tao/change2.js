@@ -26,6 +26,39 @@ var findMinForm = function (n,a) {
     return tail;
 };
 
+var findMaxForm = function (n,a) {
+  var tail = {TAIL:true};
+  var node;
+  var head = tail;
+  var i = 0;
+  var ii = a.length;
+  for (;i<ii;i++) {
+    node = {};
+    var b = a[i]; // assume a[i] > a[i+1]
+    node.BASE = b;
+    node.COEF = Math.floor(n/b);
+    n = n - (node.BASE*node.COEF);
+    node.LEFT = head;
+    head.RIGHT = node;
+    head = node;
+    if (n == 0) {
+      break;
+    }
+  }
+  tail.LEFT = head;
+  head.RIGHT = tail;
+  return tail;
+};
+
+var toNum = function (p) {
+  p = p.LEFT;
+  r = 0;
+  while (!p.TAIL) {
+    r += (p.COEF*p.BASE);
+  }
+  return r;
+};
+
 var copy = function (p) {
   p = p.RIGHT;
   var r = {TAIL:true};
