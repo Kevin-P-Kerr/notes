@@ -52,24 +52,53 @@ var print = function (p) {
         str += p.COEF+"("+p.BASE+") + ";
         p = p.RIGHT;
     }
+    str = str.trim();
+    str = str.slice(0,str.length-1);
     console.log(str);
+};
+
+var propagate = function (m) {
+  var tail = m;
+  m = m.RIGHT.RIGHT;
+  var l = m.LEFT;
+  while (!m.TAIL) {
+    if (l.TAIL) { 
+      return false;
+    }
+    var n = m.COEF*m.BASE;
+    if (n >= l.BASE) {
+      n = n-l.BASE;
+      m.COEF = Math.floor(n/m.BASE);
+      n = n - m.COEF;
+      if (n > 0) {
+        tail.LEFT.COEF += n;
+      }
+      l.COEF += 1;
+      return true;
+    }
+    m = m.RIGHT;
+    l = l.RIGHT;
+  }
+  return false;
 };
 
 var a = [25,10,5,1];
 
 var findCombos = function (mf) {
   var r = [copy(mf)];
+  while (propagate(mf)) {
+    r.push(copy(mf));
+  }
   return r;
-
 };
 
 var makeChangeCombos = function (n,a) {
   var minForm = findMinForm(n,a);
-  print(minForm);
   return findCombos(minForm);
 };
 
-var z = makeChangeCombos(30,a);
+var z = makeChangeCombos(100,a);
+console.log(z.length);
 z.forEach(function (l) { print(l); });
 
 
