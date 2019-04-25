@@ -41,9 +41,6 @@ var findMaxForm = function (n,a) {
     node.LEFT = head;
     head.RIGHT = node;
     head = node;
-    if (n == 0) {
-      break;
-    }
   }
   tail.LEFT = head;
   head.RIGHT = tail;
@@ -55,6 +52,7 @@ var toNum = function (p) {
   r = 0;
   while (!p.TAIL) {
     r += (p.COEF*p.BASE);
+    p = p.LEFT;
   }
   return r;
 };
@@ -90,27 +88,41 @@ var print = function (p) {
     console.log(str);
 };
 
+var collectRightBases = function (m) {
+  var r = [];
+  while (!m.TAIL) {
+    r.push(m.BASE);
+    m = m.RIGHT;
+  }
+  return r;
+};
+
 var propagate = function (m) {
   var tail = m;
-  m = m.RIGHT.RIGHT;
-  var l = m.LEFT;
+  m = m.LEFT.LEFT;
   while (!m.TAIL) {
-    if (l.TAIL) { 
-      return false;
+    if (m.COEF == 0) {
+      m = m.LEFT;
+      continue;
     }
-    var n = m.COEF*m.BASE;
-    if (n >= l.BASE) {
-      n = n-l.BASE;
-      m.COEF = Math.floor(n/m.BASE);
-      n = n - m.COEF;
-      if (n > 0) {
-        tail.LEFT.COEF += n;
-      }
-      l.COEF += 1;
-      return true;
+    var bases = collectRightBases(m.RIGHT);
+    if (bases.length == 0) {
+      return;
     }
-    m = m.RIGHT;
-    l = l.RIGHT;
+    m.COEF = m.COEF-1;
+    var z = tail.RIGHT;
+    tail.RIGHT = m.RIGHT;
+    m.RIGHT.LEFT = tail;
+    var n = toNum(tail) + m.BASE;
+    var r = findMaxForm(n,bases);
+    m.RIGHT = r.RIGHT;
+    r.RIGHT.LEFT = m;
+    z.LEFT = r;
+    r.RIGHT = z;
+    
+    print(r);
+    console.log('**');
+    return r;
   }
   return false;
 };
@@ -119,15 +131,17 @@ var a = [25,10,5,1];
 
 var findCombos = function (mf) {
   var r = [copy(mf)];
-  while (propagate(mf)) {
+  mf = propagate(mf);
+  while (mf) {
     r.push(copy(mf));
+    mf = propagate(mf);
   }
   return r;
 };
 
 var makeChangeCombos = function (n,a) {
-  var minForm = findMinForm(n,a);
-  return findCombos(minForm);
+  var maxForm = findMaxForm(n,a);
+  return findCombos(maxForm);
 };
 
 var z = makeChangeCombos(100,a);
