@@ -99,13 +99,31 @@ M(j) = sum(n:0<=n<=j, n mod j) =
 sum(n:0<=n<=j, n - j*floor(n/j)) = 
 sum(n:0<=n<=j, n) - sum(n:0<=n<=j, j*floor(n/j)) 
 
+R(n) = 0<=n<=j
+p(i) = j-i  
+
+sum(n:R(n), j*floor(n/j)) = 
+sum(i:R(p(i)), j*floor(p(i)/j)) = 
+sum(n:j<=n<=2j, j*floor((j-n)/j) = 
+sum(n:1<=n/j<=j, j*floor((j-(n/j))/j) = 
+sum(n:1<=n/j<=j, j*floor(((j^2-n)/j)/j) = 
+sum(n:1<=n/j<=j, j*floor((j^2-n)/j^2) = 
+sum(n:1<=n/j<=j, j*floor(1-(n/j^n))
 
 
+---
+M(j) = sum(n:0<=n<=j, n mod a) =
+sum(n:0<=n<=j, n - a*floor(a/n)) = 
 
-
-
-
-
-
+R(n) = 0<=n<=j
+p(i) = i+a
+map p r = R'(n) = a<=n+a<=j+a
+sum(n:0<=n<=j, n - a*floor(a/n)) = 
+sum(n:a<=n+a<=j+a, n+a - a*floor(a/(n+a))) = 
+sum(n:0<=n<=j, n) - sum(n:a<=n<=j+a, a*floor(a/(n+a))) 
+  H(j) = sum(n:a<=n<=j+a, a*floor(a/n+a)) = 
+  a*(sum(n:a<=n+a<=j+a, floor(a/n+a))) = 
+  
+  P(j) = sum
 
 
