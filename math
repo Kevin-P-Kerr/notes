@@ -1,0 +1,111 @@
+josephus
+
+f(n) = (f(n-1)+1)%n + [n=1]
+---
+
+
+
+
+A = f(n-1)+1
+B = f(n)*z^n
+C = nz^n
+D = sum(n,z^n)
+E = sum(n,Cfloor(A/C))
+
+G(z) = sum f(n)*z^n = z^n((f(n-1)+1)%n + [n=1]) = z^n(A%n) + z^n[n=1]
+
+sum(n,B) = sum(n,z^n(A%n) + z^n[n=1]) = 
+
+sum(n, z^n(A%n)) + z = 
+sum(n,z^nA%nz^n) + z =
+sum(n,z^nA%C) + z =
+sum(n, z^nA - Cfloor(A/C)) +z  = 
+sum(n, z^nA) - sum(n,Cfloor(A/C)) +z  = 
+sum(n, z^nf(n-1) + z^n) - sum(n,Cfloor(A/C)) + z = 
+sum(n, z^nf(n-1)) + sum(n,z^n) - sum(n,Cfloor(A/C)) +z = 
+zG(z) + D - E + z
+
+G(z) = zG(z) + D - E + z
+
+G(z) - zG(z) = D - E + z
+G(z)-zG(z)-z = D-E
+
+G(z)(1-z-1/G(z)) = D-E
+
+G(z) = (D-E)G(z)/(1-z)
+
+1 = D-E/(1-z)
+
+
+
+----
+
+f(x) = f(x-1)+1+[n=1]
+
+G(z) = sum(x,z^xf(x)) = sum(x,z^x(f(x-1)+1+[n=1])) = 
+sum(x,(z^xf(x-1) + z^x + z^x[n=1])) = 
+sum(x,z^x(f(x-1))) + sum(x,z^x) + z =
+sum(x,z^(x+1)(f(x))) + sum(x,z^x) + z =
+zG(z) + sum(x,z^x) + z
+G(z)(1-z) = sum(x,z^x) + z 
+G(z) = (1/(1-z) + z)/(1-z) = (1-z-z^2)/(1-z)^2
+
+
+---
+
+F(j) = sum(n:0<=n<=j, a^n)
+F(j) = 1 + sum(n:1<=n<=j, a^n) =
+1 + a*sum(n:0<=n<=j-1, a^n) =
+1 - a^(j+1) + a*sum(n:0<=n<=j, a^n) 
+F(j) = 1 - a^(j+1) + a*F(j)
+F(j)-a*F(j) = 1 - a^(j+1)
+F(j)(1-a) = 1-a^(j+1)
+F(j) = (1-a^(j+1))/(1-a)
+
+
+x mod y = x - y*floor(x/y)
+M(j) = sum(n:0<=n<=j, n mod a)
+M(j) = sum(i:0<=i<a, i) + sum(x:a<=x<=j, x mod a)
+
+  S(j) = sum(n:0<=n<=j, n) =
+  sum(n:1<=n<=j,n) =
+  j*sum(n:1<=n<=j, n/j) =
+  j*(1+sum(n:1<=n<=j-1, n/j)) =
+  j*(1+sum(n:1<=j/2<j-1, 1/2)) = 
+  j*(1+(1/2)(j-1))
+  10 = 10*(5.5) = 55
+  11 = 11*(6) = 66
+  12 = 12*(6.5) = 78
+
+M(j) = sum(i:0<=i<=a-i, i) + sum(x:a<=x<=j, x mod a)
+M(j) = (a-1)*(1+(1/2)(a-2)) + sum(x:a<=x<=j, x mod a)
+
+
+---
+S(j) = sum(n:0<=n<=j, n) =
+sum(n:1<=n<=j, n) =
+j*sum(n:1<=n<=j, n/j) =
+j*(sum(n:0<=n<=(j/2)-1, n/j+(j-n)/j) + j/2j) = 
+j*(sum(n:0<=n<=(j/2)-1, 1) + 1/2) = 
+j*(j/2+1/2)
+
+10(5.5)
+11(6)
+12(7.5)
+
+---
+
+M(j) = sum(n:0<=n<=j, n mod j) =
+sum(n:0<=n<=j, n - j*floor(n/j)) = 
+sum(n:0<=n<=j, n) - sum(n:0<=n<=j, j*floor(n/j)) 
+
+
+
+
+
+
+
+
+
+
+
