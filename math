@@ -126,6 +126,10 @@ sum(n:0<=n<=j, n) - sum(n:a<=n<=j+a, a*floor(a/(n+a)))
   
   P(j) = sum(n:a<=n+a<=j+a, floor(a/n+a)) =
   sum(n:0<=n<=j, floor(a/n)) = 
-  sum(i:1<=a*i<=j+a, sum(n:0<=n<=i, floor(a/n+a)*[n<=j])) =
-
-
+  sum(i:0<=a*i<=j, sum(n:a*i<=n<a*(i+1), floor(a/n)*[n<=j])) =
+  sum(i:0<=i<=j/a, sum(n:a*i<=n<a*(i+1), floor(a/n)*[n<=j])) = 
+  sum(i:0<=i<=j/a, sum(n:a*i<=n<a*(i+1),  i*[n<=j])) = 
+  sum(i:0<=i<=j/a, i*sum(n:a*i<=n<a*(i+1), [n<=j])) = 
+  sum(i:0<=i<=j/a, i*min(j-a*i,a)) =
+  sum(i:0<=i<j/a, 
+  
