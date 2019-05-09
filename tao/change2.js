@@ -117,7 +117,7 @@ var makeChangeCombos = function (n,a) {
 };
 
 var i= 1;
-var ii = 100;
+var ii = 200;
 for (;i<=ii;i++) {
 var z = makeChangeCombos(i,a);
 //z.forEach(function (l) { print(l); });

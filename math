@@ -124,6 +124,8 @@ sum(n:0<=n<=j, n) - sum(n:a<=n<=j+a, a*floor(a/(n+a)))
   H(j) = sum(n:a<=n<=j+a, a*floor(a/n+a)) = 
   a*(sum(n:a<=n+a<=j+a, floor(a/n+a))) = 
   
-  P(j) = sum
+  P(j) = sum(n:a<=n+a<=j+a, floor(a/n+a)) =
+  sum(n:0<=n<=j, floor(a/n)) = 
+  sum(i:1<=a*i<=j+a, sum(n:0<=n<=i, floor(a/n+a)*[n<=j])) =
 
 

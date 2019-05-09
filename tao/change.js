@@ -4,15 +4,16 @@ var makeChangeA = (function (denom) {
   var last = denom.length-1;
   var find = function (n,suppressed) {
     if (!isNaN(c[n])) {
-      //return c[n];
+      //return c[n]; // no caching for now
     }
     var r = 0;
     var i = 0;
     var ii = denom.length;
     var currentCoin;
     var subn;
+    var save = n;
     for (;i<ii;i++) {
-      if (i == denom.indexOf(suppressed)) {
+      if (i <= denom.indexOf(suppressed)) {
         continue;
       }
       if (i == last) {
@@ -20,15 +21,18 @@ var makeChangeA = (function (denom) {
         break;
       }
       currentCoin = denom[i];
-      subn = n-currentCoin;
-      if (subn < 0) {
-        continue;
+      while (n > 0) {
+        n = n-currentCoin;
+        if (n < 0) {
+          break;
+        }
+        if (n == 0) {
+            r+=1;
+            break;
+        }
+        r +=  find(n,currentCoin);
       }
-      if (subn == 0) {
-          r+=1;
-          continue;
-      }
-      r +=  find(subn,currentCoin);
+      n = save;
     }
     c[n] = r;
     return r;
@@ -36,11 +40,8 @@ var makeChangeA = (function (denom) {
   return find;
 })([25,10,5,1]);
 
-var i = 0, ii =101;
+var i = 0, ii =201;
 for (;i<ii;i++) {
-  if (i == 25) {
-      debugger;
-  }
   console.log(i,makeChangeA(i));
 }
 
