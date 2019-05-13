@@ -159,7 +159,11 @@ sum(n:0<=n<=j, n) -  sum(n:0<=n<=j, a*floor(n/a))
     sum(i:0<=i<=floor(j/a), i*min(a,j-(a*i))) = 
     sum(i:0<=i<=floor(j/a)-1, i*a) + (i=floor(j/a), i*min(a,j+1-(a*i))) =
     let z = floor(j/a), then G(j) =
-    a*(z-1*((z-1)/2 +1/2)) + z*min(a,j-z)
+    a*(z-1*((z-1)/2 +1/2)) + z*min(a,j+1-z)
+
+F(j) = j*(j/2+1) - a^2(z-1*((z-1)/2 +1/2)) - a*z*min(a,j+1-z)
+
+
 
 
 
