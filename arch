@@ -1,0 +1,94 @@
+ocs 1.14
+"The surface of any isoscles cone excluding the base is equal to a circle whose radius
+is mean proportional between the side of the cone and the radius of the circle which is the base of the cone."
+
+A = the base of the cone
+C = the radius of A
+D = the side of the cone
+E = sqrt(C*D)
+B = circle with radius E
+(hypotheis) B = S = surface of cone - base
+if (not hypothesis) then either B>S || B<S
+suppose B<S
+E = regular polygon inscribed in B, F = regular polygon circumscribed about in B, such that 
+E:F < B:S
+G = polygon about A, such that G:A = F:B
+H = pyramid upon G with an apex equal to that of the cone
+then
+G:F = C^2:E^2 (?) = C:D (C^2/(CD) = C/D) = G:(surface of pyramid exluding base)
+therefore
+(surface of pyramid (exluding base?)) = F
+(surface of pyarmid):E < S:B, which is impossible, for 
+B>E
+(surface of pyramid)>S
+
+
+SP/E < S/B implies that either SP < S or E>B, neither of which is true
+
+so B is not less then S
+
+then say that B > S
+E,F = polygons circum/in such that E:F < B:S
+G = inscribed in A such that G is similar to F
+
+
+---
+
+Definition 1: concave (lines) in the same direction
+Definition 2: concave (planes) in the same direction
+Definition 3: a solid sector is a the figure by the apex of a cone cutting a sphere at its center, including the surface of the sphere contained within the cone
+Definition 4: a solid rhombus is the figure comprehended by a two cones which share a base, and whose apices lies on the same axis
+Assumption 1: Of all lines which have the same extremity, the straight line is the least
+Assumption 2: Of two concave straightlines, the lesser is the one which is included in the greater
+Assumption 3: (1) same of planes
+Asuumption 4: (2) of planes
+Assumption 5: of unequal lines, unequal surfaces, and unequal solids, the difference between the 
+lesser and greater may, by addition with itself, be made to surpass any assigned magnitude
+
+Proposition 1. if a polygon be circumscribed about a circle, the perimeter of the polygon is greater
+than the circumference of the circle
+Proposotion 2. given two unequal magnitudes, it is possible to find two straightlines such that 
+the greater straightline has to the lesser a ratio less less than the greater magnitude to the lesser.
+  let AB, D be the magnitudes, AB > D
+  BC = D
+  GH a straightlines
+  N = the smallest integer such that N(CA) > D
+  AF = N(CA)
+  ACBF; BC=D, AF>D, AF=N(CA)
+  GHE; GH = N(HE)
+  HE:GH = AC:AF
+  therefore, since AF>D
+  AC:AF < AC:BC
+  therefore
+  HE:GH < AC:BC
+  and, since AC < AB
+  HE:GH < AB:BC, as required
+
+Proposition 3: Given two unequal magnitudes and a circle, it is possible
+to inscribe a polygon in the circle and describe a polygon about the circle
+such that the side of the circumscribed polygon may have to the side of the inscribed
+polygon a ratio less than the greater magnitude to the less
+  A>B
+  F,KL such that F:KL < A:B, F>KL (II)
+  ML is perpendicular to LK, and KM=F
+  CE,DG are two diameters of the circle
+  Let O be the center of the circle
+  then bisect the angle DOC continously till there is an angle less than 1/2(LKM), call this NOC
+  join NC.  then NC is the side of a regular polygon in the circle
+  OHP, a radius of the circle bisecting NOC at H
+  then OS,OT are extension of OC,ON such that they contain the tangent at P
+  #CON < 2 < #LKM
+  #HOC < #LKM
+  the angles at H are right
+  the angle at L is right
+  MK:LK > OC:OH (why?, because all right angled triangles are similar)
+  MK:LK > OP:OH
+  ST:CN < MK:LK
+  ST:CN < F:KL < A:B, as required
+
+Proposition 4: The same as 3, but for sectors
+Proposition 5: Given a circle and two unequal magnitudes, to describe a 
+polygon about the circle and to inscribe another within it, so that the
+circumscribed polygon has to the inscribed polygon a ratio less than the greater mag. to the lessera
+Proposition 6: The same as 5, but for sectors
+
