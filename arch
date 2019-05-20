@@ -87,14 +87,38 @@ polygon a ratio less than the greater magnitude to the less
   ST:CN < F:KL < A:B, as required
 
 Proposition 4: The same as 3, but for sectors
+
 Proposition 5: Given a circle and two unequal magnitudes, to describe a 
 polygon about the circle and to inscribe another within it, so that the
 circumscribed polygon has to the inscribed polygon a ratio less than the greater mag. to the lessera
+
 Proposition 6: The same as 5, but for sectors
+
 Proposition 7: If in an isosceles cone a pyramid be inscribed having an equilateral base, the surface
 of the pyramid excluding its base is equal to a triangle having its base equal to the perimeter
 of the base of the pyramid and its height equal to the perpendicular drawn from the apex on one side of the base.
+
 Proposition 8: If a pyramid be circumscribed about an isosceles cone, the surface of the pyramid
 excluding its base is equal to a triangle having its base equal to the permieter of the base of the pyramid
 and its height equal to the side of the cone.
-    
+
+Proposition 9: If in the ciruclar base of an isosceles cone a chord be placed, and from
+its extremities straight lines be drawn to the apex of the cone, the triangle so formed 
+will be less than the portion of the surface of the cone intercepted between the lines drawn to the apex.
+
+    ABC = the circular base of the cone
+    O = the apex
+    AB = the chord in ABC
+    OAB = the triangle
+    C = the point of bisection of arc(AB)
+    AC,BC,OC
+    tri(OAC)+tri(OBC) > OAB
+    D = tri(OAC)+tri(OBC)-OAB
+    AEC,CFB = segments in the circle
+    D is either less than AEC+CFB, or not
+    .... (if D is not less, the proof is relatively easy)
+    say that D is less
+    D < AEC+CFB
+    AGE,EHC,CKF,FLB are segments less than D, and they are equal to one another
+    OE,OF are lines
+

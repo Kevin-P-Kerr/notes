@@ -164,22 +164,35 @@ sum(n:0<=n<=j, n) -  sum(n:0<=n<=j, a*floor(n/a))
 F(j) = j*(j/2+1) - a^2(z-1*((z-1)/2 +1/2)) - a*z*min(a,j+1-z)
 
 
+g_n = (g_n-1+1)%n
+
+g_n*z^n = z^n((g_n-1)+1%n) =
+z^n((g_n-1)+1 - n*floor(((g_n-1)+1)/n)) = 
+z^n*g_n-1 + z^n - z^n*n*floor(((g_n-1)+1)/n) = 
+
+G(z) = sum(n:g_n*z^n) = 
+sum(n:(g_(n-1)*z^n)) + sum(n: z^n) - sum(n: z^n*n*floor((g_(n-1)+1)/n)) = 
+zG(z) + 1/(1-z) - sum(n:z^(n+1)*(n+1)*floor((g_n+1)/(n+1))) 
+
+--
+g_n = ((g_(n-1)+2)%(n-1))
+g_n = g_(n-1) + 2 *[isPowTwo(n)]    
 
 
+g_n*z^n = z^n*((g_(n-1)+1)%n) = 
+z^n*(g_(n-1)+1) % n*(z^n)
+
+G(z) = sum(n:g_n*z^n) = 
+sum(n:
+
+--
+g_n = g_(n-1)+1
+
+G(z) = zG(z) + 1/(1-z)
+G(z) - zG(z) = 1/(1-z)
+G(z)(1-z) = 1/(1-z)
+G(z) = 1/(1-z)^2
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+--
 
