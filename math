@@ -145,6 +145,30 @@ sum(n:0<=n<=j, n) - sum(n:a<=n<=j+a, a*floor(a/(n+a)))
   a*(j/a*(j/2a + 1/2)) + (j/a)(j-(j/a))
 
 
+a cong b (mod p) iff a mod p = b mod p
+
+ax cong by (mod p) implies a cong b (mod p) 
+    ax mod p = by mod p
+    ax - p*floor(ax/p) = by-p*floor(by/p)
+    ax - by = p*floor(ax/p) - p*floor(by/p)
+    ax - by = p*(floor(ax/p)-floor(by/p))
+
+
+ax mod p = (a mod p)(x mod p) mod p
+ax mod p = ax - p*floor(ax/p)
+(a - p*floor(a/p))(x - p*floor(x/p)) = ax - a*p*floor(x/p) - x*p*floor(a/p) + p*p*floor(x/p)*floor(a/p) 
+
+
+ax cong by (mod p) and a cong b (mod p) then x cong y (mod p)
+    ax mod p = by mod p
+    a mod p = b mod p
+    by mod p = b mod p * y mod p mod p 
+    by mod p = a mod p * y mod p mod p 
+    a mod p & y mod p mod p = ay mod p
+    by mod p = ay mod p
+    ax mod p = ay mod p
+    ay mod p = 
+    
 -----
 x mod y = x - y*floor(x/y)
 F(j) = sum(n:0<=n<=j, n mod a) =
