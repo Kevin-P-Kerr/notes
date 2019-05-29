@@ -158,6 +158,51 @@ ax mod p = (a mod p)(x mod p) mod p
 ax mod p = ax - p*floor(ax/p)
 (a - p*floor(a/p))(x - p*floor(x/p)) = ax - a*p*floor(x/p) - x*p*floor(a/p) + p*p*floor(x/p)*floor(a/p) 
 
+theorem: a*p*floor(x/p) - x*p*floor(a/p) + p^2*floor(x/p)*floor(a/p) = ax*floor(ax/p) 
+a*p*floor(x/p) - x*p*floor(a/p) + p^2*floor(x/p)*floor(a/p) =
+p(a*floor(x/p) - x*floor(a/p) + p*floor(x/p)*floor(a/p)) =
+p*(a*floor(x/p) - floor(a/p)*(x + p*floor(x/p))) = 
+
+---
+(a mod p)(x mod p) mod p
+exist j,k,l,m,n,o:
+a = j*p+k
+x = l*p+m
+a*x = q*p+r
+k*m = n*p+o
+hypothesis
+r = o
+--
+r = a*x-q*p
+r*k*m = (a*x-q*p)(n*p+o)
+r*k*m = a*x*n*p + a*x*o - q*p*n - q*p*o
+
+
+
+
+
+k = a-j*p
+m = x-l*p
+n*p+o = (a-j*p)(x-l*p)
+n*p+o = a*x-a*l*p-j*p*x-j*l*p^2
+
+a*x = j*p*x + k*x
+a*x = l*p*a + m*a
+a*x = (j*p+k)(l*p+m)
+a*x = j*p*l + j*p*m + k*l + k*p*m
+j*p*x + k*x = l*p*a + m*a 
+
+---
+
+f(x) = x-p*floor(x/p)
+hypothesis
+f(f(x)f(y))=f(x*y)
+f(f(x)f(y)) = f(x)f(y)-p*floor(f(x)(fy)/p)
+f(x)f(y) = (x-p*floor(x/p)) * (y-p*floor(y/p))
+f(x)f(y) = x*y - x*p*floor(y/p) - y*p*floor(x/p) + p^2*floor(x/p)*floor(y/p)
+
+f(f(x)f(y)) = (x-p*floor(x/p)) * (y-p*floor(y/p)) - p*floor((x-p*floor(x/p)) * (y-p*floor(y/p))/p)
+
 
 ax cong by (mod p) and a cong b (mod p) then x cong y (mod p)
     ax mod p = by mod p
