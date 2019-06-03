@@ -295,4 +295,10 @@ p > C + mp
 which is absurd. therefore q is not less than n. therefore it equals n. qed.
 therefore, if C be less than p, then C+pn-p*floor(C+pn,p) = C.
 
+hypothesis
+j = (a + mp) mod p = a
+j = (a+mp) - p*floor((a+mp),p)
+j = a+mp-mp=a
+j=a
+as required.
 
