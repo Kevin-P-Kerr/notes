@@ -268,9 +268,31 @@ let C be less than p. then
 (C + pm) mod p * (C + pn) mod p mod p = (C+pn)(C+pm) mod p
 
 (C + pm) mod p = C+pm-p*floor(C+pm,p) = C
-(C + pn) mod p = C+pn-p*floor(C+pn,p) = C
+(C + pn) mod p = C+pn-p*floor(C+pn,p) = C*
 (C + pm) mod p * (C + pn) mod p = C^2 mod p
 likewise
-(C+pn)(C+pm) = C^2+Cpn+Cpm+pnpm = C^2 mod p
+(C+pn)(C+pm) = C^2+Cpn+Cpm+pnpm = C^2 mod p*
 
-herefore
+hypothesis: 
+let C be less than p, then
+C+pn-p*floor(C+pn,p) = C
+this turns on the identity 
+p*floor(C+pn,p) = pn, which in turn
+floor(C+pn,p) = n, but we can see this is so by
+p*floor(C+pn,p) <= C+pn
+floor(C+pn,p) <= (C+pn)/p
+floor(C+pn,p) <= C/p + n
+but, since floor is an integer function, this means
+floor(C+pn,p) <= n
+suppose it less than n, and call this value q, then
+q < n
+pq < C+pn
+p(q+1) > C+pn
+pq+p > C+pn
+p > C+pn-pq
+but pn-pq is a multiple of p, call it mp
+p > C + mp
+which is absurd. therefore q is not less than n. therefore it equals n. qed.
+therefore, if C be less than p, then C+pn-p*floor(C+pn,p) = C.
+
+
