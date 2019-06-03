@@ -264,4 +264,13 @@ G(z) = 1/(1-z)^2
 
 
 --
+let C be less than p. then
+(C + pm) mod p * (C + pn) mod p mod p = (C+pn)(C+pm) mod p
 
+(C + pm) mod p = C+pm-p*floor(C+pm,p) = C
+(C + pn) mod p = C+pn-p*floor(C+pn,p) = C
+(C + pm) mod p * (C + pn) mod p = C^2 mod p
+likewise
+(C+pn)(C+pm) = C^2+Cpn+Cpm+pnpm = C^2 mod p
+
+herefore
