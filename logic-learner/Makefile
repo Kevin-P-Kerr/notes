@@ -1,6 +1,6 @@
 OCAMLMAKEFILE = ./OCamlMakeFile
-SOURCES = boolinterp.ml
+SOURCES = learner.ml
 LIBS = str
-RESULT = bin/interp
+RESULT = bin/learner
 OCAML_LIB_INSTALL = lib
 -include OCamlMakeFile

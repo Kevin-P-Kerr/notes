@@ -16,12 +16,26 @@ let toInt boolVec =
   in
   helper boolVec 0 0;;
 
+let getNthBit n b = 
+  let p = pow2 n in
+  b land p > 0;;
+
 
 (* a truth table is an 2^n bit integer representation of a boolean function of n variables
  * where we say that the leftmost bit is the least significant 
  * for example, the truth table for AND is 0001 = 8 
+*)
 let eval_relation args truthTable = 
   let n = toInt(args) in
-  lookUpVal(n truthTable);;
-*)
+  getNthBit n truthTable;;
 
+let xor a b = 
+  eval_relation [a;b] 3;;
+
+let xor a b = 
+  eval_relation [a;b] 1;;
+
+let d = xor false false;;
+print_string "\n";;
+if d then print_string "true" else print_string "false";;
+print_string "\n";;
