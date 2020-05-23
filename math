@@ -145,6 +145,75 @@ sum(n:0<=n<=j, n) - sum(n:a<=n<=j+a, a*floor(a/(n+a)))
   a*(j/a*(j/2a + 1/2)) + (j/a)(j-(j/a))
 
 
+a cong b (mod p) iff a mod p = b mod p
+
+ax cong by (mod p) implies a cong b (mod p) 
+    ax mod p = by mod p
+    ax - p*floor(ax/p) = by-p*floor(by/p)
+    ax - by = p*floor(ax/p) - p*floor(by/p)
+    ax - by = p*(floor(ax/p)-floor(by/p))
+
+
+ax mod p = (a mod p)(x mod p) mod p
+ax mod p = ax - p*floor(ax/p)
+(a - p*floor(a/p))(x - p*floor(x/p)) = ax - a*p*floor(x/p) - x*p*floor(a/p) + p*p*floor(x/p)*floor(a/p) 
+
+theorem: a*p*floor(x/p) - x*p*floor(a/p) + p^2*floor(x/p)*floor(a/p) = ax*floor(ax/p) 
+a*p*floor(x/p) - x*p*floor(a/p) + p^2*floor(x/p)*floor(a/p) =
+p(a*floor(x/p) - x*floor(a/p) + p*floor(x/p)*floor(a/p)) =
+p*(a*floor(x/p) - floor(a/p)*(x + p*floor(x/p))) = 
+
+---
+(a mod p)(x mod p) mod p
+exist j,k,l,m,n,o:
+a = j*p+k
+x = l*p+m
+a*x = q*p+r
+k*m = n*p+o
+hypothesis
+r = o
+--
+r = a*x-q*p
+r*k*m = (a*x-q*p)(n*p+o)
+r*k*m = a*x*n*p + a*x*o - q*p*n - q*p*o
+
+
+
+
+
+k = a-j*p
+m = x-l*p
+n*p+o = (a-j*p)(x-l*p)
+n*p+o = a*x-a*l*p-j*p*x-j*l*p^2
+
+a*x = j*p*x + k*x
+a*x = l*p*a + m*a
+a*x = (j*p+k)(l*p+m)
+a*x = j*p*l + j*p*m + k*l + k*p*m
+j*p*x + k*x = l*p*a + m*a 
+
+---
+
+f(x) = x-p*floor(x/p)
+hypothesis
+f(f(x)f(y))=f(x*y)
+f(f(x)f(y)) = f(x)f(y)-p*floor(f(x)(fy)/p)
+f(x)f(y) = (x-p*floor(x/p)) * (y-p*floor(y/p))
+f(x)f(y) = x*y - x*p*floor(y/p) - y*p*floor(x/p) + p^2*floor(x/p)*floor(y/p)
+
+f(f(x)f(y)) = (x-p*floor(x/p)) * (y-p*floor(y/p)) - p*floor((x-p*floor(x/p)) * (y-p*floor(y/p))/p)
+
+
+ax cong by (mod p) and a cong b (mod p) then x cong y (mod p)
+    ax mod p = by mod p
+    a mod p = b mod p
+    by mod p = b mod p * y mod p mod p 
+    by mod p = a mod p * y mod p mod p 
+    a mod p & y mod p mod p = ay mod p
+    by mod p = ay mod p
+    ax mod p = ay mod p
+    ay mod p = 
+    
 -----
 x mod y = x - y*floor(x/y)
 F(j) = sum(n:0<=n<=j, n mod a) =
@@ -204,4 +273,42 @@ forall a,b,c,d: proportional(a,b,c,d) implies proportional(a,c,b,d)
 (3) thereis a,b,c,d,e,f,g,h: isto(a,b,c,d) and isto(a,b,e,f) and isto(c,d,e,f) and equim(g,h,c,d) and equim(e,f,a,b)
 (4) thereis a,b,c,d,e,f,g,h: isto(a,b,c,d) and isto(a,b,e,f) and isto(c,d,e,f) and equim(g,h,c,d) and equim(e,f,a,b) andisto(c,d,g,h)
 (5) thereis a,b,c,d,e,f,g,h: isto(a,b,c,d) and isto(a,b,e,f) and isto(c,d,e,f) and equim(g,h,c,d) and equim(e,f,a,b) andisto(c,d,g,h) and isto(e,f,g,h)
+---
+let C be less than p. then
+(C + pm) mod p * (C + pn) mod p mod p = (C+pn)(C+pm) mod p
+
+(C + pm) mod p = C+pm-p*floor(C+pm,p) = C
+(C + pn) mod p = C+pn-p*floor(C+pn,p) = C*
+(C + pm) mod p * (C + pn) mod p = C^2 mod p
+likewise
+(C+pn)(C+pm) = C^2+Cpn+Cpm+pnpm = C^2 mod p*
+
+hypothesis: 
+let C be less than p, then
+C+pn-p*floor(C+pn,p) = C
+this turns on the identity 
+p*floor(C+pn,p) = pn, which in turn
+floor(C+pn,p) = n, but we can see this is so by
+p*floor(C+pn,p) <= C+pn
+floor(C+pn,p) <= (C+pn)/p
+floor(C+pn,p) <= C/p + n
+but, since floor is an integer function, this means
+floor(C+pn,p) <= n
+suppose it less than n, and call this value q, then
+q < n
+pq < C+pn
+p(q+1) > C+pn
+pq+p > C+pn
+p > C+pn-pq
+but pn-pq is a multiple of p, call it mp
+p > C + mp
+which is absurd. therefore q is not less than n. therefore it equals n. qed.
+therefore, if C be less than p, then C+pn-p*floor(C+pn,p) = C.
+
+hypothesis
+j = (a + mp) mod p = a
+j = (a+mp) - p*floor((a+mp),p)
+j = a+mp-mp=a
+j=a
+as required.
 
