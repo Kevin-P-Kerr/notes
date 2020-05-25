@@ -68,10 +68,24 @@ let collectNots i =
   in
   helper i EMPTY;;
 
+let collectTrues i =
+  let rec helper i r =
+    match i with
+    | [] -> r
+    | x::xs -> 
+        let b = extractTrue x in
+        match b with
+        | EMPTY -> helper xs r
+        | R(x) -> 
+            match r with
+            | EMPTY -> helper xs x
+            | R(y) -> helper xs R(P(x,y))
+  in
+  helper i EMPTY;;
 (* learn a boolean function in the simplest way *)
 let learn1bit i =
   let ns = collectNots i in
-  let ands = collectAnds i in
+  let ands = collectTrues i in
 
   P(N(collectNots i),(collectAnds i));
 
