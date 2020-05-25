@@ -61,7 +61,7 @@ let collectNots i =
         | R(z) -> 
             match r with
             | EMPTY -> helper xs (R(z))
-            | R(y) -> helper xs (R(M(z,y)))
+            | R(y) -> helper xs (R(P(z,y)))
   in
   helper i EMPTY;;
 
@@ -98,7 +98,7 @@ let dbg s =
   print_string (s^"\n");;
 
 
-let partxor = [STTR([false;false],false);STTR([false;true],true);STTR([true;true],false)];;
+let partxor = [STTR([false;true],true);STTR([true;false], true)];;
 
 let pbe = learn1bit partxor;;
 let myf = match pbe with
