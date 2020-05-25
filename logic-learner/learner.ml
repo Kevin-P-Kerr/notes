@@ -4,6 +4,7 @@ open List;;
 type bexpr =  A of (int) | N of (bexpr) | M of (bexpr*bexpr) | P of (bexpr*bexpr);;
 type 'a optional = EMPTY | R of ('a);;
 type simple_truth_table_record = STTR of ((bool list)*bool);;
+type complex_truth_table_record = CTTR of ((bool list)*(bool list));;
 
 let rec evalBoolExpr e v =
   match e with
@@ -91,24 +92,23 @@ let learn1bit i =
       | EMPTY -> R(N(x))
       | R(y) -> R(P(N(x),y));;
 
+(* learn a more complex function *)
+let learnNbit i = 
+  let rec helper i r = 
+    match i with
+    | CTTR(x,y) ->
+        match y with
+        | [] -> r
+        | l::ls -> 
+            let f = learn1bit (STTR(x,l)) in
+            match f with
+            | EMPTY -> helper i r
+            | R(jf) -> helper i (r@[jf])
+  in
+  helper i [];;
+
 let printEval f a = 
   if evalBoolExpr f a then "true" else "false";;
-
-let dbg s =
-  print_string (s^"\n");;
-
-
-let partxor = [STTR([false;true],true);STTR([true;false], true)];;
-
-let pbe = learn1bit partxor;;
-let myf = match pbe with
-| EMPTY -> let y = print_string "error error\n" in A(0)
-| R(x) -> let y =  print_string ((toStr x)^"\n") in x;;
-
-dbg (printEval myf [|false;false|]);;
-dbg (printEval myf [|false;true|]);;
-dbg (printEval myf [|true;false|]);;
-dbg (printEval myf [|true;true|]);;
 
 
 let pow2 b = 
@@ -144,9 +144,27 @@ let eval_relation args truthTable =
     | x::xs -> let lr = getNthBit n x in helper xs (r@[lr])
   in helper truthTable [];;
 
+(* debugging and testing: TODO: put this in it's own file *)
 let xor a b = 
   let r = eval_relation [a;b] [6]
   in 
   List.hd r;;
 
 let d = xor true false;;
+
+let dbg s =
+  print_string (s^"\n");;
+
+
+let partxor = [STTR([false;true],true);STTR([true;false], true)];;
+
+let pbe = learn1bit partxor;;
+let myf = match pbe with
+| EMPTY -> let y = print_string "error error\n" in A(0)
+| R(x) -> let y =  print_string ((toStr x)^"\n") in x;;
+
+dbg (printEval myf [|false;false|]);;
+dbg (printEval myf [|false;true|]);;
+dbg (printEval myf [|true;false|]);;
+dbg (printEval myf [|true;true|]);;
+
