@@ -1,14 +1,20 @@
 open Str;;
 open List;;
 
-type bexpr = A of (bool) | N of (bexpr) | M of (bexpr*bexpr) | P of (bexpr*bexpr);;
+type bexpr = A of (int) | N of (bexpr) | M of (bexpr*bexpr) | P of (bexpr*bexpr);;
 
-let rec evalBoolExpr e =
+
+let rec evalBoolExpr e v =
   match e with
-  | A(x) -> x
-  | N(x) -> not (evalBoolExpr x)
-  | M(x,y) -> (evalBoolExpr x) && (evalBoolExpr y)
-  | P(x,y) -> (evalBoolExpr x) || (evalBoolExpr y);;
+  | A(x) -> v.(x)
+  | N(x) -> not (evalBoolExpr x v)
+  | M(x,y) -> (evalBoolExpr x v) && (evalBoolExpr y v)
+  | P(x,y) -> (evalBoolExpr x v) || (evalBoolExpr y v);;
+
+let myBoolExpr = M(N(A(0)),M(A(1),N(A(0))));;
+
+let j = evalBoolExpr myBoolExpr [|true; false;|];;
+if j then print_string "true" else print_string "\nfalse";;
 
 let pow2 b = 
   let rec helper x r = 
