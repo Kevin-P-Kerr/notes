@@ -103,14 +103,20 @@ let getNth r l =
   helper r l;;
 
 let unRollToSTTR i = 
-  let rec helper i n r = 
+  let rec helperA i n r = 
     match i with
     | [] -> r
     | x::xs ->
         match x with
         | CTTR(a,r) ->
-            helper xs n r@[getNth r n]
+            helperA xs n r@[getNth r n]
   in
+  let rec helperB i n r =
+    match i with
+    | [] -> r
+    | x::xs ->
+
+
 
 (* learn a more complex function *)
 let learnNbit i = 
