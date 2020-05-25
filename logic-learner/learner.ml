@@ -11,10 +11,22 @@ let rec evalBoolExpr e v =
   | M(x,y) -> (evalBoolExpr x v) && (evalBoolExpr y v)
   | P(x,y) -> (evalBoolExpr x v) || (evalBoolExpr y v);;
 
-let myBoolExpr = M(N(A(0)),M(A(1),N(A(0))));;
+let toAlpha x = 
+  let r = [|"a";"b";"c";"d";"e";"f";"g";"h";"i";"j";"k";"l";"m";"n";"o"|] in
+  r.(x);;
 
-let j = evalBoolExpr myBoolExpr [|true; false;|];;
+let rec toStr e =
+  match e with
+  | A(x) -> toAlpha x
+  | N(x) -> "~"^(toStr x)
+  | M(x,y) -> "("^(toStr x)^")*("^(toStr y)^")"
+  | P(x,y) -> "("^(toStr x)^")+("^(toStr y)^")";;
+
+let myBoolExpr = M(N(A(0)),M(A(1),P(N(A(0)),A(2))));;
+
+let j = evalBoolExpr myBoolExpr [|false; false;|];;
 if j then print_string "true" else print_string "\nfalse";;
+print_string ("\n"^(toStr myBoolExpr));;
 
 let pow2 b = 
   let rec helper x r = 
