@@ -1,8 +1,8 @@
 open Str;;
 open List;;
 
-type bexpr = A of (int) | N of (bexpr) | M of (bexpr*bexpr) | P of (bexpr*bexpr);;
-
+type bexpr =  A of (int) | N of (bexpr) | M of (bexpr*bexpr) | P of (bexpr*bexpr);;
+type 'a optional = EMPTY | R of ('a);;
 
 let rec evalBoolExpr e v =
   match e with
@@ -23,6 +23,21 @@ let rec toStr e =
   | P(x,y) -> "("^(toStr x)^")+("^(toStr y)^")";;
 
 let myBoolExpr = M(N(A(0)),M(A(1),P(N(A(0)),A(2))));;
+
+(*
+let collectNots i =
+  let rec helper i r =
+    match i with
+    | [] -> r
+    | 
+
+(* learn a boolean function in the simplest way *)
+let learn1bit i =
+  let ns = collectNots i in
+  let ands = collectAnds i in
+
+  P(N(collectNots i),(collectAnds i));
+*)
 
 let j = evalBoolExpr myBoolExpr [|false; false;|];;
 if j then print_string "true" else print_string "\nfalse";;
