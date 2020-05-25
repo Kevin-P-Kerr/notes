@@ -92,16 +92,30 @@ let learn1bit i =
       | EMPTY -> R(N(x))
       | R(y) -> R(P(N(x),y));;
 
+exception IndexError of string;;
+let getNth r l = 
+  let rec helper r l =
+    match l with
+    | [] -> raise (IndexError "getNth")
+    | x::xs ->
+        if r=0 then x else helper (r-1) xs
+  in
+  helper r l;;
+
+let unRollToSTTR i = 
+  let rec helper i n r = 
+    match i with
+    | [] -> r
+    | x::xs ->
+        match x with
+        | CTTR(a,r) ->
+            helper xs n r@[getNth r n]
+  in
+
 (* learn a more complex function *)
 let learnNbit i = 
   let rec helper i r = 
     match i with
-    | CTTR(x,y) ->
-        match y with
-        | [] -> r
-        | l::ls -> 
-            let f = learn1bit (STTR(x,l)) in
-            match f with
             | EMPTY -> helper i r
             | R(jf) -> helper i (r@[jf])
   in
