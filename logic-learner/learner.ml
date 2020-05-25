@@ -25,9 +25,8 @@ let rec toStr e =
 
 let myBoolExpr = M(N(A(0)),M(A(1),P(N(A(0)),A(2))));;
 
-(* ttr = truth table record *)
-let extractNot ttr = 
-  let rec helper l i = 
+let row2bexpr l = 
+  let rec helper l i =
     match l with
     | [] -> EMPTY
     | x::xs -> 
@@ -37,10 +36,22 @@ let extractNot ttr =
         | EMPTY -> R(b)
         | R(x) -> R(M(b,x))
   in
+  helper l 0;;
+
+(* ttr = truth table record *)
+let extractNot ttr = 
+  match ttr with
+  | STTR(l,v) ->
+      if v then EMPTY else
+        row2bexpr l;;
+
+(* ttr = truth table record *)
+let extractTrue ttr = 
+  in
   match ttr with
   | STTR(l,v) ->
       if not v then EMPTY else
-        helper l;;
+        row2bexpr l;;
 
 let collectNots i =
   let rec helper i r =
