@@ -3,7 +3,7 @@ open List;;
 
 type bexpr =  A of (int) | N of (bexpr) | M of (bexpr*bexpr) | P of (bexpr*bexpr);;
 type 'a optional = EMPTY | R of ('a);;
-type simple_truth_table_record = STTR of ((list bool)*bool);;
+type simple_truth_table_record = STTR of ((bool list)*bool);;
 
 let rec evalBoolExpr e v =
   match e with
@@ -19,11 +19,9 @@ let toAlpha x =
 let rec toStr e =
   match e with
   | A(x) -> toAlpha x
-  | N(x) -> "~"^(toStr x)
+  | N(x) -> "~("^(toStr x)^")"
   | M(x,y) -> "("^(toStr x)^")*("^(toStr y)^")"
   | P(x,y) -> "("^(toStr x)^")+("^(toStr y)^")";;
-
-let myBoolExpr = M(N(A(0)),M(A(1),P(N(A(0)),A(2))));;
 
 let row2bexpr l = 
   let rec helper l i =
@@ -47,7 +45,6 @@ let extractNot ttr =
 
 (* ttr = truth table record *)
 let extractTrue ttr = 
-  in
   match ttr with
   | STTR(l,v) ->
       if not v then EMPTY else
@@ -61,10 +58,10 @@ let collectNots i =
         let b = extractNot x in
         match b with
         | EMPTY -> helper xs r
-        | R(x) -> 
+        | R(z) -> 
             match r with
-            | EMPTY -> helper xs x
-            | R(y) -> helper xs R(M(x,y))
+            | EMPTY -> helper xs (R(z))
+            | R(y) -> helper xs (R(M(z,y)))
   in
   helper i EMPTY;;
 
@@ -76,10 +73,10 @@ let collectTrues i =
         let b = extractTrue x in
         match b with
         | EMPTY -> helper xs r
-        | R(x) -> 
+        | R(z) -> 
             match r with
-            | EMPTY -> helper xs x
-            | R(y) -> helper xs R(P(x,y))
+            | EMPTY -> helper xs (R(z))
+            | R(y) -> helper xs (R(P(z,y)))
   in
   helper i EMPTY;;
 
@@ -94,9 +91,25 @@ let learn1bit i =
       | EMPTY -> R(N(x))
       | R(y) -> R(P(N(x),y));;
 
-let j = evalBoolExpr myBoolExpr [|false; false;|];;
-if j then print_string "true" else print_string "\nfalse";;
-print_string ("\n"^(toStr myBoolExpr));;
+let printEval f a = 
+  if evalBoolExpr f a then "true" else "false";;
+
+let dbg s =
+  print_string (s^"\n");;
+
+
+let partxor = [STTR([false;false],false);STTR([false;true],true);STTR([true;true],false)];;
+
+let pbe = learn1bit partxor;;
+let myf = match pbe with
+| EMPTY -> let y = print_string "error error\n" in A(0)
+| R(x) -> let y =  print_string ((toStr x)^"\n") in x;;
+
+dbg (printEval myf [|false;false|]);;
+dbg (printEval myf [|false;true|]);;
+dbg (printEval myf [|true;false|]);;
+dbg (printEval myf [|true;true|]);;
+
 
 let pow2 b = 
   let rec helper x r = 
@@ -137,6 +150,3 @@ let xor a b =
   List.hd r;;
 
 let d = xor true false;;
-print_string "\n";;
-if d then print_string "true" else print_string "false";;
-print_string "\n";;
