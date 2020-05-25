@@ -21,21 +21,25 @@ let getNthBit n b =
   b land p > 0;;
 
 
-(* a truth table is an 2^n bit integer representation of a boolean function of n variables
+(* a truth table is an m sized list of (2^n bit integers) representation of a boolean 
+ * function of n input variables and m output variables
  * where we say that the leftmost bit is the least significant 
  * for example, the truth table for AND is 0001 = 8 
 *)
 let eval_relation args truthTable = 
   let n = toInt(args) in
-  getNthBit n truthTable;;
+  let rec helper t r =
+    match t with 
+    | [] -> r
+    | x::xs -> let lr = getNthBit n x in helper xs (r@[lr])
+  in helper truthTable [];;
 
 let xor a b = 
-  eval_relation [a;b] 6;;
+  let r = eval_relation [a;b] [6]
+  in 
+  List.hd r;;
 
-let n a b = 
-  eval_relation [a;b] 1;;
-
-let d = xor true true;;
+let d = xor true false;;
 print_string "\n";;
 if d then print_string "true" else print_string "false";;
 print_string "\n";;
