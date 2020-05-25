@@ -30,12 +30,12 @@ let eval_relation args truthTable =
   getNthBit n truthTable;;
 
 let xor a b = 
-  eval_relation [a;b] 3;;
+  eval_relation [a;b] 6;;
 
-let xor a b = 
+let n a b = 
   eval_relation [a;b] 1;;
 
-let d = xor false false;;
+let d = xor true true;;
 print_string "\n";;
 if d then print_string "true" else print_string "false";;
 print_string "\n";;
