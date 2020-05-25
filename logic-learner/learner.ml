@@ -1,6 +1,15 @@
 open Str;;
 open List;;
 
+type bexpr = A of (bool) | N of (bexpr) | M of (bexpr*bexpr) | P of (bexpr*bexpr);;
+
+let rec evalBoolExpr e =
+  match e with
+  | A(x) -> x
+  | N(x) -> not (evalBoolExpr x)
+  | M(x,y) -> (evalBoolExpr x) && (evalBoolExpr y)
+  | P(x,y) -> (evalBoolExpr x) || (evalBoolExpr y);;
+
 let pow2 b = 
   let rec helper x r = 
     if x=0 then 1 else if x=1 then r*2 else let z = x-1 in let rr = r*2 in helper z rr
