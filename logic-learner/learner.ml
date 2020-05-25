@@ -82,12 +82,17 @@ let collectTrues i =
             | R(y) -> helper xs R(P(x,y))
   in
   helper i EMPTY;;
+
 (* learn a boolean function in the simplest way *)
 let learn1bit i =
   let ns = collectNots i in
   let ands = collectTrues i in
-
-  P(N(collectNots i),(collectAnds i));
+  match ns with
+  | EMPTY -> ands
+  | R(x) -> 
+      match ands with
+      | EMPTY -> R(N(x))
+      | R(y) -> R(P(N(x),y));;
 
 let j = evalBoolExpr myBoolExpr [|false; false;|];;
 if j then print_string "true" else print_string "\nfalse";;
