@@ -3,6 +3,7 @@ open List;;
 
 type bexpr =  A of (int) | N of (bexpr) | M of (bexpr*bexpr) | P of (bexpr*bexpr);;
 type 'a optional = EMPTY | R of ('a);;
+type simple_truth_table_record = STTR of ((list bool)*bool);;
 
 let rec evalBoolExpr e v =
   match e with
@@ -24,12 +25,37 @@ let rec toStr e =
 
 let myBoolExpr = M(N(A(0)),M(A(1),P(N(A(0)),A(2))));;
 
-(*
+(* ttr = truth table record *)
+let extractNot ttr = 
+  let rec helper l i = 
+    match l with
+    | [] -> EMPTY
+    | x::xs -> 
+        let b = if x then A(i) else N(A(i)) in
+        let y = helper xs (i+1) in
+        match y with
+        | EMPTY -> R(b)
+        | R(x) -> R(M(b,x))
+  in
+  match ttr with
+  | STTR(l,v) ->
+      if not v then EMPTY else
+        helper l;;
+
 let collectNots i =
   let rec helper i r =
     match i with
     | [] -> r
-    | 
+    | x::xs -> 
+        let b = extractNot x in
+        match b with
+        | EMPTY -> helper xs r
+        | R(x) -> 
+            match r with
+            | EMPTY -> helper xs x
+            | R(y) -> helper xs R(M(x,y))
+  in
+  helper i EMPTY;;
 
 (* learn a boolean function in the simplest way *)
 let learn1bit i =
@@ -37,7 +63,6 @@ let learn1bit i =
   let ands = collectAnds i in
 
   P(N(collectNots i),(collectAnds i));
-*)
 
 let j = evalBoolExpr myBoolExpr [|false; false;|];;
 if j then print_string "true" else print_string "\nfalse";;
