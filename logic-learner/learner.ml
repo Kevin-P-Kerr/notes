@@ -102,6 +102,14 @@ let getNth r l =
   in
   helper r l;;
 
+let getLen l = 
+  let rec helper l r = 
+    match l with
+    | [] -> r
+    | x::xs -> helper xs (r+1)
+  in
+  helper l 0;;
+
 let unRollToSTTR i = 
   let rec helperA i n r = 
     match i with
@@ -109,12 +117,21 @@ let unRollToSTTR i =
     | x::xs ->
         match x with
         | CTTR(a,r) ->
-            helperA xs n r@[getNth r n]
+            let nr = STTR(a,(getNth r n)) 
+            in
+            helperA xs n r@[nr]
   in
-  let rec helperB i n r =
-    match i with
-    | [] -> r
-    | x::xs ->
+  let rec helperB i n l r =
+    if n=l then r else
+      helperB i (n+1) l (r@[helperA i n []])
+  in
+  match i with
+  | [] -> []
+  | x::xs ->
+      match x with
+      |CTTR(y,z) -> 
+          let len = getLenz z in
+          helperB i 0 len [];;
 
 
 
