@@ -116,8 +116,8 @@ let unRollToSTTR i =
     | [] -> r
     | x::xs ->
         match x with
-        | CTTR(a,r) ->
-            let nr = STTR(a,(getNth r n)) 
+        | CTTR(a,rr) ->
+            let nr = STTR(a,(getNth n rr)) 
             in
             helperA xs n r@[nr]
   in
@@ -130,7 +130,7 @@ let unRollToSTTR i =
   | x::xs ->
       match x with
       |CTTR(y,z) -> 
-          let len = getLenz z in
+          let len = getLen z in
           helperB i 0 len [];;
 
 
