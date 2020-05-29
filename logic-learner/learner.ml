@@ -147,6 +147,15 @@ let learnNbit i =
 let printEval f a = 
   if evalBoolExpr f a then "true" else "false";;
 
+let printBoolSeq l a =
+  let rec helper l a r =
+    match l with
+    |[] -> r
+    |f::xs ->  let j = if evalBoolExpr f a then 1 else 0 in 
+    helper xs a r@[j]
+  in
+  helper l a [];;
+
 
 let pow2 b = 
   let rec helper x r = 
