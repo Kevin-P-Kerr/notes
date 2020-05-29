@@ -107,7 +107,7 @@ let learn1bit i =
   | R(x) -> 
       match ands with
       | EMPTY -> R(N(x))
-      | R(y) -> R(P(N(x),y));;
+      | R(y) -> R(y);;
 
 exception IndexError of string;;
 let getNth r l = 
@@ -182,7 +182,7 @@ let toBoolSeq l a =
   let rec helper l a r =
     match l with
     |[] -> r
-    |f::xs ->  let j = if evalBoolExpr f a then 1 else 0 in 
+    |f::xs ->  let j = evalBoolExpr f a in 
     helper xs a r@[j]
   in
   helper l a [];;
@@ -275,12 +275,6 @@ let makeTruthTableForAddition n m =
       let j = Random.int max in
       let k = Random.int max in
       let l = (j+k) mod max in
-      let  () = print_int j in
-      let () = print_string "\n" in
-      let () = print_int k in
-      let () = print_string "\n" in
-      let () = print_int l in
-      let () = print_string "\n**\n" in
       let jj = int2bool j max in
       let kk = int2bool k max in
       let ll = int2bool l max in
@@ -289,11 +283,28 @@ let makeTruthTableForAddition n m =
   in
   helper m [];;
 
-let fourBit = makeTruthTableForAddition 4 4;;
+let fourBit = makeTruthTableForAddition 4 3;;
 let tt = printTruthTable fourBit;;
 dbg (collect tt);;
 
+(*
 dbg (printBoolSeq (int2bool 4 15));;
 dbg (printBoolSeq (int2bool 7 15));;
 dbg (printBoolSeq (int2bool 12 15));;
-      
+*)
+
+let b2str a = 
+  match a with
+  | EMPTY -> "nuthin'"
+  | R(x) -> toStr x;;
+
+let anl x = x^"\n";;
+
+let eo x = 
+  match x with
+  |EMPTY -> raise (IndexError "no")
+  |R(z) -> z;;
+
+let m = learnNbit fourBit;;
+dbg (collect (map (map m b2str) anl));;
+dbg (printBoolSeq (toBoolSeq (map m eo) [|false;true;false;true;true;false;false;true|]));;
