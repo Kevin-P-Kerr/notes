@@ -1,10 +1,27 @@
 open Str;;
 open List;;
+open Random;;
 
 type bexpr =  A of (int) | N of (bexpr) | M of (bexpr*bexpr) | P of (bexpr*bexpr);;
 type 'a optional = EMPTY | R of ('a);;
 type simple_truth_table_record = STTR of ((bool list)*bool);;
 type complex_truth_table_record = CTTR of ((bool list)*(bool list));;
+
+let map l f =
+  let rec helper l f r =
+  match l with
+  |[] -> r
+  |x::xs -> helper xs f r@[f x]
+  in
+  helper l f [];;
+
+let collect l =
+  let rec helper l r = 
+    match l with
+    |[] -> r
+    |x::xs -> helper xs (r^x)
+  in
+  helper l "";;
 
 let rec evalBoolExpr e v =
   match e with
@@ -151,7 +168,17 @@ let learnNbit i =
 let printEval f a = 
   if evalBoolExpr f a then "true" else "false";;
 
-let printBoolSeq l a =
+let printBoolSeq l = 
+  let rec helper l r = 
+    match l with
+    | [] -> r
+    | x::xs ->
+       let j = if x then "1" else "0" in
+       helper xs r^j
+  in
+  helper l "";;
+
+let toBoolSeq l a =
   let rec helper l a r =
     match l with
     |[] -> r
@@ -213,8 +240,60 @@ let myf = match pbe with
 | EMPTY -> let y = print_string "error error\n" in A(0)
 | R(x) -> let y =  print_string ((toStr x)^"\n") in x;;
 
+(*
 dbg (printEval myf [|false;false|]);;
 dbg (printEval myf [|false;true|]);;
 dbg (printEval myf [|true;false|]);;
 dbg (printEval myf [|true;true|]);;
+*)
 
+let printTruthTable l = 
+  let f y = 
+    match y with 
+    |CTTR(j,k) -> 
+        let n = printBoolSeq j
+        in
+        let o = printBoolSeq k
+        in
+        n^":"^o^"\n"
+  in
+  map l f;;
+
+let int2bool i max = 
+  let rec helper i p r =
+    if p > max then r else
+    let b = (p land i)>0 in
+    helper i (p*2) r@[b]
+  in
+  helper i 1 [];;
+    
+
+let makeTruthTableForAddition n m =
+  let max = (pow2 n)-1 in
+  let rec helper m r =
+    if m=0 then r else
+      let j = Random.int max in
+      let k = Random.int max in
+      let l = (j+k) mod max in
+      let  () = print_int j in
+      let () = print_string "\n" in
+      let () = print_int k in
+      let () = print_string "\n" in
+      let () = print_int l in
+      let () = print_string "\n**\n" in
+      let jj = int2bool j max in
+      let kk = int2bool k max in
+      let ll = int2bool l max in
+      let record = CTTR((List.append jj kk), ll) in
+      helper (m-1) r@[record]
+  in
+  helper m [];;
+
+let fourBit = makeTruthTableForAddition 4 4;;
+let tt = printTruthTable fourBit;;
+dbg (collect tt);;
+
+dbg (printBoolSeq (int2bool 4 15));;
+dbg (printBoolSeq (int2bool 7 15));;
+dbg (printBoolSeq (int2bool 12 15));;
+      
