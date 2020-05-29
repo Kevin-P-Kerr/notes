@@ -137,12 +137,16 @@ let unRollToSTTR i =
 
 (* learn a more complex function *)
 let learnNbit i = 
-  let rec helper i r = 
-    match i with
-            | EMPTY -> helper i r
-            | R(jf) -> helper i (r@[jf])
+  let unrolled = unRollToSTTR i in
+  let rec helper l r =
+    match l with 
+    |[] -> r
+    | x::xs -> 
+        let f = learn1bit x in
+        helper xs r@[f]
   in
-  helper i [];;
+  helper unrolled [];;
+
 
 let printEval f a = 
   if evalBoolExpr f a then "true" else "false";;
