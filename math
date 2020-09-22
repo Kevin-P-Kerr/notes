@@ -302,3 +302,12 @@ j = a+mp-mp=a
 j=a
 as required.
 
+
+forall a,b,c thereis d: mod(a,b,c) iff (floor(d,a,b) and product(e,d,b) and difference(c,a,e))
+forall a,b,c,d,e : (product(c,a,b) and sum(d,c,e) and mod(f,e,b)) implies equals(f,d)
+
+
+--
+say there are 10 axioms, of 5 variables a piece
+then their conjunction together gives 50 variables
+
