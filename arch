@@ -122,3 +122,50 @@ will be less than the portion of the surface of the cone intercepted between the
     AGE,EHC,CKF,FLB are segments less than D, and they are equal to one another
     OE,OF are lines
 
+Proposition 10: If in the plane of an isosceles cone two tangents be drawn to the circle
+meeting in a point, and the points of contact and the point of concourse of the tangents be respectively
+joined to the apex of the cone, the sum of the two triangles formed by joining the lines and the two tangents
+are together greater than the included portion of the surface of the cone.
+  ABC = the circular base of the cone
+  O = the apex of the cone
+  AD,BD tangents on ABC meeting at D
+  OAD,OBD, the two triangles
+  C, the middle point of arc ABC
+  ECF, a tangent at C
+  OE,OF
+  ED+DF > EF
+  AD+BD > AE + EF + FB
+  OA = OC = OB
+  tri(OAD) + tri(OBD) > OAE + OEF  + OFB
+  G = tri(OAD) + tri(OBD) - OAE + OEF  + OFB
+
+Proposition 11:
+  If a plane paralell to the surface of a right cylinder cut the cylinder, the part of the surface of the cylinder cut off by the plane is greater than the area of the parallelogram in which the plane cuts it.
+
+Proposition 12: 
+  If at the extremities of two generators of any right cylinder tangents be drawn to the circular bases in the planes of those bases repsectively, and if the pairs of tangents meet, the parallelograms formed by each generator and the two corresponding tangents respectively are together greater than the included portion of the surface of the cylinder between the two generators. 
+
+Proposition 13:
+  The surface of any right cylinder excluding the base is equal to a circle whose radius is a mean proportional between the side of the cylinder and and the diameter of its base
+
+  A = circle
+  CD = diameter of the cylinder 
+  EF = height of the cylinder
+  H = mean proportional between CD and EF
+  B = circle with diameter H e.g. sqrt(CD*EF)
+  B = area of the cylinder exluding the bases = S
+  if not
+    B<S or B>S
+  suppose B < S
+
+Proposition 14
+  The surface of any isosceles cone excluding the base is equal to a circle whose radius is mean proportional between the side of the side of the cone and the radius of the circle which is the base of the cone.
+    A = base of the cone
+    C = line equal to the radius of A
+    D = line equal to the side of the cone
+    E = line mean proportional to C and D
+    B = circle with radius E
+    S = area of A excluding the base
+    suppose B<S
+
+

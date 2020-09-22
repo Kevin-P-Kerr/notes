@@ -264,6 +264,16 @@ G(z) = 1/(1-z)^2
 
 
 --
+Euclid V 16
+If four magnitudes are proportional, then they are also proportional alternately
+
+forall a,b,c,d: proportional(a,b,c,d) implies proportional(a,c,b,d)
+(1) thereis a,b,c,d: isto(a,b,c,d)
+(2) thereis e,f: isto(e,f,a,b) 
+(3) thereis a,b,c,d,e,f,g,h: isto(a,b,c,d) and isto(a,b,e,f) and isto(c,d,e,f) and equim(g,h,c,d) and equim(e,f,a,b)
+(4) thereis a,b,c,d,e,f,g,h: isto(a,b,c,d) and isto(a,b,e,f) and isto(c,d,e,f) and equim(g,h,c,d) and equim(e,f,a,b) andisto(c,d,g,h)
+(5) thereis a,b,c,d,e,f,g,h: isto(a,b,c,d) and isto(a,b,e,f) and isto(c,d,e,f) and equim(g,h,c,d) and equim(e,f,a,b) andisto(c,d,g,h) and isto(e,f,g,h)
+---
 let C be less than p. then
 (C + pm) mod p * (C + pn) mod p mod p = (C+pn)(C+pm) mod p
 
